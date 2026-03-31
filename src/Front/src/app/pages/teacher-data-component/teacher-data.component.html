@@ -6,24 +6,21 @@
 
       <div class="form-row">
         <label>{{ 'teacher.fullName' | transloco }}</label>
-        <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.fullName" [disabled]="true"></inputs>
+        <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.fullName" ></inputs>
       </div>
 
       <div class="form-row">
         <label>{{ 'teacher.iin' | transloco }}</label>
-        <inputs [type]="inputTypes.onlyNumbers" [innerControl]="teacherForm.controls.iin" [disabled]="true"></inputs>
+        <inputs [type]="inputTypes.onlyNumbers" [innerControl]="teacherForm.controls.iin" ></inputs>
       </div>
 
       <div class="form-row">
-        <label>{{ 'teacher.department' | transloco }}</label>
-        <selects
-          [type]="selectTypes.matSelect"
-          [items]="departments()"
-          [displayKey]="'name' | langField"
-          valueKey="id"
-          [control]="teacherForm.controls.departmentId"
-          (selectionChange)="onDepartmentChange($event)">
-        </selects>
+        <label class="form-label">{{ 'teacher.department' | transloco }}</label>
+        <inputs
+          [type]="inputTypes.text"
+          [innerControl]="teacherForm.controls.departmentName"
+          placeholderText="{{ 'teacher.department' | transloco }}">
+        </inputs>
       </div>
     </fieldset>
 
@@ -149,7 +146,7 @@
 
         <div class="form-row">
           <label><strong>{{ 'teacher.total' | transloco }}</strong></label>
-          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.total" [disabled]="true"></inputs>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.total" ></inputs>
         </div>
 
       </div>
@@ -204,26 +201,25 @@
       </form>
     </div>
   </form>
-
   <div class="table-section card">
     <div class="table-section card">
       <div class="table-block">
         <h3>{{ 'teacher.mainInfo' | transloco }}</h3>
-        <tables [config]="tableConfigMain" [data]="teachers"></tables>
+        <tables [config]="tableConfigMain" [data]="teachers()"></tables>
       </div>
 
       <hr class="table-divider">
 
       <div class="table-block">
         <h3>{{ 'teacher.load' | transloco }}</h3>
-        <tables [config]="tableConfigLoad" [data]="teachers"></tables>
+        <tables [config]="tableConfigLoad" [data]="teachers()"></tables>
       </div>
 
       <hr class="table-divider">
 
       <div class="table-block">
         <h3>{{ 'teacher.details' | transloco }}</h3>
-        <tables [config]="tableConfigPayment" [data]="teachers"></tables>
+        <tables [config]="tableConfigPayment" [data]="teachers()"></tables>
       </div>
     </div>
   </div>

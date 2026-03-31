@@ -5,42 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71dcf4d1-14a6-45f1-89d1-59118d21ea10" name="Changes" comment="fr">
-      <change afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/AcademicLoad.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/PaymentDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/AcademicLoadRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/PaymentDetailRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/ba054acb-4ac4-4939-8981-cd09ba7e7464.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/ba054acb-4ac4-4939-8981-cd09ba7e7464.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Document/Document.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Document/Document.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Document/DocumetService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Document/DocumetService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/authGuard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/authGuard.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/app/shared-new/inputs/inputs.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/shared-new/inputs/inputs.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/material-theme.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/material-theme.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/DocumentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/DocumentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/GradingPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/GradingPolicy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Library.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Library.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/DocumentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/DocumentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/WeeklyTopicRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Repository/WeeklyTopicRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/CourseValueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/CourseValueService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/CustomUserDetailsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DisciplineService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DisciplineService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DocumentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DocumentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/DocumentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/DocumentController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Repository/DocumentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Repository/DocumentRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/DocumentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/DocumentService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/kk.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/kk.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/ru.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +185,7 @@
       <workItem from="1774446428135" duration="4941000" />
       <workItem from="1774500692083" duration="34584000" />
       <workItem from="1774847431698" duration="23753000" />
-      <workItem from="1774928206448" duration="7116000" />
+      <workItem from="1774928206448" duration="12496000" />
     </task>
     <task id="LOCAL-00001" summary="fr">
       <option name="closed" value="true" />
@@ -224,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774930039641</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fr">
+      <option name="closed" value="true" />
+      <created>1774948711066</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774948711066</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -18,21 +18,21 @@ import {Inputs} from './inputs';
 
 @Component({
     selector: 'inputs',
-    imports: [
-        DatePipe,
-        FormsModule,
-        NgIf,
-        NgClass,
-        FlexModule,
-        MatDatepicker,
-        MatDatepickerInput,
-        MatDatepickerToggle,
-        MatInput,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        TranslocoPipe
-    ],
+  imports: [
+    FormsModule,
+    NgIf,
+    NgClass,
+    FlexModule,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatInput,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    TranslocoPipe,
+    DatePipe
+  ],
     standalone: true,
     templateUrl: './inputs.component.html',
     styleUrl: './inputs.component.scss',

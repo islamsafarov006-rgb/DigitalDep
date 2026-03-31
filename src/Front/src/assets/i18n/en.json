@@ -48,5 +48,9 @@
     "hourlyLoad": "Hourly Load",
     "save": "Save",
     "preview": "Preview"
-  }
+  },
+  "notSelected": "Not selected",
+  "search...": "Search...",
+  "№": "No.",
+  "noEntriesFound": "No entries found"
 }
