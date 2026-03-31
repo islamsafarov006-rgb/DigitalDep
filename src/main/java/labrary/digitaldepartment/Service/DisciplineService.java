@@ -23,13 +23,13 @@ public class DisciplineService {
                 .orElseThrow(() -> new RuntimeException("Discipline not found with id: " + id));
     }
 
-    // Поиск по коду курса (напр. MMR 2217)
+
     public Discipline findByCourseCode(String code) {
         return disciplineRepository.findByCourseCode(code)
                 .orElseThrow(() -> new RuntimeException("Discipline not found with code: " + code));
     }
 
-    // Получить все дисциплины конкретной кафедры
+
     public List<Discipline> findByDepartment(Long departmentId) {
         return disciplineRepository.findByDepartmentId(departmentId);
     }

@@ -196,9 +196,12 @@
       </div>
     </fieldset>
     <div class="actions">
-      <button type="button" class="submit-btn" (click)="save()">
-         {{ 'teacher.save' | transloco }}
-      </button>
+      <form [formGroup]="teacherForm" (ngSubmit)="save()">
+        <div class="actions">
+          <button type="submit" class="submit-btn"> {{ 'teacher.save' | transloco }}
+          </button>
+        </div>
+      </form>
     </div>
   </form>
 

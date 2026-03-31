@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String iin) throws UsernameNotFoundException {
-        // Мы используем ИИН как основной логин (username)
+
         return userRepository.findByIin(iin)
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getIin(),

@@ -181,13 +181,13 @@ export class InputsComponent implements OnInit {
         this.modelChanges(value);
     }
 
-  // Замените старый метод на этот:
+
   onDateChangeinnerControl(event: MatDatepickerInputEvent<Date>) {
     const value = event.value;
     if (value) {
       const formatted = moment(value).format('YYYY-MM-DD');
 
-      // Используем innerControl вместо formControl
+
       if (this.innerControl) {
         this.innerControl.setValue(formatted, { emitEvent: true });
       }

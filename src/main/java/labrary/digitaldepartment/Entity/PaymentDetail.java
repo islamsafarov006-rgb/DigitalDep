@@ -5,27 +5,29 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "grading_policies")
+@Table(name = "payment_details")
 @Getter
 @Setter
-public class GradingPolicy {
+public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double firstAttestationWeight;
-    private Double secondAttestationWeight;
-    private Double finalExamWeight;
+    private String position;
+    private String paymentType;
+    private Integer hoursCount;
+    @Column(name = "staff_load")
+    private BigDecimal staffLoad;
 
-    @Column(columnDefinition = "TEXT")
-    private String attendancePolicy;
-
+    @Column(name = "hourly_load")
+    private BigDecimal hourlyLoad;
 
     @ManyToOne
     @JoinColumn(name = "document_id")
     @JsonBackReference
     private Document document;
-
-
 }
+

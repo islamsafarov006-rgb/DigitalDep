@@ -21,7 +21,7 @@ public class CourseValueService {
 
     @Transactional
     public CourseVolume saveOrUpdate(CourseVolume volume) {
-        // Автоматический расчет Total перед сохранением [cite: 2]
+
         int total = (volume.getLectures() != null ? volume.getLectures() : 0) +
                 (volume.getPractice() != null ? volume.getPractice() : 0) +
                 (volume.getSiw() != null ? volume.getSiw() : 0) +

@@ -1,4 +1,11 @@
 {
+  "sidebar": {
+    "teachers": "Оқытушылар",
+    "syllabus": "Силлабустар",
+    "admin": "Әкімшілік",
+    "settings": "Параметрлер",
+    "logout": "Шығу"
+  },
   "teacher": {
     "mainInfo": "Негізгі ақпарат",
     "fullName": "ТЖҚ",

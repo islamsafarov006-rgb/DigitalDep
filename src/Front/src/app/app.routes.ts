@@ -4,7 +4,7 @@ import { authGuard } from './authGuard';
 export const routes: Routes = [
   {
     path: 'register',
-    // Исправлена опечатка в названии файла .componen -> .component
+
     loadComponent: () => import('./pages/register-component/register.componen').then(m => m.RegisterComponent)
   },
   {
@@ -13,14 +13,14 @@ export const routes: Routes = [
   },
   {
     path: 'teacher-data',
-    // Путь к твоему новому компоненту, который мы создали
+
     loadComponent: () => import('./pages/teacher-data-component/teacher-data.component').then(m => m.TeacherDataComponent),
-    canActivate: [authGuard] // Страница будет доступна только после логина
+    canActivate: [authGuard]
   },
   {
     path: 'syllabus',
     loadComponent: () => import('./pages/syllabus-component/syllabus-editor.component').then(m => m.SyllabusEditorComponent),
-    canActivate: [authGuard] // Защита от неавторизованных
+    canActivate: [authGuard]
   },
   {
     path: '',
@@ -28,7 +28,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: '**', // Обработка несуществующих путей (404)
+    path: '**',
     redirectTo: 'login'
   }
 ];

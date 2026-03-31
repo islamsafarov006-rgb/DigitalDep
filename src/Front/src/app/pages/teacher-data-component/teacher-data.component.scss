@@ -22,7 +22,6 @@
     }
   }
 
-  // Общий контейнер для строк формы
   .form-row {
     display: flex;
     align-items: center;
@@ -30,22 +29,20 @@
     width: 100%;
 
     label {
-      width: 200px; // Фиксированная ширина для идеального выравнивания
-      flex-shrink: 0; // Запрещаем сжатие метки
+      width: 200px;
+      flex-shrink: 0;
       font-weight: 500;
       color: #555;
       font-size: 0.95rem;
       margin-right: 20px;
     }
 
-    // Растягиваем компоненты ввода на всю оставшуюся ширину
     inputs, selects {
       flex-grow: 1;
       display: block;
       width: 100%;
     }
 
-    // Стилизация поля "Итого", чтобы оно выделялось
     &:has(input[disabled]) {
       label {
         color: #3f51b5;
@@ -54,12 +51,11 @@
     }
   }
 
-  // Сетка для двух колонок
   .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; // Ровно две колонки
-    column-gap: 60px; // Расстояние между колонками
-    row-gap: 5px;   // Отступы между строками внутри сетки
+    grid-template-columns: 1fr 1fr;
+    column-gap: 60px;
+    row-gap: 5px;
   }
 
   .actions {
@@ -112,13 +108,12 @@
   }
 }
 
-// Адаптивность для небольших экранов (планшеты)
 @media (max-width: 1024px) {
   .teacher-container {
     padding: 20px;
 
     .form-grid {
-      grid-template-columns: 1fr; // Переключаемся в одну колонку
+      grid-template-columns: 1fr;
       gap: 0;
     }
 
@@ -135,7 +130,7 @@
 }
 .form-row {
   display: flex;
-  align-items: center; // Центрирует label и поля по вертикали
+  align-items: center;
   margin-bottom: 20px;
   width: 100%;
 

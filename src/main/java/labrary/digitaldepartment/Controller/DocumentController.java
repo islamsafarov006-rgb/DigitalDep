@@ -2,9 +2,7 @@ package labrary.digitaldepartment.Controller;
 
 import labrary.digitaldepartment.Entity.Document;
 import labrary.digitaldepartment.Enums.DocumentStatus;
-import labrary.digitaldepartment.Repository.DocumentRepository;
 import labrary.digitaldepartment.Service.DocumentService;
-import labrary.digitaldepartment.Service.LibraryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +12,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/documents")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class DocumentController {
 
     private final DocumentService documentService;
 
-    public DocumentController(DocumentService documentService) {
-        this.documentService = documentService;
-    }
     @GetMapping
     public List<Document> getAll() {
-        return documentService.findAll();
+        return documentService.findAllMyDocuments();
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<Document>> getMyDocuments() {
+        return ResponseEntity.ok(documentService.findAllMyDocuments());
     }
 
     @GetMapping("/{id}")
@@ -32,15 +33,12 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.findById(id));
     }
 
-    @GetMapping("/filter")
-    public List<Document> getByFilter(@RequestParam Long deptId, @RequestParam DocumentStatus status) {
-        return documentService.findByDeptAndStatus(deptId, status);
-    }
-
     @PostMapping
     public ResponseEntity<Document> save(@RequestBody Document document) {
-        return new ResponseEntity<>(documentService.save(document), HttpStatus.CREATED);
+        return new ResponseEntity<>(documentService.saveDocument(document), HttpStatus.CREATED);
     }
+
+
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Document> changeStatus(@PathVariable Long id, @RequestParam DocumentStatus status) {

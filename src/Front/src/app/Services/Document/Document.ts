@@ -1,7 +1,6 @@
-import {Discipline} from '../syllabus/Syllabus';
-import {User} from '../User/User';
-import {CourseVolume} from '../CourseVolume/CourseVolume';
-
+import { Discipline } from '../syllabus/Syllabus';
+import { User } from '../User/User';
+import { CourseVolume } from '../CourseVolume/CourseVolume';
 
 export enum DocumentStatus {
   DRAFT = 'DRAFT',
@@ -9,6 +8,23 @@ export enum DocumentStatus {
   SIGNED = 'SIGNED'
 }
 
+
+export interface AcademicLoad {
+  id?: number;
+  discipline: string;
+  studentGroup: string;
+  totalStreams: string;
+  lectureHours: number;
+  practiceHours: number;
+  labHours: number;
+  totalHours: number;
+}
+
+export interface PaymentDetails {
+  id?: number;
+  staffLoad: number;
+  hourlyLoad: number;
+}
 
 export interface SyllabusDocument {
   id?: number;
@@ -24,4 +40,7 @@ export interface SyllabusDocument {
   author?: User;
   courseVolume?: CourseVolume;
   weeklyTopics?: any[];
+
+  academicLoads?: AcademicLoad[];
+  paymentDetails?: PaymentDetails[];
 }

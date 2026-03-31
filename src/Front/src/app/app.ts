@@ -18,19 +18,19 @@ export class App implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
-  // Публичная переменная для шаблона
+
   public showSidebar: boolean = false;
 
   constructor() {
-    // Используем effect, чтобы следить за изменениями пользователя в AuthService
+
     effect(() => {
-      // Как только пользователь в сигнале меняется (логин/логхаут), обновляем видимость
+
       this.updateSidebarVisibility();
     });
   }
 
   ngOnInit() {
-    // Следим за сменой страниц
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -42,10 +42,10 @@ export class App implements OnInit {
     const currentUrl = this.router.url;
     const authPages = ['/login', '/register', '/'];
 
-    // ПРОВЕРКА 1: Мы НЕ на странице входа
+
     const isNotAuthPage = !authPages.includes(currentUrl);
 
-    // ПРОВЕРКА 2: Токен есть в localStorage (используем твой ключ auth_token)
+
     const hasToken = !!localStorage.getItem('auth_token');
 
     this.showSidebar = isNotAuthPage && hasToken;

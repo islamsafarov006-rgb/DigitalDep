@@ -23,7 +23,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            // 1. Хешируем пароль (БЕЗ ЭТОГО ЛОГИН НЕ ЗАРАБОТАЕТ)
+
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             if (user.getRole() == null) user.setRole(UserRole.TEACHER);

@@ -14,11 +14,6 @@ import java.util.List;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
-    @Query("SELECT d FROM Document d " +
-            "WHERE d.discipline.department.id = :deptId " +
-            "AND d.status = :status")
-    List<Document> findByDeptAndStatus(
-            @Param("deptId") Long deptId,
-            @Param("status") DocumentStatus status
-    );
+    List<Document> findAllByAuthorEmail(String email);
+    List<Document> findAllByAuthorId(Long authorId);
 }

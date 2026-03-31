@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor // Хорошая практика для JPA
+@NoArgsConstructor
 @Table(name = "weekly_topics")
 public class WeeklyTopic {
 
@@ -17,7 +17,7 @@ public class WeeklyTopic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer weekNumber; // 1-15
+    private Integer weekNumber;
 
     @Column(columnDefinition = "TEXT")
     private String lectureTopic;

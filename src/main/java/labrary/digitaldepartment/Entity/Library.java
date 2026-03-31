@@ -14,5 +14,5 @@ public class Library {
     private String isbn;
 
     @Column(columnDefinition = "TEXT")
-    private String url; // Ссылка на ИРБИС или электронный ресурс 
+    private String url;
 }

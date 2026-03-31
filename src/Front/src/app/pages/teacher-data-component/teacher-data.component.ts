@@ -12,7 +12,9 @@ import { Department } from '../../Services/Department/department';
 import { DepartmentService } from '../../Services/Department/DepartmentService';
 import { SelectsComponent } from '../../shared-new/selects/selects.component';
 import { LangFieldPipe } from '../../Ppipes/langField.pipe';
-import {TranslocoPipe, TranslocoService} from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { DocumentService } from '../../Services/Document/DocumetService';
+import { DocumentStatus } from '../../Services/Document/Document';
 
 @Component({
   selector: 'app-teacher-data',
@@ -33,21 +35,24 @@ export class TeacherDataComponent implements OnInit {
   private authService = inject(AuthService);
   private departmentService = inject(DepartmentService);
   private translocoService = inject(TranslocoService);
+  private documentService = inject(DocumentService);
 
   readonly inputTypes = Inputs;
   readonly selectTypes = Selects;
 
   departments = signal<Department[]>([]);
+
+
   teachers: any[] = [];
 
   teacherForm = new FormGroup({
-    fullName: new FormControl('', Validators.required),
-    iin: new FormControl('', [Validators.required, Validators.minLength(12)]),
-    birthDate: new FormControl('', Validators.required),
-    departmentId: new FormControl<number | null>(null, Validators.required),
+    fullName: new FormControl(''),
+    iin: new FormControl('', [Validators.minLength(12)]),
+    birthDate: new FormControl(''),
+    departmentId: new FormControl<number | null>(null),
     departmentName: new FormControl(''),
     experience: new FormControl(0),
-    disciplineCode: new FormControl('', Validators.required),
+    disciplineCode: new FormControl(''),
     discipline: new FormControl(''),
     educationalProgram: new FormControl(''),
     departmentOP: new FormControl(''),
@@ -71,8 +76,8 @@ export class TeacherDataComponent implements OnInit {
     isHourly: new FormControl(false),
     isElective: new FormControl(false),
     isCoursera: new FormControl(false),
-    position: new FormControl('', Validators.required),
-    paymentType: new FormControl('', Validators.required),
+    position: new FormControl(''),
+    paymentType: new FormControl(''),
     hoursCount: new FormControl(0),
     staffOrHourlyUnits: new FormControl(0),
     staffUnits: new FormControl(0),
@@ -81,11 +86,10 @@ export class TeacherDataComponent implements OnInit {
     hourlyLoad: new FormControl(0)
   });
 
-  tableConfig: TableConfig = { columns: [] };
-
   ngOnInit(): void {
     this.initTableConfig();
     this.loadDepartments();
+    this.loadMyDocuments();
 
     this.translocoService.langChanges$.subscribe(() => this.initTableConfig());
 
@@ -95,11 +99,53 @@ export class TeacherDataComponent implements OnInit {
         fullName: user.fio || '',
         iin: user.sub || user.iin || '',
         position: user.position || '',
-        disciplineCode: '', // Очистка кода
+        disciplineCode: '',
       });
     }
     this.setupTotalCalculation();
   }
+
+
+  loadMyDocuments(): void {
+    this.documentService.getAll().subscribe({
+      next: (data: any[]) => {
+        this.teachers = data.map(doc => {
+
+          const load = doc.academicLoads && doc.academicLoads.length > 0 ? doc.academicLoads[0] : {};
+          const payment = doc.paymentDetails && doc.paymentDetails.length > 0 ? doc.paymentDetails[0] : {};
+
+          return {
+            ...doc,
+
+            fullName: doc.author?.fullName || '',
+            iin: doc.author?.iin || '',
+            departmentName: doc.author?.department?.nameRu || '',
+            degree: doc.description || '',
+
+
+            discipline: load.discipline || '',
+            group: load.studentGroup || '',
+            totalStreams: load.totalStreams || 0,
+            lectureHours: load.lectureHours || 0,
+            practiceHours: load.practiceHours || 0,
+            labHours: load.labHours || 0,
+            total: load.totalHours || 0,
+
+
+            position: doc.author?.position || '',
+            paymentType: payment.paymentType || 'Штатный',
+            hoursCount: payment.hoursCount || 0,
+            staffOrHourlyUnits: payment.staffLoad || 0,
+            staffLoad: payment.staffLoad || 0,
+            hourlyLoad: payment.hourlyLoad || 0
+          };
+        });
+        console.log('Документы загружены и обработаны:', this.teachers);
+      },
+      error: (err) => console.error('Ошибка при получении документов:', err)
+    });
+  }
+
   readonly degreeOptions = [
     { id: '1', name: '1 курс' },
     { id: '2', name: '2 курс' },
@@ -110,17 +156,7 @@ export class TeacherDataComponent implements OnInit {
   ];
 
   private setupTotalCalculation(): void {
-    const fieldsToWatch = [
-      'lectureHours',
-      'practiceHours',
-      'labHours',
-      'srsp',
-      'rk',
-      'exam'
-    ];
-
-
-
+    const fieldsToWatch = ['lectureHours', 'practiceHours', 'labHours', 'srsp', 'rk', 'exam'];
     this.teacherForm.valueChanges.subscribe(() => {
       const total = fieldsToWatch.reduce((acc, field) => {
         const control = this.teacherForm.get(field);
@@ -130,7 +166,6 @@ export class TeacherDataComponent implements OnInit {
     });
   }
 
-
   tableConfigMain: TableConfig = { columns: [] };
   tableConfigLoad: TableConfig = { columns: [] };
   tableConfigPayment: TableConfig = { columns: [] };
@@ -138,7 +173,6 @@ export class TeacherDataComponent implements OnInit {
   initTableConfig(): void {
     const translate = (key: string) => this.translocoService.translate(`teacher.${key}`);
 
-    // 1. Основная информация
     this.tableConfigMain = {
       columns: [
         { key: 'index', title: '№', type: TableColumnTypes.index },
@@ -149,7 +183,6 @@ export class TeacherDataComponent implements OnInit {
       ]
     };
 
-    // 2. Учебная нагрузка (Предметы и часы)
     this.tableConfigLoad = {
       columns: [
         { key: 'index', title: '№', type: TableColumnTypes.index },
@@ -163,7 +196,6 @@ export class TeacherDataComponent implements OnInit {
       ]
     };
 
-    // 3. Детали оплаты
     this.tableConfigPayment = {
       columns: [
         { key: 'index', title: '№', type: TableColumnTypes.index },
@@ -175,16 +207,16 @@ export class TeacherDataComponent implements OnInit {
         { key: 'hourlyLoad', title: translate('hourlyLoad'), type: TableColumnTypes.text }
       ]
     };
-  }  readonly semesterOptions = [
+  }
+
+  readonly semesterOptions = [
     { id: 1, name: '1' },
     { id: 2, name: '2' }
   ];
 
   loadDepartments(): void {
     this.departmentService.getAll().subscribe({
-      next: (data: Department[]) => {
-        this.departments.set(data);
-      },
+      next: (data: Department[]) => this.departments.set(data),
       error: (err: any) => console.error('Ошибка бэкенда:', err)
     });
   }
@@ -201,18 +233,75 @@ export class TeacherDataComponent implements OnInit {
   }
 
   save() {
-    const formValue = this.teacherForm.getRawValue(); // 1. Берем данные
+    if (this.teacherForm.invalid) {
+      const invalidFields = this.findInvalidControls();
+      this.teacherForm.markAllAsTouched();
+      alert(`Заполните обязательные поля: ${invalidFields.join(', ')}`);
+      return;
+    }
 
-    this.teachers = [...this.teachers, { ...formValue, id: Date.now() }];
+    const formValue = this.teacherForm.getRawValue();
+    const documentToSave: any = {
+      status: DocumentStatus.DRAFT,
+      academicYear: "2025-2026",
+      semester: Number(formValue.semester),
+      goals: "Заполнение данных преподавателя",
+      description: formValue.educationalProgram || 'Данные преподавателя',
+      disciplineId: formValue.departmentId,
 
+      academicLoads: [
+        {
+          discipline: formValue.discipline || formValue.disciplineCode,
+          studentGroup: formValue.group,
+          totalStreams: String(formValue.totalStreams || 0),
+          lectureHours: Number(formValue.lectureHours || 0),
+          practiceHours: Number(formValue.practiceHours || 0),
+          labHours: Number(formValue.labHours || 0),
+          totalHours: Number(formValue.total || 0)
+        }
+      ],
 
+      paymentDetails: [
+        {
+          staffLoad: formValue.staffLoad || 0,
+          hourlyLoad: formValue.hourlyLoad || 0
+        }
+      ]
+    };
+
+    this.documentService.save(documentToSave).subscribe({
+      next: () => {
+        this.loadMyDocuments();
+        this.resetForm();
+        alert('Данные успешно сохранены!');
+      },
+      error: (err) => {
+        alert('Ошибка при сохранении: ' + (err.error?.message || 'Сервер недоступен'));
+      }
+    });
+  }
+
+  private findInvalidControls(): string[] {
+    const invalid = [];
+    const controls = this.teacherForm.controls;
+    for (const name in controls) {
+      if (controls[name as keyof typeof controls].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
+  }
+
+  private resetForm() {
     const user = this.authService.currentUser();
     this.teacherForm.reset({
       fullName: user?.fio || '',
       iin: user?.sub || user?.iin || '',
       position: user?.position || '',
       experience: 0,
-      semester: 1
+      semester: 1,
+      disciplineCode: '',
+      total: 0
     });
-  }}
-
+  }
+}

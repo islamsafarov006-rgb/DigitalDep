@@ -26,11 +26,22 @@ export class DocumentService {
   }
 
   save(document: SyllabusDocument): Observable<SyllabusDocument> {
-    return this.http.post<SyllabusDocument>(this.apiUrl, document);
+    const token = localStorage.getItem('token');
+
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+
+    return this.http.post<SyllabusDocument>(this.apiUrl, document, { headers });
+  }
+
+  update(id: number, document: SyllabusDocument): Observable<SyllabusDocument> {
+    return this.http.put<SyllabusDocument>(`${this.apiUrl}/${id}`, document);
   }
 
   updateStatus(id: number, status: DocumentStatus): Observable<SyllabusDocument> {
-    return this.http.patch<SyllabusDocument>(`${this.apiUrl}/${id}/status`, null, {
+
+    return this.http.patch<SyllabusDocument>(`${this.apiUrl}/${id}/status`, {}, {
       params: { status }
     });
   }

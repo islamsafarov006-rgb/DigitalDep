@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @Table(name = "documents")
 public class Document {
@@ -21,43 +20,29 @@ public class Document {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "discipline_id")
-    private Discipline discipline;
-
-    @Enumerated(EnumType.STRING)
-    private DocumentStatus status;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
 
     @Column(name = "academic_year")
     private String academicYear;
 
     private Integer semester;
 
-
-
-    @Column(columnDefinition = "TEXT")
-    private String goals;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<AcademicLoad> academicLoads;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<WeeklyTopic> weeklyPlan;
+    private List<PaymentDetail> paymentDetails;
 
-    @ManyToMany
-    @JoinTable(
-            name = "document_library",
-            joinColumns = @JoinColumn(name = "document_id"),
-            inverseJoinColumns = @JoinColumn(name = "library_id")
-    )
-    private List<Library> selectedLiterature;
-
-    private String courseCycle = "GER";
-    private String finalAssessment = "Examination";
-
-    @Column(name = "academic_program_code", length = 50)
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus status;
     private String academicProgramCode;
-
-    @Column(name = "academic_program_title", length = 1000)
     private String academicProgramTitle;
+    private String courseCycle;
+    private String finalAssessment;
+
+    @Column(columnDefinition = "TEXT")
+    private String goals;
 }

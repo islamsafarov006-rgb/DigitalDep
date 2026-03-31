@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface WeeklyTopicRepository extends JpaRepository<WeeklyTopic, Long> {
-    // Получить весь план на 15 недель для конкретного документа
+
     List<WeeklyTopic> findByDocumentIdOrderByWeekNumberAsc(Long documentId);
 }

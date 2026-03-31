@@ -1,4 +1,11 @@
 {
+  "sidebar": {
+    "teachers": "Teachers",
+    "syllabus": "Syllabuses",
+    "admin": "Administration",
+    "settings": "Settings",
+    "logout": "Sign Out"
+  },
   "teacher": {
     "mainInfo": "Main Information",
     "fullName": "Full Name",
