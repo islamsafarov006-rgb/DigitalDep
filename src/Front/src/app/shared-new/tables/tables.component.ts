@@ -3,14 +3,14 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {DatePipe, DecimalPipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import {TranslocoPipe, TranslocoService} from '@jsverse/transloco';
-import {TableConfig} from '../../core/models/table-config.model';
-import {TableRowColumn} from '../../core/models/table-column.model';
 import {ButtonsComponent} from '../buttons/buttons.component';
 import {InputsComponent} from '../inputs/inputs.component';
 import {CommonComponent} from '../common/common.component';
 import {IconComponent} from '../icon/icon.component';
 import {SelectsComponent} from "../selects/selects.component";
-import {ButtonConfig} from '../../core/models/button-config.model';
+import {TableConfig} from '../../models/table-config.model';
+import {TableRowColumn} from '../../models/table-column.model';
+import {ButtonConfig} from '../../models/button-config.model';
 
 @Component({
     selector: 'tables',

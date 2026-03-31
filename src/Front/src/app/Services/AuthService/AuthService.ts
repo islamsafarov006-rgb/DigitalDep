@@ -6,11 +6,9 @@ import {Observable, tap} from 'rxjs';
 export class AuthService {
   private readonly API_URL = 'http://localhost:8080/api/auth';
 
-  // Сигнал, который хранит данные пользователя
   currentUser = signal<any>(null);
 
   constructor(private http: HttpClient) {
-    // ВАЖНО: Этот код запускается ОДИН РАЗ при старте приложения (или F5)
     this.restoreSession();
   }
 
@@ -19,12 +17,11 @@ export class AuthService {
       .pipe(
         tap(token => {
           localStorage.setItem('auth_token', token);
-          this.decodeToken(token); // Декодируем сразу после логина
+          this.decodeToken(token);
         })
       );
   }
 
-  // Метод, который проверяет наличие токена при обновлении страницы
   private restoreSession() {
     const token = localStorage.getItem('auth_token');
     if (token) {
@@ -37,7 +34,6 @@ export class AuthService {
       const payloadBase64 = token.split('.')[1];
       const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
 
-      // Декодируем с поддержкой кириллицы (UTF-8)
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
@@ -46,10 +42,8 @@ export class AuthService {
       );
 
       const decoded = JSON.parse(jsonPayload);
-      this.currentUser.set(decoded); // Записываем данные в сигнал
-      console.log("Сессия восстановлена:", decoded);
+      this.currentUser.set(decoded);
     } catch (e) {
-      console.error("Ошибка восстановления сессии (токен поврежден):", e);
       this.logout();
     }
   }

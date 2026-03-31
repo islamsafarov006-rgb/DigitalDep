@@ -10,7 +10,6 @@ import {
     MatDatepickerToggle
 } from '@angular/material/datepicker';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {OnlyDateCharactersDirective} from '../../core/directive/only-date-characters.directive';
 import moment from 'moment/moment';
 import {TranslocoPipe, TranslocoService} from '@jsverse/transloco';
 import {DateAdapter, provideNativeDateAdapter} from '@angular/material/core';
@@ -29,7 +28,6 @@ import {Inputs} from './inputs';
         MatDatepickerInput,
         MatDatepickerToggle,
         MatInput,
-        OnlyDateCharactersDirective,
         ReactiveFormsModule,
         MatFormField,
         MatLabel,
@@ -46,7 +44,7 @@ export class InputsComponent implements OnInit {
     private readonly transloco = inject(TranslocoService);
     private readonly dateAdapter = inject(DateAdapter<any>);
     private readonly destroyRef = inject(DestroyRef);
-
+    @Input() innerControl?: FormControl;
     @Input() type: Inputs = Inputs.text;
     @Input() value: any;
     @Input() disabled = false;
@@ -55,7 +53,6 @@ export class InputsComponent implements OnInit {
     @Input() min?: number;
     @Input() max?: number;
     @Input() required = false;
-    @Input() formControl?: FormControl;
     @Input() placeholderText?: any;
     @Input() label: string = '';
     @Output() valueChange = new EventEmitter<any>();
@@ -119,15 +116,15 @@ export class InputsComponent implements OnInit {
         if (value) {
             const formatted = moment(value).format('YYYY-MM-DD');
 
-            if (this.formControl) {
-                this.formControl.setValue(formatted, { emitEvent: true });
+            if (this.innerControl) {
+                this.innerControl.setValue(formatted, { emitEvent: true });
             }
 
             this.valueChange.emit(formatted);
             this.modelChange.emit(formatted);
         } else {
-            if (this.formControl) {
-                this.formControl.setValue(null, { emitEvent: true });
+            if (this.innerControl) {
+                this.innerControl.setValue(null, { emitEvent: true });
             }
 
             this.valueChange.emit(null);
@@ -183,4 +180,27 @@ export class InputsComponent implements OnInit {
         input.value = String(value);
         this.modelChanges(value);
     }
+
+  // Замените старый метод на этот:
+  onDateChangeinnerControl(event: MatDatepickerInputEvent<Date>) {
+    const value = event.value;
+    if (value) {
+      const formatted = moment(value).format('YYYY-MM-DD');
+
+      // Используем innerControl вместо formControl
+      if (this.innerControl) {
+        this.innerControl.setValue(formatted, { emitEvent: true });
+      }
+
+      this.valueChange.emit(formatted);
+      this.modelChange.emit(formatted);
+    } else {
+      if (this.innerControl) {
+        this.innerControl.setValue(null, { emitEvent: true });
+      }
+
+      this.valueChange.emit(null);
+      this.modelChange.emit(null);
+    }
+  }
 }

@@ -7,27 +7,27 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatSelectSearchComponent} from 'ngx-mat-select-search';
 import {TranslocoPipe} from '@jsverse/transloco';
 import {Selects} from './selects';
-import {LangFieldPipe} from '../../shared/pipes/langField.pipe';
-import {ImportantStyleDirective} from '../../core/directive/important-style.directive';
+import {LangFieldPipe} from '../../Ppipes/langField.pipe';
+import {ImportantStyleDirective} from '../../derective/important-style.directive';
 
 @Component({
     selector: 'selects',
     standalone: true,
-    imports: [
-        MatFormField,
-        MatLabel,
-        MatOption,
-        MatSelect,
-        MatSelectSearchComponent,
-        NgForOf,
-        NgIf,
-        ReactiveFormsModule,
-        FormsModule,
-        TranslocoPipe,
-        NgClass,
-        LangFieldPipe,
-        ImportantStyleDirective,
-    ],
+  imports: [
+    MatFormField,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    MatSelectSearchComponent,
+    NgForOf,
+    NgIf,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslocoPipe,
+    NgClass,
+    LangFieldPipe,
+    ImportantStyleDirective,
+  ],
     templateUrl: './selects.component.html',
     styleUrls: ['./selects.component.scss']
 })
@@ -45,6 +45,7 @@ export class SelectsComponent implements OnChanges, OnInit {
     @Input() fieldName: string = '';
     @Input() langConfig: any;
     @Input() importantStyles: { [key: string]: string } = {};
+    @Input() control!: FormControl;
 
     @Input() modelValue: any;
     @Output() modelValueChange = new EventEmitter<any>();

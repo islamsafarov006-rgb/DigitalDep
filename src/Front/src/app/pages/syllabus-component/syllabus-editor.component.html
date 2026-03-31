@@ -1,52 +1,33 @@
-<div class="container" [formGroup]="syllabusForm">
-  <h2>Syllabus Editor: {{ syllabusForm.get('common.title')?.value }}</h2>
+<div class="container">
+  <fieldset>
+    <legend>Доступные документы</legend>
 
-  <fieldset formGroupName="common">
-    <legend>1. General Information</legend>
-    <div class="row">
-      <label>Course Title:</label>
-      <input formControlName="title" readonly>
+    <div class="doc-item">
+      <div class="doc-info">
+        <span class="doc-icon">📄</span>
+        <div class="doc-text">
+          <span class="doc-title">Силлабус по дисциплине "Социология"</span>
+          <span class="doc-subtitle">ID: #0001 | 2026</span>
+        </div>
+      </div>
 
-      <label>Code:</label>
-      <input formControlName="code" readonly>
-
-      <label>Credits (ECTS):</label>
-      <input type="number" formControlName="credits">
+      <button
+        (click)="openSyllabus(1)"
+        [disabled]="isLoading()"
+        class="view-btn-modern">
+        @if (isLoading()) {
+          <span class="loader"></span>
+        } @else {
+          Просмотреть
+        }
+      </button>
     </div>
   </fieldset>
 
-  <fieldset formGroupName="volume">
-    <legend>2. Course Volume (Hours)</legend>
-    <table>
-      <tr>
-        <td>Lectures: <input type="number" formControlName="lectures"></td>
-        <td>Practice: <input type="number" formControlName="practice"></td>
-        <td>SIW: <input type="number" formControlName="siw"></td>
-        <td>SIWT: <input type="number" formControlName="siwt"></td>
-        <td><strong>Total: {{ syllabusForm.get('volume.total')?.value }}</strong></td>
-      </tr>
-    </table>
-  </fieldset>
-
-  <fieldset>
-    <legend>3. Course Schedule (15 Weeks)</legend>
-    <table class="table-weeks">
-      <thead>
-      <tr>
-        <th>Week</th>
-        <th>Lecture Topic</th>
-        <th>Practical Session</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let week of weeks">
-        <td>{{ week }}</td>
-        <td><input type="text" placeholder="Enter lecture topic..."></td>
-        <td><input type="text" placeholder="Enter practice topic..."></td>
-      </tr>
-      </tbody>
-    </table>
-  </fieldset>
-
-  <button (click)="saveSyllabus()" class="btn-save">Save Template</button>
+  @if (isModalOpen() && selectedSyllabus()) {
+    <app-syllabus-modal
+      [syllabusData]="selectedSyllabus()!"
+      (close)="closeModal()">
+    </app-syllabus-modal>
+  }
 </div>

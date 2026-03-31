@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {PaginationConfig} from '../../core/models/pagination-config';
 import {MatPaginator} from '@angular/material/paginator';
+import {PaginationConfig} from '../../models/pagination-config';
 
 @Component({
     selector: 'pagination',
@@ -15,3 +15,4 @@ export class PaginationComponent {
     @Input({ required: true }) config!: PaginationConfig;
     @Output() page = new EventEmitter<any>();
 }
+

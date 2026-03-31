@@ -1,6 +1,6 @@
 import {ButtonConfig} from './button-config.model';
-import {TableColumnTypes} from '../../shared-new/tables/table-column-types';
 import {SelectTableConfig} from './select-table-config.model';
+import {TableColumnTypes} from '../shared-new/tables/table-column-types';
 
 export interface TableRowColumn {
     key: string;

@@ -3,9 +3,9 @@ import {FlexModule} from '@angular/flex-layout';
 import {TranslocoPipe} from '@jsverse/transloco';
 import {IconComponent} from '../icon/icon.component';
 import {CommonComponent} from '../common/common.component';
-import {ButtonConfig} from '../../core/models/button-config.model';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatTooltip} from '@angular/material/tooltip';
+import {ButtonConfig} from '../../models/button-config.model';
 
 @Component({
     selector: 'buttons',

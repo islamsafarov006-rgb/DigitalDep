@@ -1,4 +1,10 @@
 package labrary.digitaldepartment.Enums;
 
-public class DocumentStatus {
+public enum DocumentStatus {
+    DRAFT,
+    UNDER_REVIEW,
+    REJECTED,
+    LIBRARY_CHECK,
+    SIGNED,
+    APPROVED
 }

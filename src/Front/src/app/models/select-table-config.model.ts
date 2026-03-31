@@ -3,3 +3,4 @@ export interface SelectTableConfig {
     displayKey: string;
     valueKey: string;
 }
+

@@ -1,7 +1,7 @@
-import { GradingPolicy, WeeklyTopic } from '../Content/GradingPolicyAndWeeklyTopic';
-import { Department } from '../organization/FacultyAndDep';
+
 import {User} from '../User/User';
 import {CourseVolume} from '../CourseVolume/CourseVolume';
+import {Department} from '../Department/department';
 
 export type DocumentStatus = 'DRAFT' | 'PENDING' | 'SIGNED' | 'REJECTED';
 

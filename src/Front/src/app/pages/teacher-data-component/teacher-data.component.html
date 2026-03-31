@@ -1,10 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="teacher-container">
+  <form [formGroup]="teacherForm">
+
+    <fieldset class="card">
+      <legend>{{ 'teacher.mainInfo' | transloco }}</legend>
+
+      <div class="form-row">
+        <label>{{ 'teacher.fullName' | transloco }}</label>
+        <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.fullName" [disabled]="true"></inputs>
+      </div>
+
+      <div class="form-row">
+        <label>{{ 'teacher.iin' | transloco }}</label>
+        <inputs [type]="inputTypes.onlyNumbers" [innerControl]="teacherForm.controls.iin" [disabled]="true"></inputs>
+      </div>
+
+      <div class="form-row">
+        <label>{{ 'teacher.department' | transloco }}</label>
+        <selects
+          [type]="selectTypes.matSelect"
+          [items]="departments()"
+          [displayKey]="'name' | langField"
+          valueKey="id"
+          [control]="teacherForm.controls.departmentId"
+          (selectionChange)="onDepartmentChange($event)">
+        </selects>
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>{{ 'teacher.load' | transloco }}</legend>
+      <div class="form-grid">
+
+        <div class="form-row">
+          <label>{{ 'teacher.disciplineCode' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.disciplineCode"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.discipline' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.discipline"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.educationalProgram' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.educationalProgram"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.departmentOP' | transloco }}</label>
+          <selects
+            [type]="selectTypes.matSelect"
+            [items]="departments()"
+            [displayKey]="'name' | langField"
+            valueKey="id"
+            [control]="teacherForm.controls.departmentId"
+            (selectionChange)="onDepartmentChange($event)">
+          </selects>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.group' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.group"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.semester' | transloco }}</label>
+          <selects [type]="selectTypes.matSelect" [items]="semesterOptions" [displayKey]="'name'" valueKey="id" [control]="teacherForm.controls.semester"></selects>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.degree' | transloco }}</label>
+          <selects
+            [type]="selectTypes.matSelect"
+            [items]="degreeOptions"
+            [displayKey]="'name'"
+            valueKey="id"
+            [control]="teacherForm.controls.degree">
+          </selects>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.contingent' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.contingent"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.contingentByRegistration' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.contingentByRegistration"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.lectureStreams' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.lectureStreams"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.practiceStreams' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.practiceStreams"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.lectures' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.lectureHours"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.practice' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.practiceHours"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.labs' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.labHours"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.srsp' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.srsp"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.rk' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.rk"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.totalStreams' | transloco }}</label>
+          <inputs
+            [type]="inputTypes.number"
+            [innerControl]="teacherForm.controls.totalStreams">
+          </inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.exam' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.exam"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.normative' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.normative"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.isHourly' | transloco }}</label>
+          <inputs [type]="inputTypes.checkbox" [innerControl]="teacherForm.controls.isHourly"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.isElective' | transloco }}</label>
+          <inputs [type]="inputTypes.checkbox" [innerControl]="teacherForm.controls.isElective"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.isCoursera' | transloco }}</label>
+          <inputs [type]="inputTypes.checkbox" [innerControl]="teacherForm.controls.isCoursera"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label><strong>{{ 'teacher.total' | transloco }}</strong></label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.total" [disabled]="true"></inputs>
+        </div>
+
+      </div>
+    </fieldset>
+
+    <fieldset class="card">
+      <legend>{{ 'teacher.details' | transloco }}</legend>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>{{ 'teacher.position' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.position"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.paymentType' | transloco }}</label>
+          <inputs [type]="inputTypes.formFiledText" [innerControl]="teacherForm.controls.paymentType"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.hoursCount' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.hoursCount"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.staffOrHourlyUnits' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.staffOrHourlyUnits"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.staffLoad' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.staffLoad"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.hourlyLoad' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.hourlyLoad"></inputs>
+        </div>
+
+        <div class="form-row">
+          <label>{{ 'teacher.staffUnits' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.staffUnits"></inputs>
+        </div>
+        <div class="form-row">
+          <label>{{ 'teacher.hourlyUnits' | transloco }}</label>
+          <inputs [type]="inputTypes.number" [innerControl]="teacherForm.controls.hourlyUnits"></inputs>
+        </div>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="button" class="submit-btn" (click)="save()">
+         {{ 'teacher.save' | transloco }}
+      </button>
+    </div>
+  </form>
+
+  <div class="table-section card">
+    <div class="table-section card">
+      <div class="table-block">
+        <h3>{{ 'teacher.mainInfo' | transloco }}</h3>
+        <tables [config]="tableConfigMain" [data]="teachers"></tables>
+      </div>
+
+      <hr class="table-divider">
+
+      <div class="table-block">
+        <h3>{{ 'teacher.load' | transloco }}</h3>
+        <tables [config]="tableConfigLoad" [data]="teachers"></tables>
+      </div>
+
+      <hr class="table-divider">
+
+      <div class="table-block">
+        <h3>{{ 'teacher.details' | transloco }}</h3>
+        <tables [config]="tableConfigPayment" [data]="teachers"></tables>
+      </div>
+    </div>
+  </div>
+</div>

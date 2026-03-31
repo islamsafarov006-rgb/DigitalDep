@@ -1,4 +1,9 @@
 package labrary.digitaldepartment.Enums;
 
-public enum UseRole {
+public enum UserRole {
+    TEACHER,
+    LIBRARIAN,
+    METHODOLOGIST,
+    DEAN,
+    ADMIN
 }

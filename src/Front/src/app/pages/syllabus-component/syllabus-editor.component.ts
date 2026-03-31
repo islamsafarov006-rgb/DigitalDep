@@ -1,60 +1,55 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {DocumentService} from '../Services/Document/DocumetService';
-import {CourseVolumeService} from '../Services/CourseVolume/CourseVolumeService';
-import {ContentService} from '../Services/Content/ContentService';
-import {NgForOf} from '@angular/common';
+import { Component, signal, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { SyllabusModalComponent } from './app-syllabus-modal/app-syllabus-modal';
+import { DocumentService } from '../../Services/syllabus/SyllabusService';
+import { SyllabusDocument } from '../../Services/syllabus/Syllabus';
+import { AuthService } from '../../Services/AuthService/AuthService';
 
 
 @Component({
-  selector: 'app-syllabus-editor',
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, SyllabusModalComponent],
   templateUrl: './syllabus-editor.component.html',
-  imports: [
-    ReactiveFormsModule,
-    NgForOf
-  ],
-  styleUrls: ['./syllabus-editor.component.scss']
+  styleUrl: './syllabus-editor.component.scss'
 })
-export class SyllabusEditorComponent implements OnInit {
-  syllabusForm: FormGroup;
-  weeks = Array.from({ length: 15 }, (_, i) => i + 1); // Массив для 15 недель [cite: 39]
+export class SyllabusEditorComponent {
+  private docService = inject(DocumentService);
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    private fb: FormBuilder,
-    private docService: DocumentService,
-    private volumeService: CourseVolumeService,
-    private contentService: ContentService
-  ) {
-    // Инициализация формы переменными из документа Political Science [cite: 9, 15, 20]
-    this.syllabusForm = this.fb.group({
-      common: this.fb.group({
-        title: ['Political Science', Validators.required], //
-        code: ['MMR 2217', Validators.required], //
-        credits: [2, Validators.required], //
-        academicYear: ['2025-2026'],
-        semester: [2] //
-      }),
-      volume: this.fb.group({
-        lectures: [15], // [cite: 16]
-        practice: [15], // [cite: 17]
-        siw: [15],      // [cite: 18]
-        siwt: [15],     // [cite: 19]
-        total: [60]     // [cite: 20]
-      }),
-      grading: this.fb.group({
-        att1: [0.3], //
-        att2: [0.3], //
-        exam: [0.4], //
-        attendancePolicy: ['If the number of absences exceeds 20%, student will be automatically scheduled for a Retake'] // [cite: 51]
-      })
+  isModalOpen = signal(false);
+  isLoading = signal(false);
+  selectedSyllabus = signal<SyllabusDocument | null>(null);
+
+  openSyllabus(id: number) {
+    this.isLoading.set(true);
+    this.docService.getById(id).subscribe({
+      next: (data: SyllabusDocument) => {
+        this.selectedSyllabus.set(data);
+        this.isModalOpen.set(true);
+        this.isLoading.set(false);
+      },
+      error: (err: any) => {
+        console.error('Ошибка при загрузке:', err);
+        this.isLoading.set(false);
+      }
     });
   }
 
-  ngOnInit(): void {}
+  closeModal() {
+    this.isModalOpen.set(false);
+    this.selectedSyllabus.set(null);
+  }
 
-  saveSyllabus() {
-    const formData = this.syllabusForm.value;
-    console.log('Сохранение шаблона силлабуса:', formData);
-    // Здесь вызываются методы сервисов для отправки на бэкенд
+  handleLogout() {
+    this.authService.logout();
+
+    this.closeModal();
+
+    this.selectedSyllabus.set(null);
+
+    this.router.navigate(['/login']);
   }
 }

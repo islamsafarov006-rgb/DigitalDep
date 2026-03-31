@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="header">
+      <h2>Digital Department</h2>
+      <p>Авторизация в системе</p>
+    </div>
+
+    <form (submit)="onLogin()">
+      <div class="form-field">
+        <label>ИИН</label>
+        <input
+          type="text"
+          [(ngModel)]="loginData.iin"
+          name="iin"
+          maxlength="12"
+          required>
+      </div>
+
+      <div class="form-field">
+        <label>Пароль</label>
+        <input
+          type="password"
+          [(ngModel)]="loginData.password"
+          name="password"
+          required>
+      </div>
+
+      <div class="error-msg" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="login-btn">Войти</button>
+
+      <div class="footer">
+        <span>Нет аккаунта?</span>
+        <a routerLink="/register">Зарегистрироваться</a>
+      </div>
+    </form>
+  </div>
+</div>

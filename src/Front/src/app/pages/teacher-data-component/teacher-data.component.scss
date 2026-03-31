@@ -1,0 +1,178 @@
+.teacher-container {
+  padding: 30px 50px;
+  background: #f4f7f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  .card {
+    background: white;
+    padding: 28px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    legend {
+      padding: 0 15px;
+      font-weight: 700;
+      color: #3f51b5;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Общий контейнер для строк формы
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+
+    label {
+      width: 200px; // Фиксированная ширина для идеального выравнивания
+      flex-shrink: 0; // Запрещаем сжатие метки
+      font-weight: 500;
+      color: #555;
+      font-size: 0.95rem;
+      margin-right: 20px;
+    }
+
+    // Растягиваем компоненты ввода на всю оставшуюся ширину
+    inputs, selects {
+      flex-grow: 1;
+      display: block;
+      width: 100%;
+    }
+
+    // Стилизация поля "Итого", чтобы оно выделялось
+    &:has(input[disabled]) {
+      label {
+        color: #3f51b5;
+        font-weight: 700;
+      }
+    }
+  }
+
+  // Сетка для двух колонок
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // Ровно две колонки
+    column-gap: 60px; // Расстояние между колонками
+    row-gap: 5px;   // Отступы между строками внутри сетки
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin: 40px 0;
+  }
+
+  .submit-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 40px;
+    background: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(63, 81, 181, 0.3);
+
+    &:hover:not(:disabled) {
+      background: #303f9f;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(63, 81, 181, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  .table-section {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      font-size: 1.3rem;
+      color: #2c3e50;
+      border-bottom: 2px solid #f0f2f5;
+      padding-bottom: 10px;
+    }
+  }
+}
+
+// Адаптивность для небольших экранов (планшеты)
+@media (max-width: 1024px) {
+  .teacher-container {
+    padding: 20px;
+
+    .form-grid {
+      grid-template-columns: 1fr; // Переключаемся в одну колонку
+      gap: 0;
+    }
+
+    .form-row {
+      flex-direction: column;
+      align-items: flex-start;
+
+      label {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+.form-row {
+  display: flex;
+  align-items: center; // Центрирует label и поля по вертикали
+  margin-bottom: 20px;
+  width: 100%;
+
+  label {
+    width: 200px;
+    flex-shrink: 0;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95rem;
+    margin-right: 20px;
+  }
+
+  inputs, selects {
+    flex: 1;
+    display: block;
+    width: 100%;
+    min-width: 0;
+
+    ::ng-deep {
+      .mat-form-field {
+        width: 100%;
+      }
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+      .mat-form-field-flex {
+        height: 52px;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 60px;
+  align-items: end;
+}
+

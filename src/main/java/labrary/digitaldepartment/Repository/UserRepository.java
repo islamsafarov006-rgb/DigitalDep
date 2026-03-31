@@ -1,4 +1,15 @@
 package labrary.digitaldepartment.Repository;
 
-public class UserRepository {
+import labrary.digitaldepartment.Entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    Optional<User> findByIin(String iin);
+    List<User> findByDepartmentId(Long departmentId);
 }

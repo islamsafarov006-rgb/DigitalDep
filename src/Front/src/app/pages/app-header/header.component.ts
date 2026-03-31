@@ -1,43 +1,59 @@
-import { Component, inject, Output, EventEmitter } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/AuthService';
+import {TranslocoService} from '@jsverse/transloco';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <header class="header-card">
-      <div class="user-profile">
-        @if (authService.currentUser()) {
-          <div class="user-avatar">
-            {{ authService.currentUser()?.fio?.charAt(0) }}
-          </div>
-          <div class="user-details">
-            <h1>{{ authService.currentUser()?.fio }}</h1>
-            <span class="code-badge">{{ authService.currentUser()?.position }}</span>
-          </div>
-        } @else {
-          <h1>Цифровая кафедра</h1>
-        }
+    <header class="header">
+      <div class="header-left">
+        <h2>Digital Department</h2>
       </div>
 
-      @if (authService.currentUser()) {
-        <button type="button" class="logout-link" (click)="logout()">
-          <span class="icon">🚪</span> Выйти
-        </button>
-      }
+      <div class="header-right">
+        <div class="lang-switcher">
+          <button
+            *ngFor="let lang of languages"
+            type="button"
+            class="lang-item"
+            [class.active]="getActiveLang() === lang.code"
+            (click)="changeLanguage(lang.code)">
+            <span class="flag">{{ lang.flag }}</span>
+            <span class="code">{{ lang.label }}</span>
+          </button>
+        </div>
+
+        <div class="user-profile">
+        </div>
+      </div>
     </header>
   `,
-  styleUrl: './header.component.scss' // Перенесите сюда стили хедера
+  styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   public authService = inject(AuthService);
   private router = inject(Router);
-
+  private translocoService = inject(TranslocoService);
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  readonly languages = [
+    { code: 'ru', label: 'RU', flag: '🇷🇺' },
+    { code: 'kk', label: 'KZ', flag: '🇰🇿' },
+    { code: 'en', label: 'EN', flag: '🇺🇸' }
+  ];
+
+  changeLanguage(langCode: string) {
+    this.translocoService.setActiveLang(langCode);
+  }
+
+  getActiveLang(): string {
+    return this.translocoService.getActiveLang();
   }
 }
