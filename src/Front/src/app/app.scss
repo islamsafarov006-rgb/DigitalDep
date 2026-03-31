@@ -1,0 +1,17 @@
+.app-wrapper {
+  display: flex; // Ставит сайдбар и main-layout в одну строку
+  width: 100%;
+  min-height: 100vh;
+}
+
+.sidebar-component {
+  flex-shrink: 0; // Не дает сайдбару сжиматься
+  width: 250px;   // Укажите здесь реальную ширину вашего сайдбара
+}
+
+.main-layout {
+  flex-grow: 1;   // Занимает все оставшееся место справа
+  display: flex;
+  flex-direction: column; // Хедер сверху, контент снизу
+  min-width: 0;   // Важно для корректного flex внутри
+}

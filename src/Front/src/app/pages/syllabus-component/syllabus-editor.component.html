@@ -1,0 +1,52 @@
+<div class="container" [formGroup]="syllabusForm">
+  <h2>Syllabus Editor: {{ syllabusForm.get('common.title')?.value }}</h2>
+
+  <fieldset formGroupName="common">
+    <legend>1. General Information</legend>
+    <div class="row">
+      <label>Course Title:</label>
+      <input formControlName="title" readonly>
+
+      <label>Code:</label>
+      <input formControlName="code" readonly>
+
+      <label>Credits (ECTS):</label>
+      <input type="number" formControlName="credits">
+    </div>
+  </fieldset>
+
+  <fieldset formGroupName="volume">
+    <legend>2. Course Volume (Hours)</legend>
+    <table>
+      <tr>
+        <td>Lectures: <input type="number" formControlName="lectures"></td>
+        <td>Practice: <input type="number" formControlName="practice"></td>
+        <td>SIW: <input type="number" formControlName="siw"></td>
+        <td>SIWT: <input type="number" formControlName="siwt"></td>
+        <td><strong>Total: {{ syllabusForm.get('volume.total')?.value }}</strong></td>
+      </tr>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>3. Course Schedule (15 Weeks)</legend>
+    <table class="table-weeks">
+      <thead>
+      <tr>
+        <th>Week</th>
+        <th>Lecture Topic</th>
+        <th>Practical Session</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let week of weeks">
+        <td>{{ week }}</td>
+        <td><input type="text" placeholder="Enter lecture topic..."></td>
+        <td><input type="text" placeholder="Enter practice topic..."></td>
+      </tr>
+      </tbody>
+    </table>
+  </fieldset>
+
+  <button (click)="saveSyllabus()" class="btn-save">Save Template</button>
+</div>

@@ -1,0 +1,123 @@
+::ng-deep .custom-select-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    height: 100% !important;
+    width: 100% !important;
+
+    .mdc-notched-outline {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-flex {
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-form-field-infix {
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        height: 100% !important;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-select-trigger {
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-select-value {
+        display: flex;
+        align-items: center;
+        height: 100% !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        height: 100% !important;
+        min-height: unset !important;
+    }
+
+    .mdc-notched-outline {
+        height: 100% !important;
+    }
+
+    .mdc-notched-outline__notch {
+        height: 100% !important;
+    }
+}
+
+::ng-deep .select-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    height: 100% !important;
+    width: 100% !important;
+
+    .mat-mdc-form-field-flex {
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-form-field-infix {
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        height: 100% !important;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-select-trigger {
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        min-height: unset !important;
+    }
+
+    .mat-mdc-select-value {
+        display: flex;
+        align-items: center;
+        height: 100% !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        height: 100% !important;
+        min-height: unset !important;
+    }
+
+    .mdc-notched-outline {
+        height: 100% !important;
+    }
+
+    .mdc-notched-outline__notch {
+        height: 100% !important;
+    }
+
+    .mat-mdc-floating-label {
+        top: 50% !important;
+    }
+
+    .mdc-floating-label--float-above {
+        top: 0 !important;
+        --mat-mdc-form-field-label-transform1:
+            translateY(calc(50% * -1))
+            scale(var(--mat-mdc-form-field-floating-label-scale, 0.75)) !important;
+
+        transform: var(--mat-mdc-form-field-label-transform1) !important;
+    }
+}
+
+.invalid {
+    border: 1px solid red !important;
+    background-color: #ffe6e6 !important;
+}

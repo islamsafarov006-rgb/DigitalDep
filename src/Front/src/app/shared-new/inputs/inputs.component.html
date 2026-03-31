@@ -1,0 +1,446 @@
+<ng-container *ngIf="type === 'date-view'">
+    <input [disabled]="disabled" type="text"
+           [ngModel]="value | date:'dd.MM.yyyy'"
+           (ngModelChange)="modelChanges($event)"
+           [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+           [placeholder]="placeholder"/>
+</ng-container>
+
+<ng-container *ngIf="type === 'number'">
+    <input
+        [disabled]="disabled"
+        type="number"
+
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [required]="required"
+        [min]="min ?? 0"
+        (input)="clampNumber($event)"
+        (keydown)="preventNegative($event)"
+        (ngModelChange)="modelChanges($event)"
+        [placeholder]="placeholderText || ''"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="number"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [required]="required"
+        [min]="min ?? 0"
+        (input)="clampNumber($event)"
+        (keydown)="preventNegative($event)"
+        (change)="modelChanges($event)"
+        [placeholder]="placeholderText || ''"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+<ng-container *ngIf="type === 'form-filed-number'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="!formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+            [disabled]="disabled"
+            type="number"
+
+            [(ngModel)]="value"
+            [required]="required"
+            [min]="min ?? 0"
+            (input)="clampNumber($event)"
+            (keydown)="preventNegative($event)"
+            (ngModelChange)="modelChanges($event)"
+            [placeholder]="placeholderText || ''"
+            [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="number"
+
+               [formControl]="formControl"
+               [required]="required"
+               [min]="min ?? 0"
+               (input)="clampNumber($event)"
+               (keydown)="preventNegative($event)"
+               (change)="modelChanges($event)"
+               [placeholder]="placeholderText || ''"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+</ng-container>
+
+<ng-container *ngIf="type === 'text'">
+    <input
+        [disabled]="disabled"
+        type="text"
+
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (ngModelChange)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="text"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (change)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+<ng-container *ngIf="type === 'form-filed-text'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="!formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="text"
+
+               [(ngModel)]="value"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (ngModelChange)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="text"
+
+               [formControl]="formControl"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (change)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+</ng-container>
+
+<ng-container *ngIf="type === 'password'">
+    <input
+        [disabled]="disabled"
+        type="password"
+
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (ngModelChange)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="password"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (change)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+<ng-container *ngIf="type === 'form-filed-password'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="!formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="password"
+
+               [(ngModel)]="value"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (ngModelChange)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="password"
+
+               [formControl]="formControl"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (change)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+</ng-container>
+
+
+<ng-container *ngIf="type === 'checkbox'">
+    <div class="checkbox-block">
+        <input
+            [disabled]="disabled"
+            type="checkbox"
+            style="width: 15px;"
+            *ngIf="!formControl"
+            [(ngModel)]="value"
+            [required]="required"
+            (ngModelChange)="modelChanges($event)"
+        />
+
+        <input
+            [disabled]="disabled"
+            type="checkbox"
+
+            *ngIf="formControl"
+            [formControl]="formControl"
+            [required]="required"
+            (change)="modelChanges($event)"
+        />
+        <label *ngIf="label">{{ label | transloco}}</label>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="type === 'time'">
+    <input
+        [disabled]="disabled"
+        type="time"
+
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (ngModelChange)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="time"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (change)="modelChanges($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+
+<ng-container *ngIf="type === 'form-filed-time'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="!formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="time"
+
+               [(ngModel)]="value"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (ngModelChange)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-inputs" *ngIf="formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <input matInput
+               [disabled]="disabled"
+               type="time"
+
+               [formControl]="formControl"
+               [minlength]="minlength"
+               [maxlength]="maxlength"
+               [required]="required"
+               [placeholder]="placeholderText || ''"
+               (change)="modelChanges($event)"
+               [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+        />
+    </mat-form-field>
+</ng-container>
+
+<ng-container *ngIf="type === 'only-numbers'">
+    <input
+        [disabled]="disabled"
+        type="text"
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (input)="onDigitsInput($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="text"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (input)="onDigitsInput($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+<ng-container *ngIf="type === 'numbers-and-latin'">
+    <input
+        [disabled]="disabled"
+        type="text"
+
+        *ngIf="!formControl"
+        [(ngModel)]="value"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (input)="onNumbersAndLatinInput($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+
+    <input
+        [disabled]="disabled"
+        type="text"
+
+        *ngIf="formControl"
+        [formControl]="formControl"
+        [minlength]="minlength"
+        [maxlength]="maxlength"
+        [required]="required"
+        [placeholder]="placeholderText || ''"
+        (input)="onNumbersAndLatinInput($event)"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    />
+</ng-container>
+
+<ng-container *ngIf="type === 'date'">
+    <div class="custom-datepicker" *ngIf="!formControl"
+        [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }">
+
+        <input
+            matInput
+            onlyDateCharacters
+            [matDatepicker]="picker"
+
+            [(ngModel)]="value"
+            (ngModelChange)="onDateChange($event)"
+            class="date-input"
+            fxFlex="80"
+            [placeholder]="placeholder"
+            [min]="dateMin"
+            [max]="dateMax"
+            [disabled]="disabled"
+            [required]="required"
+        />
+
+        <mat-datepicker-toggle
+            [for]="picker"
+            fxFlex="20"
+            [disabled]="disabled">
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #picker [disabled]="disabled"></mat-datepicker>
+    </div>
+
+
+    <div class="custom-datepicker" *ngIf="formControl"
+         [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }">
+
+        <input
+            matInput
+            onlyDateCharacters
+            [matDatepicker]="picker"
+
+            [formControl]="formControl"
+            (dateChange)="onDateChangeFormControl($event)"
+            class="date-input"
+            fxFlex="80"
+            [placeholder]="placeholder"
+            [min]="dateMin"
+            [max]="dateMax"
+            [disabled]="disabled"
+            [required]="required"
+        />
+
+        <mat-datepicker-toggle
+            [for]="picker"
+            fxFlex="20"
+            [disabled]="disabled">
+        </mat-datepicker-toggle>
+
+        <mat-datepicker #picker [disabled]="disabled"></mat-datepicker>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="type === 'textarea'">
+    <textarea
+        [(ngModel)]="value"
+        [placeholder]="placeholderText || ''"
+        [rows]="4"
+        [disabled]="disabled">
+    </textarea>
+</ng-container>
+
+<ng-container *ngIf="type === 'form-filed-textarea'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-textarea" *ngIf="!formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <textarea
+            matInput
+            [(ngModel)]="value"
+            [placeholder]="placeholderText || ''"
+            [rows]="4"
+            [disabled]="disabled"
+            (ngModelChange)="modelChanges($event)"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="custom-textarea" *ngIf="formControl">
+        <mat-label *ngIf="label">{{ label | transloco}}</mat-label>
+        <textarea
+            matInput
+            [formControl]="formControl"
+            [placeholder]="placeholderText || ''"
+            [rows]="4"
+            [disabled]="disabled"
+            (change)="modelChanges($event)"></textarea>
+    </mat-form-field>
+</ng-container>
+

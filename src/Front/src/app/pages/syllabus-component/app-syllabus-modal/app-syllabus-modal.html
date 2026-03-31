@@ -1,0 +1,41 @@
+<div class="modal-backdrop" (click)="close.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Syllabus: {{ syllabusData().courseCode }} - {{ syllabusData().courseName }}</h2>
+      <button class="close-btn" (click)="close.emit()">&times;</button>
+    </header>
+
+    <div class="modal-body">
+      <table class="info-table">
+        <tr>
+          <td><strong>Department:</strong></td>
+          <td>{{ syllabusData().department }}</td>
+        </tr>
+        <tr>
+          <td><strong>Credits (ECTS):</strong></td>
+          <td>{{ syllabusData().credits }}</td>
+        </tr>
+      </table>
+
+      <h3>Weekly Schedule</h3>
+      <table class="schedule-table">
+        <thead>
+        <tr>
+          <th>Week</th>
+          <th>Topic</th>
+          <th>Hours</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (week of syllabusData().weeks; track week.number) {
+            <tr>
+              <td>{{ week.number }}</td>
+              <td>{{ week.topic }}</td>
+              <td>{{ week.hours }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

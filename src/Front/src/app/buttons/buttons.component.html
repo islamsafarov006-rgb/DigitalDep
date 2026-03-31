@@ -1,0 +1,145 @@
+<div class="buttons {{ type }}">
+    <ng-container *ngFor="let config of configs">
+        <ng-container *ngIf="visibility(config.clickType)">
+            <button
+                class="border button"
+                *ngIf="config.type === 'border-button'"
+                (click)="action .emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [color]="'#005689'" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="fill button"
+                *ngIf="config.type === 'fill-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [color]="'white'" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="fill-border button"
+                *ngIf="config.type === 'fill-border-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [color]="'white'" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="header button"
+                *ngIf="config.type === 'header-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [color]="'#005689'" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="simple button"
+                *ngIf="config.type === 'simple-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="white button"
+                *ngIf="config.type === 'white-simple-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21"></icon>
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="simple icon-button"
+                *ngIf="config.type === 'icon-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21"></icon>
+            </button>
+
+            <button
+                class="white icon-button"
+                *ngIf="config.type === 'white-icon-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21"></icon>
+            </button>
+
+            <button
+                class="simple text-button"
+                *ngIf="config.type === 'text-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="white text-button"
+                *ngIf="config.type === 'white-text-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="special-table-buttons primary-icon"
+                *ngIf="config.type === 'primary-icon-button'"
+                (click)="action.emit(config.clickType)"
+                matTooltip="{{ config.title | transloco }}"
+                matTooltipPosition="below"
+                (mouseenter)="iconColor = '#fff'"
+                (mouseleave)="iconColor = '#1976d2'"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21" [color]="iconColor"></icon>
+            </button>
+
+            <button
+                class="special-table-buttons warning-icon"
+                *ngIf="config.type === 'warning-icon-button'"
+                (click)="action.emit(config.clickType)"
+                matTooltip="{{ config.title | transloco }}"
+                matTooltipPosition="below"
+                (mouseenter)="iconColor = '#fff'"
+                (mouseleave)="iconColor = '#ef6c00'"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21" [color]="iconColor"></icon>
+            </button>
+
+            <button
+                class="special-table-buttons error-icon"
+                *ngIf="config.type === 'error-icon-button'"
+                (click)="action.emit(config.clickType)"
+                matTooltip="{{ config.title | transloco }}"
+                matTooltipPosition="below"
+                (mouseenter)="iconColor = '#fff'"
+                (mouseleave)="iconColor = '#d32f2f'"
+                [disabled]="disabled(config.clickType)">
+                <icon [name]="config.icon" [size]="config.iconSize || 21" [color]="iconColor"></icon>
+            </button>
+
+            <button
+                class="fill text-button"
+                *ngIf="config.type === 'fill-text-button'"
+                (click)="action.emit(config.clickType)"
+                [disabled]="disabled(config.clickType)">
+                <span>{{ config.title | transloco }}</span>
+            </button>
+
+            <button
+                class="simple check-button {{ isClick ? 'withIcon' : '' }}"
+                *ngIf="config.type === 'text-check-button'"
+                (click)="action.emit(config.clickType);
+                toggleClick()"
+                [disabled]="disabled(config.clickType)">
+                <span>{{ config.title | transloco }}</span>
+                <icon *ngIf="isClick" [name]="config.icon" [size]="config.iconSize || 21"></icon>
+            </button>
+        </ng-container>
+    </ng-container>
+</div>

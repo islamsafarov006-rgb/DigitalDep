@@ -1,0 +1,309 @@
+<div class="actions" *ngIf="isManipulateButtons">
+    <buttons
+        [configs]="tableManipulationConfig"
+        (action)="clickButtons($event)"
+    ></buttons>
+</div>
+
+<div class="table-wrapper">
+    <table mat-table [dataSource]="dataSource" [ngClass]="type">
+
+        <ng-container *ngFor="let column of flatColumns; let columnIndex = index ">
+            <ng-container *ngIf="visibility(column.key)" [matColumnDef]="column.key">
+
+                <th mat-header-cell
+                    *matHeaderCellDef
+                    [style.max-width]="column.width"
+                    [style.min-width]="column.width"
+                    [style.width]="column.width"
+                    [attr.colspan]="column.colspan"
+                    [attr.rowspan]="column.rowspan">
+                    {{ getColumnTitle(column) | transloco }}
+                </th>
+
+                <td mat-cell
+                    *matCellDef="let element; let rowIndex = index"
+                    [style.max-width]="column.width"
+                    [style.min-width]="column.width"
+                    [style.width]="column.width">
+
+                    <ng-container [ngSwitch]="column.type">
+
+                        <ng-container *ngSwitchCase="'index'">
+                            {{ getRowIndex(element) }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'with-children'">
+                            <div class="with-child-block">
+                               <span [style.margin-left.px]="element.level ? element.level * 10 : 0">
+                                   {{ getCellValue(element, column, rowIndex) }}
+                               </span>
+
+                                <ng-container *ngIf="element[this.childrenName] && element[this.childrenName].length > 0">
+                                    <icon [name]="Icons.chevronRight" *ngIf="!element.openChildren" [size]="16" (click)="toggleChilds(element)"></icon>
+                                    <icon [name]="Icons.chevronDown" *ngIf="element.openChildren" [size]="16" (click)="toggleChilds(element)"></icon>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'org-with-children'">
+                            <div class="org-with-child-block">
+                                <icon class="icon-org"
+                                      [name]="orgIcons(element.node)"
+                                      [size]="16"
+                                      [style.margin-left.px]="element.level ? element.level * 10 : 0"
+                                ></icon>
+                                <div class="with-child-block">
+                               <span>
+                                   {{ getCellValue(element, column, rowIndex) }}
+                               </span>
+
+                                    <ng-container *ngIf="element[this.childrenName] && element[this.childrenName].length > 0">
+                                        <icon [name]="Icons.chevronRight" *ngIf="!element.openChildren" [size]="16" (click)="toggleChilds(element)"></icon>
+                                        <icon [name]="Icons.chevronDown" *ngIf="element.openChildren" [size]="16" (click)="toggleChilds(element)"></icon>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'actions'">
+                            <ng-container *ngIf="column.actions">
+                                <buttons
+                                    [type]="'table'"
+                                    [configs]="filterActions(element, column)"
+                                    (action)="tableActionClick.emit({$event, rowIndex})"
+                                ></buttons>
+                            </ng-container>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'date'">
+                            {{ getCellValue(element, column, rowIndex) | date : 'dd.MM.yyyy' }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'date-time'">
+                            {{ getCellValue(element, column, rowIndex) | date : 'dd.MM.yyyy HH:mm' }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'year'">
+                            {{ getCellValue(element, column, rowIndex) | date : 'yyyy' }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'input-number'">
+                            <div class="input-block" *ngIf="getText(column.key, element); else showText">
+                                <inputs
+                                    [type]="Inputs.number"
+                                    [(value)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [min]="column.min"
+                                    [max]="column.max"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (modelChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></inputs>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'input-text'">
+                            <div class="input-block" *ngIf="getText(column.key, element); else showText">
+                                <inputs
+                                    [type]="Inputs.text"
+                                    [(value)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [minlength]="column.minlength"
+                                    [maxlength]="column.maxlength"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (modelChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></inputs>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'input-date'">
+                            <div class="input-block" *ngIf="getText(column.key, element); else showText">
+                                <inputs
+                                    [type]="Inputs.date"
+                                    [(value)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (modelChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></inputs>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'input-time'">
+                            <div class="input-block" *ngIf="getText(column.key, element); else showText">
+                                <inputs
+                                    [type]="Inputs.time"
+                                    [(value)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (modelChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></inputs>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'select'">
+                            <div class="selects-block" *ngIf="column.selectConfig && getText(column.key, element); else showText">
+                                <selects
+                                    [items]="column.selectConfig.options()"
+                                    [displayKey]="column.selectConfig.displayKey"
+                                    [valueKey]="column.selectConfig.valueKey"
+                                    [(modelValue)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (selectionChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></selects>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'select-dynamic-option'">
+                            <div class="selects-block" *ngIf="column.selectConfig && getText(column.key, element); else showText">
+                                <selects
+                                    [items]="column.selectConfig.options(element)"
+                                    [displayKey]="column.selectConfig.displayKey"
+                                    [valueKey]="column.selectConfig.valueKey"
+                                    [(modelValue)]="element[column.key]"
+                                    [fieldErrors]="column.filedErrors"
+                                    [fieldName]="column.filedErrors ? column.key + rowIndex : ''"
+                                    (selectionChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></selects>
+                            </div>
+
+                            <ng-template #showText>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'input-checkbox'">
+                            <ng-container *ngIf="getText(column.key, element); else showText">
+                                <inputs
+                                    [type]="Inputs.checkbox"
+                                    [(value)]="element[column.key]"
+                                    (modelChange)="catchChange($event, column.key, element, rowIndex)"
+                                ></inputs>
+                            </ng-container>
+
+                            <ng-template #showText>
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'badge'">
+                            <div class="badge {{ getCellValue(element, column, rowIndex).toLowerCase() }}">
+                                {{ getCellValue(element, column, rowIndex).toLowerCase() | transloco }}
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'icon-badge'">
+                            <div class="badge icon-badge {{ getCellValue(element, column, rowIndex) }}">
+                                <icon [name]="getCellValue(element, column, rowIndex)" [size]="16"></icon>
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'little-badge'">
+                            <div class="little-badge-list">
+                                <div class="little-badge" *ngFor="let variable of getCellValue(element, column, rowIndex)">
+                                    {{ variable }}
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'composite'">
+                            <div class="indicator-block">
+                                <div class="indicator green" (click)="catchChange($event, column.key, element, rowIndex)"></div>
+                                <label>{{ getCellValue(element, column, rowIndex) }}</label>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'link'">
+                            <div class="link-block" (click)="catchChange($event, column.key, element, rowIndex)">
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'object-link'">
+                            <div class="link-block" (click)="catchChange($event, column.key, element, rowIndex)">
+                                {{ getCellValue(element, column, rowIndex) }}
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'employees-array'">
+                            <div class="employee-link" (click)="catchChange($event, column.key, element, columnIndex)">
+                                {{ getEmployeesArrayValue(element, columnIndex, column.arrayName || '') }}
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'boolean-to-text'">
+                            {{ element[column.key] !== null ? ((element[column.key] ? 'yes' : 'no') | transloco) : '' }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'code-to-text'">
+                            {{ findCodeText(column, element[column.key]) | transloco }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'currency'">
+                            {{ getCellValue(element, column, rowIndex) | number:'1.0-2' }} {{ element[column.key] && column.currencySymbol ? column.currencySymbol : '' }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'loco-text'">
+                            {{ getCellValue(element, column, rowIndex) | transloco }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'object'">
+                            {{ getCellValue(element, column, rowIndex) }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchDefault>
+                            {{ getCellValue(element, column, rowIndex) }}
+                        </ng-container>
+
+                    </ng-container>
+                </td>
+
+            </ng-container>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <ng-container *ngIf="config.hasDoubleRow">
+            <tr mat-header-row *matHeaderRowDef="displayedSubColumns"></tr>
+        </ng-container>
+
+        <tr mat-row
+            *matRowDef="let row; columns: displayedTdColumns"
+            (click)="selectRowShow(row)"
+            (dblclick)="doubleClickChange(row)"
+            [class.selected]="selectedRow === row">
+        </tr>
+
+<!--        <tr mat-row-->
+<!--            *matRowDef="let row; columns: ['expandedDetail']; when: isEditingRow">-->
+<!--        </tr>-->
+
+<!--        <ng-container matColumnDef="expandedDetail">-->
+<!--            <td mat-cell *matCellDef="let row" [attr.colspan]="displayedTdColumns.length">-->
+<!--                <div class="expanded-form">-->
+<!--                    sdfsdf-->
+<!--                </div>-->
+<!--            </td>-->
+<!--        </ng-container>-->
+
+    </table>
+</div>

@@ -1,0 +1,307 @@
+<mat-form-field
+    appearance="outline"
+    class="custom-select-field"
+    subscriptSizing="dynamic"
+    [appImportantStyle]="importantStyles"
+    [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    *ngIf="!checkForMatFiled(type)">
+
+    <mat-select
+        *ngIf="formControl && type === 'select';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'select';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="formControl && type === 'select-local';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="valueKey !== '' ? item[valueKey] : item">
+            {{ displayKey !== '' ? (item[displayKey] | transloco) : (item | transloco) }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'select-local';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="valueKey !== '' ? item[valueKey] : item">
+            {{ displayKey !== '' ? (item[displayKey] | transloco) : (item | transloco) }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="type === 'boolean-select'"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [value]="true">{{ 'yes' | transloco }}</mat-option>
+        <mat-option [value]="false">{{ 'no' | transloco }}</mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="type === 'sign-type'"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [value]="'nuc'">{{ 'nuc' | transloco }}</mat-option>
+        <mat-option [value]="'ucgo'">{{ 'ucgo' | transloco }}</mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="formControl && type === 'multi-select';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)"
+        multiple>
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'multi-select';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)"
+        multiple>
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+
+<mat-form-field
+    appearance="outline"
+    class="select-field"
+    subscriptSizing="dynamic"
+    [appImportantStyle]="importantStyles"
+    [ngClass]="{ 'invalid': fieldName && fieldErrors[fieldName] }"
+    *ngIf="checkForMatFiled(type)">
+    <mat-label *ngIf="label">{{ label | transloco }}</mat-label>
+
+    <mat-select
+        *ngIf="formControl && type === 'mat-select';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'mat-select';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="formControl && type === 'mat-select-local';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="valueKey !== '' ? item[valueKey] : item">
+            {{ displayKey !== '' ? (item[displayKey] | transloco) : (item | transloco) }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'mat-select-local';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)">
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="showNotSelected" [value]="null">
+            {{ 'notSelected' | transloco }}
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="valueKey !== '' ? item[valueKey] : item">
+            {{ displayKey !== '' ? (item[displayKey] | transloco) : (item | transloco) }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="type === 'mat-boolean-select'"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [value]="true">{{ 'yes' | transloco }}</mat-option>
+        <mat-option [value]="false">{{ 'no' | transloco }}</mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="type === 'mat-sign-type'"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)">
+        <mat-option [value]="'nuc'">{{ 'nuc' | transloco }}</mat-option>
+        <mat-option [value]="'ucgo'">{{ 'ucgo' | transloco }}</mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="formControl && type === 'mat-multi-select';"
+        [formControl]="formControl"
+        [disabled]="disabled"
+        (selectionChange)="onSelectionChange($event.value)"
+        multiple>
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+
+    <mat-select
+        *ngIf="!formControl && type === 'mat-multi-select';"
+        [(ngModel)]="modelValue"
+        [disabled]="disabled"
+        (ngModelChange)="onSelectionChange($event)"
+        multiple>
+        <mat-option [disabled]="true">
+            <ngx-mat-select-search
+                [formControl]="filterCtrl"
+                [placeholderLabel]="'search...' | transloco"
+                [noEntriesFoundLabel]="'noEntriesFound' | transloco">
+            </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let item of filteredItems" [value]="item[valueKey]">
+            {{ item | langField : displayKey : langConfig }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>

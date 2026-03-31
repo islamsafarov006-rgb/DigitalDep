@@ -1,0 +1,17 @@
+$white: #ffffff;
+$border: #e2e8f0;
+
+mat-paginator {
+    margin-top: 1rem;
+    background: $white;
+    border-radius: 8px;
+    border: 1px solid $border;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+:host ::ng-deep mat-paginator .mat-mdc-paginator-range-actions {
+    margin-top: 0 !important;
+}
+
