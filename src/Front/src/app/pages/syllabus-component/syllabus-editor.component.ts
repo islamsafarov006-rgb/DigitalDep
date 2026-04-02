@@ -52,4 +52,7 @@ export class SyllabusEditorComponent {
 
     this.router.navigate(['/login']);
   }
+  createDiscipline() {
+    console.log('Создание новой дисциплины...');
+  }
 }

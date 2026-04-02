@@ -20,6 +20,10 @@ public class Document {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "discipline_id", nullable = false)
+    private Discipline discipline;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
 

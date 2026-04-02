@@ -20,7 +20,7 @@ export class LoginComponent {
   onLogin() {
     this.authService.login(this.loginData).subscribe({
       next: () => {
-        this.router.navigate(['/syllabus']);
+        this.router.navigate(['/main-page']);
       },
       error: (err) => {
         this.errorMessage = 'Неверный ИИН или пароль';

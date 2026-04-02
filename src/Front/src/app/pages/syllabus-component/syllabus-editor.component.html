@@ -1,13 +1,19 @@
 <div class="container">
-  <fieldset>
-    <legend>Доступные документы</legend>
+  <div class="list-header">
+    <h1>Мои Дисциплины</h1>
+    <button class="create-btn" (click)="createDiscipline()">
+      <span class="plus-icon">+</span>
+      Создать дисциплину
+    </button>
+  </div>
 
+  <div class="content-card">
     <div class="doc-item">
       <div class="doc-info">
-        <span class="doc-icon">📄</span>
+        <div class="icon-wrapper">📄</div>
         <div class="doc-text">
-          <span class="doc-title">Силлабус по дисциплине "Социология"</span>
-          <span class="doc-subtitle">ID: #0001 | 2026</span>
+          <span class="doc-title">Социология</span>
+          <span class="doc-subtitle">ID: #0001 | Семестр: 1 | 2026</span>
         </div>
       </div>
 
@@ -22,7 +28,8 @@
         }
       </button>
     </div>
-  </fieldset>
+
+  </div>
 
   @if (isModalOpen() && selectedSyllabus()) {
     <app-syllabus-modal

@@ -1,15 +1,10 @@
 .sidebar {
-  width: 280px; // Чуть шире для лучшего "воздуха"
+  width: 280px;
   height: 100vh;
   background: #ffffff;
   border-right: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Inter', system-ui, sans-serif;
 
   .sidebar-header {
@@ -17,7 +12,6 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    // Убираем border-bottom для более цельного вида или делаем его очень тонким
     border-bottom: 1px solid #f8fafc;
 
     .logo-circle {
@@ -31,14 +25,13 @@
       justify-content: center;
       font-weight: 800;
       font-size: 1.1rem;
-      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+      flex-shrink: 0;
     }
 
     .logo-text {
       font-weight: 700;
       color: #0f172a;
       font-size: 1.25rem;
-      letter-spacing: -0.025em;
     }
   }
 
@@ -47,7 +40,7 @@
     padding: 1.5rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 4px; // Плотное расположение элементов
+    gap: 4px;
 
     .nav-item {
       display: flex;
@@ -55,7 +48,7 @@
       gap: 12px;
       padding: 10px 16px;
       text-decoration: none;
-      color: #64748b; // Более мягкий цвет текста
+      color: #64748b;
       border-radius: 10px;
       font-size: 0.935rem;
       font-weight: 500;
@@ -64,27 +57,20 @@
       .nav-icon {
         width: 20px;
         height: 20px;
-        stroke: #94a3b8;
-        transition: stroke 0.2s ease;
+        min-width: 20px;
+        flex-shrink: 0;
+        display: block;
       }
 
       &:hover {
         background: #f8fafc;
         color: #1e293b;
-
-        .nav-icon {
-          stroke: #1e293b;
-        }
       }
 
       &.active {
-        background: #eff6ff; // Нежно-голубой фон
-        color: #2563eb; // Яркий синий текст
+        background: #eff6ff;
+        color: #2563eb;
         font-weight: 600;
-
-        .nav-icon {
-          stroke: #2563eb; // Иконка красится в цвет текста
-        }
       }
     }
 
@@ -107,34 +93,6 @@
 
   .sidebar-footer {
     padding: 1.25rem;
-    background: #fdfdfd;
     border-top: 1px solid #f1f5f9;
-
-    .logout-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: transparent;
-      border: 1px solid #fee2e2;
-      color: #ef4444;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #fef2f2;
-        border-color: #fca5a5;
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
   }
 }

@@ -1,16 +1,14 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-
 import { filter } from 'rxjs';
-import {SidebarComponent} from './pages/sidebar/sidebar-component';
 import {AuthService} from './Services/AuthService/AuthService';
 import {HeaderComponent} from './pages/app-header/header.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
