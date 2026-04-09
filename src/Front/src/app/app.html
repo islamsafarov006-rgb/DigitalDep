@@ -1,7 +1,8 @@
 <div class="app-wrapper">
   <div class="main-layout">
-    <app-header></app-header>
-    <main class="content">
+    <app-header *ngIf="showSidebar"></app-header>
+
+    <main class="content" [class.no-header]="!showSidebar">
       <router-outlet></router-outlet>
     </main>
   </div>

@@ -18,13 +18,24 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'syllabus/:id/variables',
+    loadComponent: () => import('./pages/syllabus-component/syllabus-variables-component/syllabus-variables.component')
+      .then(m => m.SyllabusVariablesComponent)
+  },
+  {
     path: 'teacher-data',
     loadComponent: () => import('./pages/teacher-data-component/teacher-data.component').then(m => m.TeacherDataComponent),
     canActivate: [authGuard]
   },
   {
     path: 'syllabus',
-    loadComponent: () => import('./pages/syllabus-component/syllabus-editor.component').then(m => m.SyllabusEditorComponent),
+    loadComponent: () => import('./pages/syllabus-component/discipline-editor.component').then(m => m.DisciplineEditorComponent),
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'create-disciplines',
+    loadComponent: () => import('./pages/discipline-form/discipline-form.component').then(m => m.DisciplineFormComponent),
     canActivate: [authGuard]
   },
   { path: '**', redirectTo: 'login' }

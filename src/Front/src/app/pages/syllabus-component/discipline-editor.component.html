@@ -1,0 +1,83 @@
+<div class="container">
+  <header class="list-header">
+    <div class="title-group">
+      <h1>{{ 'SYLLABUS.TITLE' | transloco }}</h1>
+      <p class="subtitle">{{ 'SYLLABUS.SUBTITLE' | transloco }}</p>
+    </div>
+
+    <button class="create-btn" (click)="createDiscipline()" type="button">
+      <span class="material-symbols-outlined">add</span>
+      <span>{{ 'SYLLABUS.NEW_BTN' | transloco }}</span>
+    </button>
+  </header>
+
+  <main class="content-card">
+    @if (isLoading()) {
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p>{{ 'SYLLABUS.LOADING' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="doc-list">
+        @for (doc of documents(); track doc.id) {
+          <div class="doc-item">
+            <div class="doc-info">
+              <div class="icon-wrapper">
+                <span class="material-symbols-outlined doc-main-icon">menu_book</span>
+              </div>
+              <div class="doc-text">
+                <span class="doc-title">
+                  {{ doc.discipline?.name || ('SYLLABUS.NO_NAME' | transloco) }}
+                </span>
+                <div class="doc-meta">
+                  <span class="meta-item">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    {{ 'SYLLABUS.SEMESTER' | transloco }} {{ doc.semester }}
+                  </span>
+                  <span class="dot">·</span>
+                  <span class="meta-item">
+                    <span class="material-symbols-outlined">history_edu</span>
+                    {{ doc.academicYear }} {{ 'SYLLABUS.YEAR' | transloco }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="status-container">
+              <span class="status-badge" [ngClass]="doc.status || 'draft'">
+                <span class="status-dot"></span>
+                {{ 'SYLLABUS.STATUS.' + (doc.status || 'DRAFT') | transloco }}
+              </span>
+            </div>
+
+
+            <div class="item-actions">
+              <button
+                class="action-btn view"
+                [title]="'SYLLABUS.VIEW' | transloco"
+                (click)="goToVariables(doc.id)"
+                type="button">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+
+              <button
+                (click)="openSyllabus(doc)"
+                class="action-btn edit"
+                [title]="'SYLLABUS.EDIT' | transloco"
+                type="button">
+                <span class="material-symbols-outlined">edit_note</span>
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="loader-container">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px;">
+              folder_open
+            </span>
+            <p>{{ 'SYLLABUS.EMPTY' | transloco }}</p>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

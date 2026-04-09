@@ -28,7 +28,7 @@
 43310||10|T|G
 43310||16403|T|G</Grants>
       <ServerVersion>15.4</ServerVersion>
-      <StartupTime>1774605823</StartupTime>
+      <StartupTime>1775196856</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -4433,7 +4433,7 @@ false Zulu
     <table id="289" parent="268" name="weekly_topics">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>43383</ObjectId>
-      <StateNumber>2913</StateNumber>
+      <StateNumber>3067</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>springuser</OwnerName>
     </table>
@@ -5269,14 +5269,19 @@ false Zulu
       <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
-    <foreign-key id="410" parent="289" name="fk1thna30ecr4o0tn1481j66h9l">
-      <ColNames>document_id</ColNames>
-      <ObjectId>43439</ObjectId>
-      <StateNumber>2913</StateNumber>
-      <RefKeyColPositions>1</RefKeyColPositions>
-      <RefTableId>43338</RefTableId>
-    </foreign-key>
-    <index id="411" parent="289" name="weekly_topics_pkey">
+    <column id="410" parent="289" name="srsp_topic">
+      <Position>6</Position>
+      <StateNumber>3066</StateNumber>
+      <StoredType>text|0s</StoredType>
+      <TypeId>25</TypeId>
+    </column>
+    <column id="411" parent="289" name="spz_topic">
+      <Position>7</Position>
+      <StateNumber>3067</StateNumber>
+      <StoredType>text|0s</StoredType>
+      <TypeId>25</TypeId>
+    </column>
+    <index id="412" parent="289" name="weekly_topics_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>43389</ObjectId>
@@ -5285,7 +5290,7 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="412" parent="289" name="weekly_topics_pkey">
+    <key id="413" parent="289" name="weekly_topics_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>43390</ObjectId>
       <Primary>1</Primary>

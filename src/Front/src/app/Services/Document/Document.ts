@@ -1,6 +1,6 @@
-import { Discipline } from '../syllabus/Syllabus';
 import { User } from '../User/User';
 import { CourseVolume } from '../CourseVolume/CourseVolume';
+import {Department} from '../Department/department';
 
 export enum DocumentStatus {
   DRAFT = 'DRAFT',
@@ -8,6 +8,13 @@ export enum DocumentStatus {
   SIGNED = 'SIGNED'
 }
 
+export interface Discipline {
+  id?: number;
+  name: string;
+  courseCode: string;
+  creditsEcts: number;
+  department?: Department;
+}
 
 export interface AcademicLoad {
   id?: number;

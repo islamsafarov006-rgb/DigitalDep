@@ -178,7 +178,7 @@ export class TeacherDataComponent implements OnInit {
         this.teachers.set(mapped);
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Ошибка получения документов:', err)
+      error: (err:any) => console.error('Ошибка получения документов:', err)
     });
   }
 

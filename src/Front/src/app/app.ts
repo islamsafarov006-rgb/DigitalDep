@@ -38,15 +38,16 @@ export class App implements OnInit {
 
   private updateSidebarVisibility() {
     const currentUrl = this.router.url;
-    const authPages = ['/login', '/register', '/'];
+    // Убираем '/', если после входа пользователь попадает на корень
+    const authPages = ['/login', '/register'];
 
+    const isAuthPage = authPages.some(page => currentUrl.startsWith(page));
 
-    const isNotAuthPage = !authPages.includes(currentUrl);
-
-
+    // Проверяем токен или состояние из сервиса
     const hasToken = !!localStorage.getItem('auth_token');
 
-    this.showSidebar = isNotAuthPage && hasToken;
+    // Хедер показываем, если это НЕ страница авторизации И у нас есть токен
+    this.showSidebar = !isAuthPage && hasToken;
   }
 
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {GradingPolicy, WeeklyTopic} from './GradingPolicyAndWeeklyTopic';
+import {GradingPolicy, WeeklyTopic,} from './GradingPolicyAndWeeklyTopic';
 
 @Injectable({ providedIn: 'root' })
 export class ContentService {

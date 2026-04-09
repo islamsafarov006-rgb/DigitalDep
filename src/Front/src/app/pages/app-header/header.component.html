@@ -28,7 +28,7 @@
         <span class="user-position">{{ user.position }}</span>
       </div>
       <div class="avatar">
-        {{ user.fio?.charAt(0) }}
+        {{ user.fio ? user.fio.charAt(0) : 'U' }}
       </div>
     </div>
 

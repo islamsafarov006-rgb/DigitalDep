@@ -17,6 +17,7 @@ public class WeeklyTopic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Integer weekNumber;
 
     @Column(columnDefinition = "TEXT")
@@ -25,7 +26,13 @@ public class WeeklyTopic {
     @Column(columnDefinition = "TEXT")
     private String practiceTopic;
 
-    @ManyToOne
+    @Column(columnDefinition = "TEXT")
+    private String srspTopic;
+
+    @Column(columnDefinition = "TEXT")
+    private String spzTopic;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "document_id")
     @JsonBackReference
     private Document document;

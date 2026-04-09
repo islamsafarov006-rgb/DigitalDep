@@ -1,0 +1,61 @@
+<div class="discipline-container">
+  <header class="header">
+    <div class="title-group">
+      <h2>Учебная программа</h2>
+      <p class="subtitle">Заполнение тем занятий на 15 недель</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="cancel.emit()">Вернуться</button>
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="disciplineForm.invalid"
+        (click)="onSubmit()">
+        Сохранить силлабус
+      </button>
+    </div>
+
+  </header>
+
+  <form [formGroup]="disciplineForm">
+    <section class="main-info card">
+      <div class="row">
+        <div class="field-wrapper" style="flex: 3">
+          <label class="field-label">Название дисциплины</label>
+          <inputs
+            [innerControl]="asFormControl(disciplineForm.get('disciplineName'))"
+            [type]="InputTypes.text"
+            [required]="true">
+          </inputs>
+        </div>
+
+        <div class="field-wrapper" style="flex: 1">
+          <label class="field-label">Учебный год</label>
+          <inputs
+            [innerControl]="asFormControl(disciplineForm.get('academicYear'))"
+            [type]="InputTypes.number">
+          </inputs>
+        </div>
+
+        <div class="field-wrapper" style="flex: 1">
+          <label class="field-label">Семестр</label>
+          <selects
+            [control]="asFormControl(disciplineForm.get('semester'))"
+            [type]="SelectTypes.matSelect"
+            [items]="[{id: 1, name: '1 семестр'}, {id: 2, name: '2 семестр'}]"
+            displayKey="name"
+            valueKey="id">
+          </selects>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-card card">
+      <tables
+        [config]="syllabusTableConfig"
+        [data]="tableDataSource"
+        (changeData)="onTableDataChange($event)">
+      </tables>
+    </section>
+  </form>
+</div>

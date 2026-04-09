@@ -52,5 +52,26 @@
   "notSelected": "Not selected",
   "search...": "Search...",
   "№": "No.",
-  "noEntriesFound": "No entries found"
+  "noEntriesFound": "No entries found",
+  "SYLLABUS": {
+    "TITLE": "My Disciplines",
+    "SUBTITLE": "Syllabus and academic plan management",
+    "NEW_BTN": "New Discipline",
+    "LOADING": "Syncing data...",
+    "EMPTY": "The list of disciplines is empty",
+    "SEMESTER": "Semester",
+    "YEAR": "year",
+    "VIEW": "View Syllabus",
+    "EDIT": "Edit",
+    "NO_NAME": "Untitled Discipline",
+    "STATUS": {
+      "DRAFT": "Draft",
+      "UNDER_REVIEW": "Under Review",
+      "REJECTED": "Rejected",
+      "LIBRARY_CHECK": "Library Check",
+      "SIGNED": "Signed",
+      "APPROVED": "Approved"
+    }
+  }
 }
+

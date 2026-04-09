@@ -1,6 +1,7 @@
 package labrary.digitaldepartment.Controller;
 
 import labrary.digitaldepartment.Entity.Document;
+import labrary.digitaldepartment.Entity.WeeklyTopic;
 import labrary.digitaldepartment.Enums.DocumentStatus;
 import labrary.digitaldepartment.Service.DocumentService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,6 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    @GetMapping
-    public List<Document> getAll() {
-        return documentService.findAllMyDocuments();
-    }
-
     @GetMapping("/my")
     public ResponseEntity<List<Document>> getMyDocuments() {
         return ResponseEntity.ok(documentService.findAllMyDocuments());
@@ -33,21 +29,28 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.findById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Document> save(@RequestBody Document document) {
-        return new ResponseEntity<>(documentService.saveDocument(document), HttpStatus.CREATED);
+    @PostMapping("/discipline")
+    public ResponseEntity<Document> saveDiscipline(@RequestBody Document document) {
+        return new ResponseEntity<>(documentService.saveDiscipline(document), HttpStatus.CREATED);
     }
 
-
+    @PutMapping("/{id}/weekly-topics")
+    public ResponseEntity<Document> updateWeeklyTopics(
+            @PathVariable Long id,
+            @RequestBody List<WeeklyTopic> topics) {
+        return ResponseEntity.ok(documentService.updateWeeklyTopics(id, topics));
+    }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Document> changeStatus(@PathVariable Long id, @RequestParam DocumentStatus status) {
+    public ResponseEntity<Document> changeStatus(
+            @PathVariable Long id,
+            @RequestParam DocumentStatus status) {
         return ResponseEntity.ok(documentService.updateStatus(id, status));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        documentService.delete(id);
+        documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
     }
 }

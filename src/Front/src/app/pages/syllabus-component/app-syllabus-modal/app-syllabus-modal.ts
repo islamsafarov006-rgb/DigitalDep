@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { CourseVolume } from '../../../Services/CourseVolume/CourseVolume';
 import { CourseVolumeService } from '../../../Services/CourseVolume/CourseVolumeService';
 import {switchMap} from 'rxjs';
-import {SyllabusDocument} from '../../../Services/syllabus/Syllabus';
-import {DocumentService} from '../../../Services/syllabus/SyllabusService';
-import {AuthService} from '../../../Services/AuthService/AuthService';
-import {ThisReceiver} from '@angular/compiler';
 
+import {AuthService} from '../../../Services/AuthService/AuthService';
+import {SyllabusDocument} from '../../../Services/Document/Document';
+import {DocumentService} from '../../../Services/Document/DocumetService';
 
 
 @Component({
@@ -39,16 +38,8 @@ export class SyllabusModalComponent implements OnInit {
   }
 
   loadSyllabusData(id: number) {
-    this.documentService.getById(id).pipe(
-      switchMap((doc: any) => {
-        return this.courseVolumeService.getByDocumentId(id);
-      })
-    ).subscribe({
-      next: (volume) => {
-        this.courseVolume.set(volume);
-      },
-      error: (err) => console.error('Ошибка загрузки данных:', err)
-    });
+
+
   }
 
   printDocument() {

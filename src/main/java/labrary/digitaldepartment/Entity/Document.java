@@ -19,7 +19,7 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "discipline_id", nullable = false)
     private Discipline discipline;
 
@@ -39,6 +39,10 @@ public class Document {
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<PaymentDetail> paymentDetails;
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<WeeklyTopic> weeklyTopics;
 
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;

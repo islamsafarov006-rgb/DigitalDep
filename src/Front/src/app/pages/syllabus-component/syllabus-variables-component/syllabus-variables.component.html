@@ -1,0 +1,18 @@
+<div class="variables-container">
+  <div class="header">
+    <h4>Настройка переменных силлабуса</h4>
+    <button class="btn-add" (click)="addVariable()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Добавить переменную
+    </button>
+  </div>
+
+  @if (variables.length === 0) {
+    <div class="empty-state">
+      Переменные не заданы. Нажмите "Добавить", чтобы создать первую переменную.
+    </div>
+  }
+</div>

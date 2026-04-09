@@ -1,11 +1,11 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {NavigationEnd, Router, RouterModule} from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/AuthService';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatFormField } from '@angular/material/form-field'; // Исправлен импорт
+import { MatFormField } from '@angular/material/form-field';
 import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
-import {filter} from 'rxjs';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit {
   private translocoService = inject(TranslocoService);
   private authService = inject(AuthService);
 
+  // Получаем данные пользователя. Убедитесь, что AuthService возвращает объект или null.
   user = this.authService.currentUser();
 
   readonly languages = [
@@ -26,15 +27,25 @@ export class HeaderComponent implements OnInit {
     { code: 'kk', flag: '🇰🇿', name: 'Қазақша' },
     { code: 'en', flag: '🇺🇸', name: 'English' }
   ];
-  isVisible = true
+
+  isVisible = true;
+
   ngOnInit() {
+    this.updateVisibility(this.router.url);
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      const hiddenRoutes = ['/login', '/register'];
-      this.isVisible = !hiddenRoutes.includes(this.router.url);
+    ).subscribe((event: any) => {
+      this.updateVisibility(event.urlAfterRedirects);
     });
   }
+
+  private updateVisibility(url: string) {
+    const hiddenRoutes = ['/login', '/register'];
+    // Проверка на точное совпадение начала пути
+    this.isVisible = !hiddenRoutes.some(route => url.startsWith(route));
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
@@ -48,7 +59,6 @@ export class HeaderComponent implements OnInit {
     return this.translocoService.getActiveLang();
   }
 
-  // Тот самый недостающий метод
   getActiveLangFlag(): string {
     const currentCode = this.getActiveLang();
     const lang = this.languages.find(l => l.code === currentCode);

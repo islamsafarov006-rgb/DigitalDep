@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import labrary.digitaldepartment.Service.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -31,13 +33,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userIin;
+        final String path = request.getServletPath();
 
-        String path = request.getServletPath();
-        if (path.contains("/api/auth")) {
+        // 1. В белом списке оставляем ТОЛЬКО авторизацию
+        // Публичные GET запросы лучше обрабатывать через SecurityConfig
+        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // 2. Если заголовка нет - идем дальше.
+        // Если эндпоинт требует .authenticated(), Spring сам выдаст 403 позже.
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -59,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
+            log.error("JWT Error: {}", e.getMessage());
             SecurityContextHolder.clearContext();
         }
 

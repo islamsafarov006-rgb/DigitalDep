@@ -10,7 +10,6 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
   getTranslation(lang: string) {
     const path = `assets/i18n/${lang}.json`;
-    console.log('Полный путь к файлу:', path);
     return this.http.get<Translation>(`./${path}`);
   }
 }
