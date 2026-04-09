@@ -30,6 +30,7 @@ public class Document {
     @Column(name = "academic_year")
     private String academicYear;
 
+    @Column(name = "semester")
     private Integer semester;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -45,10 +46,19 @@ public class Document {
     private List<WeeklyTopic> weeklyTopics;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private DocumentStatus status;
+
+    @Column(name = "academicProgramCode")
     private String academicProgramCode;
+
+    @Column(name = "academicProgramTitle")
     private String academicProgramTitle;
+
+    @Column(name = "courseCycle")
     private String courseCycle;
+
+    @Column(name = "finalAssessment")
     private String finalAssessment;
 
     @Column(columnDefinition = "TEXT")
