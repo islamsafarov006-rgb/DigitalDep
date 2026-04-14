@@ -1,6 +1,7 @@
 import { User } from '../User/User';
 import { CourseVolume } from '../CourseVolume/CourseVolume';
 import {Department} from '../Department/department';
+import {Syllabus} from '../Syllabus/syllabus';
 
 export enum DocumentStatus {
   DRAFT = 'DRAFT',
@@ -47,7 +48,7 @@ export interface SyllabusDocument {
   author?: User;
   courseVolume?: CourseVolume;
   weeklyTopics?: any[];
-
+  syllabus?: Syllabus;
   academicLoads?: AcademicLoad[];
   paymentDetails?: PaymentDetails[];
 }

@@ -9,11 +9,14 @@ import { TablesComponent } from '../../../shared-new/tables/tables.component';
 import { TableColumnTypes } from '../../../shared-new/tables/table-column-types';
 import { WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
 import { DocumentService } from '../../../Services/Document/DocumetService';
+import {FormsModule} from '@angular/forms';
+import {InputsComponent} from '../../../shared-new/inputs/inputs.component';
+import {Inputs} from '../../../shared-new/inputs/inputs';
 
 @Component({
   selector: 'app-syllabus-variables',
   standalone: true,
-  imports: [CommonModule, TablesComponent],
+  imports: [CommonModule, TablesComponent, FormsModule, InputsComponent],
   templateUrl: './syllabus-variables.component.html',
   styleUrls: ['./syllabus-variables.component.scss']
 })
@@ -66,7 +69,22 @@ export class SyllabusVariablesComponent implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          this.syllabus.set(res.doc);
+          const loadedDoc = res.doc;
+          if (!loadedDoc.syllabus) {
+            loadedDoc.syllabus = {
+              academicProgramCode: '',
+              academicProgramTitle: '',
+              courseCycle: '',
+              finalAssessment: '',
+              goals: '',
+              courseDescription: '',
+              coursePolicy: '',
+              literature: [],
+              examinationTopics: ''
+            };
+          }
+
+          this.syllabus.set(loadedDoc);
           this.lectures = res.topics.filter(t => t.lectureTopic);
           this.practices = res.topics.filter(t => t.practiceTopic);
           this.srsp = res.topics.filter(t => t.srspTopic);
@@ -88,4 +106,6 @@ export class SyllabusVariablesComponent implements OnInit {
 
   setActiveTab(tab: string) { this.activeTab = tab; }
   goBack() { this.router.navigate(['/syllabus-editor']); }
+
+  protected readonly Inputs = Inputs;
 }

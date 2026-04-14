@@ -64,8 +64,45 @@
 
       <div class="tab-content-animation">
 
-        <div class="card" *ngIf="activeTab === 'syllabusData'">
+        <div class="card" *ngIf="activeTab === 'syllabusData' && doc.syllabus">
+          <div class="card-header">
+            <span class="material-symbols-outlined">edit_note</span>
+            <h3>Данные силлабуса</h3>
+          </div>
 
+          <div class="form-content">
+            <div class="form-grid">
+              <div class="labeled-input-group">
+                <label>Код программы</label>
+                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.academicProgramCode"></inputs>
+              </div>
+
+              <div class="labeled-input-group">
+                <label>Название программы</label>
+                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.academicProgramTitle"></inputs>
+              </div>
+
+              <div class="labeled-input-group">
+                <label>Цикл дисциплин</label>
+                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.courseCycle"></inputs>
+              </div>
+
+              <div class="labeled-input-group">
+                <label>Итоговая аттестация</label>
+                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.finalAssessment"></inputs>
+              </div>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Цели курса</label>
+              <textarea [(ngModel)]="doc.syllabus.goals" placeholder="Кратко опишите цели..." rows="3"></textarea>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Описание курса</label>
+              <textarea [(ngModel)]="doc.syllabus.courseDescription" placeholder="Детальное описание..." rows="4"></textarea>
+            </div>
+          </div>
         </div>
 
         <div class="card" *ngIf="activeTab === 'lectures'">
@@ -90,9 +127,9 @@
 
       </div>
 
-      <div class="actions-footer">
+      <footer class="actions-footer">
         <button class="btn-primary" (click)="saveAll()">Сохранить изменения</button>
-      </div>
+      </footer>
     </main>
   </div>
 </div>

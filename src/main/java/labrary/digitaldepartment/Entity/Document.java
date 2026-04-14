@@ -1,5 +1,6 @@
 package labrary.digitaldepartment.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import labrary.digitaldepartment.Enums.DocumentStatus;
@@ -49,4 +50,7 @@ public class Document {
     @Column(name = "status")
     private DocumentStatus status;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "syllabus_id", referencedColumnName = "id")
+    private Syllabus syllabus;
 }

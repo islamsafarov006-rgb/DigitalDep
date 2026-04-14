@@ -1,10 +1,10 @@
 package labrary.digitaldepartment.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,6 +35,10 @@ public class Syllabus{
     @Column(name = "coursePolicy")
     private String coursePolicy;
 
-    @Column(name = "literature")
-    private String literature;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "syllabus_id")
+    private List<Library> literature;
+
+    @Column(name = "examinationTopics")
+    private String examinationTopics;
 }
