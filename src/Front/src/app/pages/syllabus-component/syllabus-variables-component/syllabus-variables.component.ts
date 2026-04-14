@@ -8,7 +8,7 @@ import { TableConfig } from '../../../models/table-config.model';
 import { TablesComponent } from '../../../shared-new/tables/tables.component';
 import { TableColumnTypes } from '../../../shared-new/tables/table-column-types';
 import { WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
-import {DocumentService} from '../../../Services/Document/DocumetService';
+import { DocumentService } from '../../../Services/Document/DocumetService';
 
 @Component({
   selector: 'app-syllabus-variables',
@@ -26,25 +26,30 @@ export class SyllabusVariablesComponent implements OnInit {
 
   syllabus = signal<SyllabusDocument | null>(null);
   isLoading = signal(false);
+  activeTab: string = 'lectures';
 
+  // Раздельные массивы данных
   lectures: WeeklyTopic[] = [];
   practices: WeeklyTopic[] = [];
   srsp: WeeklyTopic[] = [];
   srs: WeeklyTopic[] = [];
 
-  private baseColumns = [
-    { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
-    { key: 'lectureTopic', title: 'Topic Title', type: TableColumnTypes.text },
-    { key: 'hours', title: 'Hours', type: TableColumnTypes.inputNumber, width: '100px' },
-    { key: 'references', title: 'References', type: TableColumnTypes.inputText },
-    { key: 'reportingForm', title: 'Reporting', type: TableColumnTypes.inputText },
-    { key: 'deadline', title: 'Deadline', type: TableColumnTypes.inputText }
-  ];
+  // Создаем разные конфигурации для разных типов тем
+  private getColumns(topicKey: string) {
+    return [
+      { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
+      { key: topicKey, title: 'Topic Title', type: TableColumnTypes.text },
+      { key: 'hours', title: 'Hours', type: TableColumnTypes.inputNumber, width: '100px' },
+      { key: 'references', title: 'References', type: TableColumnTypes.inputText },
+      { key: 'reportingForm', title: 'Reporting', type: TableColumnTypes.inputText },
+      { key: 'deadline', title: 'Deadline', type: TableColumnTypes.inputText }
+    ];
+  }
 
-  lectureConfig: TableConfig = { columns: this.baseColumns };
-  practiceConfig: TableConfig = { columns: this.baseColumns };
-  srspConfig: TableConfig = { columns: this.baseColumns };
-  srsConfig: TableConfig = { columns: this.baseColumns };
+  lectureConfig: TableConfig = { columns: this.getColumns('lectureTopic') };
+  practiceConfig: TableConfig = { columns: this.getColumns('practiceTopic') };
+  srspConfig: TableConfig = { columns: this.getColumns('srspTopic') };
+  srsConfig: TableConfig = { columns: this.getColumns('spzTopic') };
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -74,12 +79,13 @@ export class SyllabusVariablesComponent implements OnInit {
 
   saveAll() {
     this.isLoading.set(true);
+    // Собираем все данные обратно в один плоский массив для сервера
     const allTopics = [...this.lectures, ...this.practices, ...this.srsp, ...this.srs];
     this.contentService.saveWeeklyPlan(allTopics)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe(() => alert('Сохранено!'));
   }
 
+  setActiveTab(tab: string) { this.activeTab = tab; }
   goBack() { this.router.navigate(['/syllabus-editor']); }
 }
-

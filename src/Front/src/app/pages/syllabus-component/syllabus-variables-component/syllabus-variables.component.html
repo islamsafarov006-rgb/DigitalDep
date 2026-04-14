@@ -1,99 +1,98 @@
 <div class="page-container">
 
-  @if (isLoading()) {
-    <div class="loader-wrapper">
-      <div class="spinner"></div>
-      <p>Загрузка данных силлабуса...</p>
-    </div>
-  } @else if (syllabus(); as doc) {
+  <div *ngIf="isLoading()" class="loader-wrapper">
+    <div class="spinner"></div>
+    <p>Загрузка данных силлабуса...</p>
+  </div>
 
-    <div class="dashboard-grid">
+  <div *ngIf="!isLoading() && syllabus() as doc" class="dashboard-grid">
 
-      <aside class="info-sidebar">
-
-        <div class="card">
-          <div class="card-header">
-            <span class="material-symbols-outlined">person</span>
-            <h3>Преподаватель</h3>
-          </div>
-
-          <div class="card-content">
-            <div class="info-block">
-              <p class="main-text">{{ doc.author?.fullName }}</p>
-              <p class="sub-text role">{{ doc.author?.position }}</p>
-
-              <a href="mailto:{{ doc.author?.email }}" class="email-link">
-                <span class="material-symbols-outlined">mail</span>
-                {{ doc.author?.email }}
-              </a>
-            </div>
+    <aside class="info-sidebar">
+      <div class="card">
+        <div class="card-header">
+          <span class="material-symbols-outlined">person</span>
+          <h3>Преподаватель</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-block">
+            <p class="main-text">{{ doc.author?.fullName }}</p>
+            <p class="sub-text role">{{ doc.author?.position }}</p>
+            <a href="mailto:{{ doc.author?.email }}" class="email-link">
+              <span class="material-symbols-outlined">mail</span>
+              {{ doc.author?.email }}
+            </a>
           </div>
         </div>
+      </div>
 
-        <div class="card">
-          <div class="card-header">
-            <span class="material-symbols-outlined">account_balance</span>
-            <h3>Кафедра</h3>
-          </div>
-
-          <div class="card-content">
-            <div class="info-block">
-              <p class="main-text">{{ doc?.author?.department?.nameEn }}</p>
-              <p class="sub-text faculty">
-                {{ doc?.author?.department?.faculty?.name }}
-              </p>
-            </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="material-symbols-outlined">account_balance</span>
+          <h3>Кафедра</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-block">
+            <p class="main-text">{{ doc?.author?.department?.nameEn }}</p>
+            <p class="sub-text faculty">{{ doc?.author?.department?.faculty?.name }}</p>
           </div>
         </div>
+      </div>
+    </aside>
 
-      </aside>
-
-      <!-- MAIN CONTENT -->
-      <main class="table-area">
-
-        <header class="header-banner">
-          <button class="btn-icon-back" (click)="goBack()">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-
-          <div class="header-title">
-            <h1>{{ doc.discipline?.name }}</h1>
-
-            <div class="status-row">
-              <span class="badge">{{ doc.academicYear }} год</span>
-              <span class="badge">Семестр {{ doc.semester }}</span>
-              <span class="status-pill">{{ doc.status }}</span>
-            </div>
+    <main class="table-area">
+      <header class="header-banner">
+        <button class="btn-icon-back" (click)="goBack()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="header-title">
+          <h1>{{ doc.discipline?.name }}</h1>
+          <div class="status-row">
+            <span class="badge">{{ doc.academicYear }} год</span>
+            <span class="badge">Семестр {{ doc.semester }}</span>
+            <span class="status-pill">{{ doc.status }}</span>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <div class="card">
+      <nav class="tabs-navigation">
+        <button [class.active]="activeTab === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные для Силлабуса</button>
+        <button [class.active]="activeTab === 'lectures'" (click)="setActiveTab('lectures')">Лекции</button>
+        <button [class.active]="activeTab === 'practices'" (click)="setActiveTab('practices')">Практика</button>
+        <button [class.active]="activeTab === 'srsp'" (click)="setActiveTab('srsp')">СРСП</button>
+        <button [class.active]="activeTab === 'srs'" (click)="setActiveTab('srs')">СРС</button>
+      </nav>
+
+      <div class="tab-content-animation">
+
+        <div class="card" *ngIf="activeTab === 'syllabusData'">
+
+        </div>
+
+        <div class="card" *ngIf="activeTab === 'lectures'">
           <div class="card-header"><h3>Лекции</h3></div>
           <tables [config]="lectureConfig" [data]="lectures"></tables>
         </div>
 
-        <div class="card">
+        <div class="card" *ngIf="activeTab === 'practices'">
           <div class="card-header"><h3>Практика</h3></div>
           <tables [config]="practiceConfig" [data]="practices"></tables>
         </div>
 
-        <div class="card">
+        <div class="card" *ngIf="activeTab === 'srsp'">
           <div class="card-header"><h3>СРСП</h3></div>
           <tables [config]="srspConfig" [data]="srsp"></tables>
         </div>
 
-        <div class="card">
+        <div class="card" *ngIf="activeTab === 'srs'">
           <div class="card-header"><h3>СРС</h3></div>
           <tables [config]="srsConfig" [data]="srs"></tables>
         </div>
 
-        <div class="actions-footer">
-          <button class="btn-primary" (click)="saveAll()">
-            Сохранить изменения
-          </button>
-        </div>
+      </div>
 
-      </main>
-    </div>
-  }
+      <div class="actions-footer">
+        <button class="btn-primary" (click)="saveAll()">Сохранить изменения</button>
+      </div>
+    </main>
+  </div>
 </div>
