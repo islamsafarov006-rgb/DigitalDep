@@ -1,18 +1,99 @@
-<div class="variables-container">
-  <div class="header">
-    <h4>Настройка переменных силлабуса</h4>
-    <button class="btn-add" (click)="addVariable()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      Добавить переменную
-    </button>
-  </div>
+<div class="page-container">
 
-  @if (variables.length === 0) {
-    <div class="empty-state">
-      Переменные не заданы. Нажмите "Добавить", чтобы создать первую переменную.
+  @if (isLoading()) {
+    <div class="loader-wrapper">
+      <div class="spinner"></div>
+      <p>Загрузка данных силлабуса...</p>
+    </div>
+  } @else if (syllabus(); as doc) {
+
+    <div class="dashboard-grid">
+
+      <aside class="info-sidebar">
+
+        <div class="card">
+          <div class="card-header">
+            <span class="material-symbols-outlined">person</span>
+            <h3>Преподаватель</h3>
+          </div>
+
+          <div class="card-content">
+            <div class="info-block">
+              <p class="main-text">{{ doc.author?.fullName }}</p>
+              <p class="sub-text role">{{ doc.author?.position }}</p>
+
+              <a href="mailto:{{ doc.author?.email }}" class="email-link">
+                <span class="material-symbols-outlined">mail</span>
+                {{ doc.author?.email }}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="material-symbols-outlined">account_balance</span>
+            <h3>Кафедра</h3>
+          </div>
+
+          <div class="card-content">
+            <div class="info-block">
+              <p class="main-text">{{ doc?.author?.department?.nameEn }}</p>
+              <p class="sub-text faculty">
+                {{ doc?.author?.department?.faculty?.name }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="table-area">
+
+        <header class="header-banner">
+          <button class="btn-icon-back" (click)="goBack()">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+
+          <div class="header-title">
+            <h1>{{ doc.discipline?.name }}</h1>
+
+            <div class="status-row">
+              <span class="badge">{{ doc.academicYear }} год</span>
+              <span class="badge">Семестр {{ doc.semester }}</span>
+              <span class="status-pill">{{ doc.status }}</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="card">
+          <div class="card-header"><h3>Лекции</h3></div>
+          <tables [config]="lectureConfig" [data]="lectures"></tables>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Практика</h3></div>
+          <tables [config]="practiceConfig" [data]="practices"></tables>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>СРСП</h3></div>
+          <tables [config]="srspConfig" [data]="srsp"></tables>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>СРС</h3></div>
+          <tables [config]="srsConfig" [data]="srs"></tables>
+        </div>
+
+        <div class="actions-footer">
+          <button class="btn-primary" (click)="saveAll()">
+            Сохранить изменения
+          </button>
+        </div>
+
+      </main>
     </div>
   }
 </div>

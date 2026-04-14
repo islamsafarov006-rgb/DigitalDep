@@ -36,4 +36,17 @@ public class WeeklyTopic {
     @JoinColumn(name = "document_id")
     @JsonBackReference
     private Document document;
+
+    // Новые поля
+    @Column(name = "hours")
+    private Integer hours;
+
+    @Column(columnDefinition = "TEXT", name = "references")
+    private String references;
+
+    @Column(columnDefinition = "TEXT", name = "reporting_form") // Рекомендуется snake_case для БД
+    private String reportingForm;
+
+    @Column(columnDefinition = "TEXT", name = "deadline")
+    private String deadline;
 }

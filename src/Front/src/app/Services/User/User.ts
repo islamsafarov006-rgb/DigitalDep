@@ -1,3 +1,5 @@
+import {Department} from '../Department/department';
+
 export enum UserRole {
   ADMIN = 'ADMIN',
   TEACHER = 'TEACHER',
@@ -13,7 +15,6 @@ export interface User {
   position: string;
   iin: string;
   role: UserRole;
-  departmentId?: number;
-
-
+  department?: Department;
 }
+

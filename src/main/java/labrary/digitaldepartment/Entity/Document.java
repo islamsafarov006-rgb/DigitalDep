@@ -49,18 +49,4 @@ public class Document {
     @Column(name = "status")
     private DocumentStatus status;
 
-    @Column(name = "academicProgramCode")
-    private String academicProgramCode;
-
-    @Column(name = "academicProgramTitle")
-    private String academicProgramTitle;
-
-    @Column(name = "courseCycle")
-    private String courseCycle;
-
-    @Column(name = "finalAssessment")
-    private String finalAssessment;
-
-    @Column(columnDefinition = "TEXT")
-    private String goals;
 }

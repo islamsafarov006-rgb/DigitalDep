@@ -5,70 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71dcf4d1-14a6-45f1-89d1-59118d21ea10" name="Changes" comment=".">
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-form.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-form.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-form.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Front/src/assets/images/img.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/src/main/java/labrary/lab6/Lab6Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lab6/src/test/java/labrary/lab6/Lab6ApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Syllabus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/ba054acb-4ac4-4939-8981-cd09ba7e7464.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/ba054acb-4ac4-4939-8981-cd09ba7e7464.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Content/ContentService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Content/ContentService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Content/GradingPolicyAndWeeklyTopic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Content/GradingPolicyAndWeeklyTopic.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Document/Document.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Document/Document.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/Document/DocumetService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/Document/DocumetService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/syllabus/Syllabus.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/syllabus/SyllabusService.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/app-header/header.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/main-page/main-page.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/main-page/main-page.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/app-syllabus-modal/app-syllabus-modal.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/app-syllabus-modal/app-syllabus-modal.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/app-syllabus-modal/app-syllabus-modal.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/app-syllabus-modal/app-syllabus-modal.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-editor.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-editor.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-editor.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/teacher-data-component/teacher-data.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/transloco-loader.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/transloco-loader.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/kk.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/kk.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/Services/User/User.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/Services/User/User.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Front/src/assets/i18n/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/assets/i18n/ru.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/JwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Configurations/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/DocumentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/DocumentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/WeeklyTopicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Controller/WeeklyTopicController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DocumentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/DocumentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Configurations/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Configurations/JwtAuthenticationFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Configurations/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Configurations/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/WeeklyTopicService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/WeeklyTopicService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/DocumentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/DocumentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/WeeklyTopicController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Controller/WeeklyTopicController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/WeeklyTopic.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/WeeklyTopic.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/DocumentService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/DocumentService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/WeeklyTopicService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/WeeklyTopicService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,11 +56,11 @@
       <list>
         <option value="com.intellij.jpb.JpaEntity" />
         <option value="Enum" />
-        <option value="Class" />
         <option value="Interface" />
         <option value="TypeScript File" />
         <option value="HTML File" />
         <option value="SCSS File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -196,7 +155,7 @@
       <command value="mvn clean install" />
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.DigitalDepartmentApplication">
+  <component name="RunManager" selected="npm.DigitalDepartmentFront">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="DigitalDepartment" />
       <method v="2">
@@ -258,7 +217,9 @@
       <workItem from="1775554332068" duration="9360000" />
       <workItem from="1775710193703" duration="9000" />
       <workItem from="1775717128079" duration="7286000" />
-      <workItem from="1775734337864" duration="2130000" />
+      <workItem from="1775734337864" duration="6385000" />
+      <workItem from="1775879051421" duration="66000" />
+      <workItem from="1776081230396" duration="7427000" />
     </task>
     <task id="LOCAL-00001" summary="fr">
       <option name="closed" value="true" />
@@ -292,7 +253,23 @@
       <option name="project" value="LOCAL" />
       <updated>1775118573146</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary=".">
+      <option name="closed" value="true" />
+      <created>1775736559160</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1775736559160</updated>
+    </task>
+    <task id="LOCAL-00006" summary=".">
+      <option name="closed" value="true" />
+      <created>1775736751874</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1775736751874</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

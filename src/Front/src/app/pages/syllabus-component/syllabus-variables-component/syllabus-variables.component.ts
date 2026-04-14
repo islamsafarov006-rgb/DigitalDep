@@ -1,52 +1,85 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, finalize } from 'rxjs';
+import { SyllabusDocument } from '../../../Services/Document/Document';
+import { ContentService } from '../../../Services/Content/ContentService';
+import { TableConfig } from '../../../models/table-config.model';
+import { TablesComponent } from '../../../shared-new/tables/tables.component';
+import { TableColumnTypes } from '../../../shared-new/tables/table-column-types';
+import { WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
+import {DocumentService} from '../../../Services/Document/DocumetService';
 
 @Component({
   selector: 'app-syllabus-variables',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, TablesComponent],
   templateUrl: './syllabus-variables.component.html',
   styleUrls: ['./syllabus-variables.component.scss']
 })
 export class SyllabusVariablesComponent implements OnInit {
-  @Output() variablesChanged = new EventEmitter<any[]>();
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private contentService = inject(ContentService);
+  private cdr = inject(ChangeDetectorRef);
+  private document = inject(DocumentService);
 
-  varsForm: FormGroup;
+  syllabus = signal<SyllabusDocument | null>(null);
+  isLoading = signal(false);
 
-  constructor(private fb: FormBuilder) {
-    this.varsForm = this.fb.group({
-      variables: this.fb.array([])
-    });
-  }
+  lectures: WeeklyTopic[] = [];
+  practices: WeeklyTopic[] = [];
+  srsp: WeeklyTopic[] = [];
+  srs: WeeklyTopic[] = [];
+
+  private baseColumns = [
+    { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
+    { key: 'lectureTopic', title: 'Topic Title', type: TableColumnTypes.text },
+    { key: 'hours', title: 'Hours', type: TableColumnTypes.inputNumber, width: '100px' },
+    { key: 'references', title: 'References', type: TableColumnTypes.inputText },
+    { key: 'reportingForm', title: 'Reporting', type: TableColumnTypes.inputText },
+    { key: 'deadline', title: 'Deadline', type: TableColumnTypes.inputText }
+  ];
+
+  lectureConfig: TableConfig = { columns: this.baseColumns };
+  practiceConfig: TableConfig = { columns: this.baseColumns };
+  srspConfig: TableConfig = { columns: this.baseColumns };
+  srsConfig: TableConfig = { columns: this.baseColumns };
 
   ngOnInit(): void {
-    // Добавляем пустую строку при инициализации
-    this.addVariable();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) this.loadData(Number(id));
   }
 
-  get variables(): FormArray {
-    return this.varsForm.get('variables') as FormArray;
+  loadData(id: number) {
+    this.isLoading.set(true);
+
+    forkJoin({
+      doc: this.document.getById(id),
+      topics: this.contentService.getWeeklyTopics(id)
+    })
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.syllabus.set(res.doc);
+          this.lectures = res.topics.filter(t => t.lectureTopic);
+          this.practices = res.topics.filter(t => t.practiceTopic);
+          this.srsp = res.topics.filter(t => t.srspTopic);
+          this.srs = res.topics.filter(t => t.spzTopic);
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Ошибка загрузки:', err)
+      });
   }
 
-  addVariable() {
-    const varGroup = this.fb.group({
-      key: ['', [Validators.required, Validators.pattern(/^[a-zA-Z_][a-zA-Z0-9_]*$/)]],
-      label: ['', Validators.required],
-      type: ['number', Validators.required],
-      defaultValue: ['', Validators.required]
-    });
-    this.variables.push(varGroup);
+  saveAll() {
+    this.isLoading.set(true);
+    const allTopics = [...this.lectures, ...this.practices, ...this.srsp, ...this.srs];
+    this.contentService.saveWeeklyPlan(allTopics)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe(() => alert('Сохранено!'));
   }
 
-  removeVariable(index: number) {
-    this.variables.removeAt(index);
-    this.emitChanges();
-  }
-
-  emitChanges() {
-    if (this.varsForm.valid) {
-      this.variablesChanged.emit(this.varsForm.value.variables);
-    }
-  }
+  goBack() { this.router.navigate(['/syllabus-editor']); }
 }
+

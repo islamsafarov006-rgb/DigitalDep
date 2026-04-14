@@ -1,10 +1,17 @@
 export interface WeeklyTopic {
+  id?: number;
+  documentId?: number;
   weekNumber: number;
-  lecture: string;
-  practice: string;
-  srsp: string;
-  spz: string;
+  lectureTopic: string;
+  practiceTopic: string;
+  srspTopic: string;
+  spzTopic: string;
+  hours?: number;
+  references?: string;
+  reportingForm?: string;
+  deadline?: string;
 }
+
 export interface GradingPolicy {
   id?: number;
   firstAttestationWeight: number;

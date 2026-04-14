@@ -33,4 +33,17 @@ public class WeeklyTopicService {
         List<WeeklyTopic> topics = getByDocumentId(documentId);
         weeklyTopicRepository.deleteAll(topics);
     }
+    @Transactional
+    public WeeklyTopic updateTopicDetails(Long id, WeeklyTopic updateData) {
+        WeeklyTopic topic = weeklyTopicRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Topic not found with id: " + id));
+
+        topic.setHours(updateData.getHours());
+        topic.setReferences(updateData.getReferences());
+        topic.setReportingForm(updateData.getReportingForm());
+        topic.setDeadline(updateData.getDeadline());
+
+        return weeklyTopicRepository.save(topic);
+    }
+
 }
