@@ -3,7 +3,7 @@ import { authGuard } from './authGuard';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'main-page', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'register',
     loadComponent: () => import('./pages/register-component/register.componen').then(m => m.RegisterComponent)
