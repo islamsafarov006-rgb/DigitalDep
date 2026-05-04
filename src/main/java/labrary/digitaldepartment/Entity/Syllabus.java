@@ -3,42 +3,50 @@ package labrary.digitaldepartment.Entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.NoArgsConstructor;
 import java.util.List;
-
 @Entity
-@Getter
-@Setter
-public class Syllabus{
+@Getter @Setter
+@NoArgsConstructor
+@Table(name = "syllabus")
+public class Syllabus {
 
     @Id
     private Long id;
 
-    @Column(name = "academicProgramCode")
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    @com.fasterxml.jackson.annotation.JsonBackReference // Чтобы не было бесконечной рекурсии
+    private Document document;
+
     private String academicProgramCode;
-
-    @Column(name = "academicProgramTitle")
     private String academicProgramTitle;
-
-    @Column(name = "courseCycle")
     private String courseCycle;
-
-    @Column(name = "finalAssessment")
     private String finalAssessment;
 
     @Column(columnDefinition = "TEXT")
     private String goals;
 
-    @Column(name = "Course_description")
+    @Column(columnDefinition = "TEXT")
+    private String objectives;
+
+    @Column(name = "learning_outcomes", columnDefinition = "TEXT")
+    private String learningOutcomes;
+
+    @Column(name = "course_description", columnDefinition = "TEXT")
     private String courseDescription;
 
-    @Column(name = "coursePolicy")
+    @Column(name = "course_policy", columnDefinition = "TEXT")
     private String coursePolicy;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "syllabus_id")
     private List<Library> literature;
 
-    @Column(name = "examinationTopics")
+    @Column(columnDefinition = "TEXT")
     private String examinationTopics;
+
+    private Integer numberOfCredits;
+    private String groupOfAcademicPrograms;
 }

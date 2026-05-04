@@ -6,7 +6,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../Services/AuthService/AuthService';
 import { finalize } from 'rxjs';
 import { DisciplineModalComponent } from '../discipline-form/discipline-modal-component/discipline-modal.component';
-import { SyllabusModalComponent } from './app-syllabus-modal/app-syllabus-modal';
 import { DocumentService } from '../../Services/Document/DocumetService';
 import { SyllabusDocument } from '../../Services/Document/Document';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -44,16 +43,7 @@ export class DisciplineEditorComponent implements OnInit {
       });
   }
 
-  openViewModal(doc: SyllabusDocument) {
-    this.dialog.open(SyllabusModalComponent, {
-      width: '85%',
-      height: '90%',
-      data: { syllabus: doc }
-    })
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
-  }
+
 
 
   openSyllabus(doc: SyllabusDocument) {

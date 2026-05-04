@@ -241,43 +241,43 @@ export class TeacherDataComponent implements OnInit {
 
   readonly semesterOptions = [ { id: 1, name: '1' }, { id: 2, name: '2' } ];
 
-  save() {
-    if (this.teacherForm.invalid) {
-      this.teacherForm.markAllAsTouched();
-      return;
-    }
-    // getRawValue включает заблокированные поля
-    const formValue = this.teacherForm.getRawValue();
-    const documentToSave: any = {
-      status: DocumentStatus.DRAFT,
-      academicYear: "2025-2026",
-      semester: Number(formValue.semester),
-      description: formValue.educationalProgram || 'Данные преподавателя',
-      disciplineId: formValue.departmentId,
-      academicLoads: [{
-        discipline: formValue.discipline || formValue.disciplineCode,
-        studentGroup: formValue.group,
-        totalStreams: String(formValue.totalStreams || 0),
-        lectureHours: Number(formValue.lectureHours || 0),
-        practiceHours: Number(formValue.practiceHours || 0),
-        labHours: Number(formValue.labHours || 0),
-        totalHours: Number(formValue.total || 0)
-      }],
-      paymentDetails: [{
-        staffLoad: formValue.staffLoad || 0,
-        hourlyLoad: formValue.hourlyLoad || 0
-      }]
-    };
-
-    this.documentService.save(documentToSave).subscribe({
-      next: () => {
-        this.loadMyDocuments();
-        this.resetForm();
-        alert('Данные успешно сохранены!');
-      },
-      error: (err) => alert('Ошибка при сохранении: ' + (err.error?.message || 'Сервер недоступен'))
-    });
-  }
+  // save() {
+  //   if (this.teacherForm.invalid) {
+  //     this.teacherForm.markAllAsTouched();
+  //     return;
+  //   }
+  //   // getRawValue включает заблокированные поля
+  //   const formValue = this.teacherForm.getRawValue();
+  //   const documentToSave: any = {
+  //     status: DocumentStatus.DRAFT,
+  //     academicYear: "2025-2026",
+  //     semester: Number(formValue.semester),
+  //     description: formValue.educationalProgram || 'Данные преподавателя',
+  //     disciplineId: formValue.departmentId,
+  //     academicLoads: [{
+  //       discipline: formValue.discipline || formValue.disciplineCode,
+  //       studentGroup: formValue.group,
+  //       totalStreams: String(formValue.totalStreams || 0),
+  //       lectureHours: Number(formValue.lectureHours || 0),
+  //       practiceHours: Number(formValue.practiceHours || 0),
+  //       labHours: Number(formValue.labHours || 0),
+  //       totalHours: Number(formValue.total || 0)
+  //     }],
+  //     paymentDetails: [{
+  //       staffLoad: formValue.staffLoad || 0,
+  //       hourlyLoad: formValue.hourlyLoad || 0
+  //     }]
+  //   };
+  //
+  //   this.documentService.save(documentToSave).subscribe({
+  //     next: () => {
+  //       this.loadMyDocuments();
+  //       this.resetForm();
+  //       alert('Данные успешно сохранены!');
+  //     },
+  //     error: (err) => alert('Ошибка при сохранении: ' + (err.error?.message || 'Сервер недоступен'))
+  //   });
+  // }
 
   private resetForm() {
     const user = this.authService.currentUser();

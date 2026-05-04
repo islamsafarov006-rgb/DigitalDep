@@ -1,5 +1,4 @@
 <div class="page-container">
-
   <div *ngIf="isLoading()" class="loader-wrapper">
     <div class="spinner"></div>
     <p>Загрузка данных силлабуса...</p>
@@ -32,8 +31,8 @@
         </div>
         <div class="card-content">
           <div class="info-block">
-            <p class="main-text">{{ doc?.author?.department?.nameEn }}</p>
-            <p class="sub-text faculty">{{ doc?.author?.department?.faculty?.name }}</p>
+            <p class="main-text">{{ doc.author?.department?.nameEn }}</p>
+            <p class="sub-text faculty">{{ doc.author?.department?.faculty?.name }}</p>
           </div>
         </div>
       </div>
@@ -41,25 +40,47 @@
 
     <main class="table-area">
       <header class="header-banner">
-        <button class="btn-icon-back" (click)="goBack()">
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <div class="header-title">
-          <h1>{{ doc.discipline?.name }}</h1>
-          <div class="status-row">
-            <span class="badge">{{ doc.academicYear }} год</span>
-            <span class="badge">Семестр {{ doc.semester }}</span>
-            <span class="status-pill">{{ doc.status }}</span>
+        <div class="header-main-section">
+          <button class="btn-icon-back" (click)="goBack()" title="Назад">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+
+          <div class="header-title">
+            <h1>{{ doc.discipline.name }}</h1>
+            <div class="status-row">
+              <div class="meta-info">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span>{{ doc.academicYear }} год</span>
+              </div>
+              <div class="meta-info">
+                <span class="material-symbols-outlined">school</span>
+                <span>{{ doc.semester }} семестр</span>
+              </div>
+              <span class="status-pill" [attr.data-status]="doc.status">
+          {{ doc.status }}
+        </span>
+            </div>
           </div>
+        </div>
+
+        <div class="export-actions">
+          <button class="btn-download" (click)="downloadWord(doc.id!)">
+            <span class="material-symbols-outlined">file_download</span>
+            <span>Экспорт в .DOCX</span>
+          </button>
         </div>
       </header>
 
       <nav class="tabs-navigation">
-        <button [class.active]="activeTab === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные для Силлабуса</button>
+        <button [class.active]="activeTab === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные силлабуса</button>
         <button [class.active]="activeTab === 'lectures'" (click)="setActiveTab('lectures')">Лекции</button>
         <button [class.active]="activeTab === 'practices'" (click)="setActiveTab('practices')">Практика</button>
         <button [class.active]="activeTab === 'srsp'" (click)="setActiveTab('srsp')">СРСП</button>
         <button [class.active]="activeTab === 'srs'" (click)="setActiveTab('srs')">СРС</button>
+        <button [class.active]="activeTab === 'preview'" (click)="setActiveTab('preview')" class="tab-preview">
+          <span class="material-symbols-outlined">visibility</span>
+          Предпросмотр
+        </button>
       </nav>
 
       <div class="tab-content-animation">
@@ -67,68 +88,127 @@
         <div class="card" *ngIf="activeTab === 'syllabusData' && doc.syllabus">
           <div class="card-header">
             <span class="material-symbols-outlined">edit_note</span>
-            <h3>Данные силлабуса</h3>
+            <h3>Редактирование разделов программы</h3>
           </div>
 
           <div class="form-content">
             <div class="form-grid">
               <div class="labeled-input-group">
                 <label>Код программы</label>
-                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.academicProgramCode"></inputs>
+                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramCode">
               </div>
 
               <div class="labeled-input-group">
-                <label>Название программы</label>
-                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.academicProgramTitle"></inputs>
+                <label>Название ОП</label>
+                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramTitle">
               </div>
 
               <div class="labeled-input-group">
                 <label>Цикл дисциплин</label>
-                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.courseCycle"></inputs>
+                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.courseCycle">
               </div>
 
               <div class="labeled-input-group">
-                <label>Итоговая аттестация</label>
-                <inputs [type]='Inputs.text' [(value)]="doc.syllabus.finalAssessment"></inputs>
+                <label>Итоговый контроль</label>
+                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.finalAssessment">
+              </div>
+
+              <div class="labeled-input-group">
+                <label>Кредиты (ECTS)</label>
+                <input type="number" class="custom-input" [(ngModel)]="doc.syllabus.numberOfCredits">
+              </div>
+
+              <div class="labeled-input-group">
+                <label>Группа ОП</label>
+                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.groupOfAcademicPrograms">
               </div>
             </div>
 
             <div class="text-area-group">
               <label class="section-label">Цели курса</label>
-              <textarea [(ngModel)]="doc.syllabus.goals" placeholder="Кратко опишите цели..." rows="3"></textarea>
+              <textarea [(ngModel)]="doc.syllabus.goals" rows="3"></textarea>
             </div>
 
             <div class="text-area-group">
-              <label class="section-label">Описание курса</label>
-              <textarea [(ngModel)]="doc.syllabus.courseDescription" placeholder="Детальное описание..." rows="4"></textarea>
+              <label class="section-label">Задачи курса (Objectives)</label>
+              <textarea [(ngModel)]="doc.syllabus.objectives" rows="3"></textarea>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Результаты обучения (Learning Outcomes)</label>
+              <textarea [(ngModel)]="doc.syllabus.learningOutcomes" rows="3"></textarea>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Краткое описание (Description)</label>
+              <textarea [(ngModel)]="doc.syllabus.courseDescription" rows="3"></textarea>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Политика курса</label>
+              <textarea [(ngModel)]="doc.syllabus.coursePolicy" rows="3"></textarea>
+            </div>
+
+            <div class="text-area-group">
+              <label class="section-label">Темы экзамена</label>
+              <textarea [(ngModel)]="doc.syllabus.examinationTopics" rows="3"></textarea>
+            </div>
+
+            <div class="literature-section">
+              <label class="section-label">Список литературы и ресурсов</label>
+
+              <div *ngFor="let item of doc.syllabus.literature; let i = index" class="literature-card">
+                <div class="literature-inputs">
+                  <div class="input-row">
+                    <input type="text" class="custom-input" [(ngModel)]="item.title" placeholder="Название книги">
+                    <input type="text" class="custom-input" [(ngModel)]="item.author" placeholder="Автор">
+                  </div>
+                  <div class="input-row">
+                    <input type="text" class="custom-input" [(ngModel)]="item.isbn" placeholder="ISBN">
+                    <input type="text" class="custom-input" [(ngModel)]="item.url" placeholder="Ссылка (URL)">
+                  </div>
+                </div>
+                <button type="button" class="btn-remove-item" (click)="removeLiteratureLine(i)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+
+              <button type="button" class="btn-add-line" (click)="addLiteratureLine()">
+                <span class="material-symbols-outlined">add</span>
+                Добавить литературу
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="card" *ngIf="activeTab === 'lectures'">
-          <div class="card-header"><h3>Лекции</h3></div>
-          <tables [config]="lectureConfig" [data]="lectures"></tables>
+        <div class="card" *ngIf="['lectures', 'practices', 'srsp', 'srs'].includes(activeTab)">
+          <div class="card-header">
+            <h3 style="text-transform: capitalize;">{{ activeTab }}</h3>
+          </div>
+          <tables [config]="getTableConfig(activeTab)" [data]="getTableData(activeTab)"></tables>
         </div>
 
-        <div class="card" *ngIf="activeTab === 'practices'">
-          <div class="card-header"><h3>Практика</h3></div>
-          <tables [config]="practiceConfig" [data]="practices"></tables>
-        </div>
-
-        <div class="card" *ngIf="activeTab === 'srsp'">
-          <div class="card-header"><h3>СРСП</h3></div>
-          <tables [config]="srspConfig" [data]="srsp"></tables>
-        </div>
-
-        <div class="card" *ngIf="activeTab === 'srs'">
-          <div class="card-header"><h3>СРС</h3></div>
-          <tables [config]="srsConfig" [data]="srs"></tables>
+        <div class="card preview-card" *ngIf="activeTab === 'preview'">
+          <div class="preview-toolbar">
+            <span class="material-symbols-outlined">info</span>
+            <p>Визуальный предпросмотр экспорта в формат .docx</p>
+          </div>
+          <div class="preview-container">
+            <div id="docx-container"></div>
+            <div *ngIf="isPreviewLoading" class="preview-loader">
+              <div class="spinner"></div>
+              <p>Генерация документа...</p>
+            </div>
+          </div>
         </div>
 
       </div>
 
       <footer class="actions-footer">
-        <button class="btn-primary" (click)="saveAll()">Сохранить изменения</button>
+        <button class="btn-primary" (click)="saveAll()" [disabled]="isLoading()">
+          <span class="material-symbols-outlined">save</span>
+          {{ isLoading() ? 'Сохранение...' : 'Сохранить все изменения' }}
+        </button>
       </footer>
     </main>
   </div>

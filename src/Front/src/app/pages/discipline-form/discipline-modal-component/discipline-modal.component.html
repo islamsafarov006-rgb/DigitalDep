@@ -3,7 +3,7 @@
     <div class="modal-content" (click)="$event.stopPropagation()">
       <header class="modal-header">
         <div class="title-info">
-          <h3>{{ syllabusData.discipline?.name || 'Загрузка...' }}</h3>
+          <h3>{{ syllabusData.discipline.name || 'Загрузка...' }}</h3>
           <span class="badge" [ngClass]="syllabusData.status || 'draft'">
             {{ syllabusData.status || 'DRAFT' }}
           </span>

@@ -1,7 +1,6 @@
 import { User } from '../User/User';
-import { CourseVolume } from '../CourseVolume/CourseVolume';
-import {Department} from '../Department/department';
-import {Syllabus} from '../Syllabus/syllabus';
+import { Syllabus } from '../Syllabus/syllabus';
+import { Department } from '../Department/department';
 
 export enum DocumentStatus {
   DRAFT = 'DRAFT',
@@ -28,27 +27,29 @@ export interface AcademicLoad {
   totalHours: number;
 }
 
-export interface PaymentDetails {
+export interface PaymentDetail { // Убрал 's', чтобы совпадало с Java Entity
   id?: number;
   staffLoad: number;
   hourlyLoad: number;
 }
 
+export interface WeeklyTopic {
+  id?: number;
+  topicName: string; // добавьте поля согласно вашей Java WeeklyTopic Entity
+  hours?: number;
+}
+
 export interface SyllabusDocument {
   id?: number;
-  discipline?: Discipline;
-  disciplineId?: number;
+  discipline: Discipline; // Убрал опциональность, так как в БД nullable=false
   status: DocumentStatus;
   academicYear: string;
   semester: number;
-  description?: string;
-  goals: string;
-  courseCycle?: string;
-  finalAssessment?: string;
   author?: User;
-  courseVolume?: CourseVolume;
-  weeklyTopics?: any[];
+
+  // Дочерние объекты
   syllabus?: Syllabus;
   academicLoads?: AcademicLoad[];
-  paymentDetails?: PaymentDetails[];
+  paymentDetails?: PaymentDetail[];
+  weeklyTopics?: WeeklyTopic[];
 }

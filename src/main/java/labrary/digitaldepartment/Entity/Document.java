@@ -1,6 +1,5 @@
 package labrary.digitaldepartment.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import labrary.digitaldepartment.Enums.DocumentStatus;
@@ -9,7 +8,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 @Entity
 @Getter @Setter
 @NoArgsConstructor
@@ -28,11 +26,11 @@ public class Document {
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
-    @Column(name = "academic_year")
     private String academicYear;
-
-    @Column(name = "semester")
     private Integer semester;
+
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus status;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -46,11 +44,18 @@ public class Document {
     @JsonManagedReference
     private List<WeeklyTopic> weeklyTopics;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private DocumentStatus status;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "syllabus_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    @PrimaryKeyJoinColumn
     private Syllabus syllabus;
+
+    public void setSyllabus(Syllabus syllabus) {
+        if (syllabus == null) {
+            if (this.syllabus != null) {
+                this.syllabus.setDocument(null);
+            }
+        } else {
+            syllabus.setDocument(this);
+        }
+        this.syllabus = syllabus;
+    }
 }

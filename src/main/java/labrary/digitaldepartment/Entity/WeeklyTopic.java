@@ -41,7 +41,7 @@ public class WeeklyTopic {
     @Column(name = "hours")
     private Integer hours;
 
-    @Column(columnDefinition = "TEXT", name = "references")
+    @Column(columnDefinition = "TEXT", name = "\"references\"")
     private String references;
 
     @Column(columnDefinition = "TEXT", name = "reporting_form") // Рекомендуется snake_case для БД

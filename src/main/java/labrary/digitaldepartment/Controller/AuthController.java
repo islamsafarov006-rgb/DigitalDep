@@ -53,7 +53,7 @@ public class AuthController {
                     claims.put("role", user.getRole().name());
 
                     if (user.getDepartment() != null) {
-                        claims.put("department", user.getDepartment().getName());
+                        claims.put("department", user.getDepartment().getNameEn());
                     }
 
                     String token = jwtService.generateToken(user.getIin(), claims);

@@ -1,6 +1,7 @@
 package labrary.digitaldepartment.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import labrary.digitaldepartment.Enums.UserRole;
 import lombok.Getter;
@@ -27,7 +28,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
     private String password;
 
     private String position;

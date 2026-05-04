@@ -1,40 +1,28 @@
 package labrary.digitaldepartment.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
-@Table(name = "departments")
-@Setter
 @Getter
+@Setter
+@Table(name = "departments")
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name_ru", nullable = false)
     private String nameRu;
 
-    @Column(name = "name_kk", nullable = false)
+    @Column(name = "name_kk")
     private String nameKk;
 
-    @Column(name = "name_en", nullable = false)
+    @Column(name = "name_en")
     private String nameEn;
-
-    @JsonIgnore
-    public String getName() {
-        return nameRu;
-    }
 
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
-
-    @OneToMany(mappedBy = "department")
-    @JsonIgnore
-    private List<User> staff;
 }

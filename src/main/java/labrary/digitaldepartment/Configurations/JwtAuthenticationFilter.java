@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -31,42 +30,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userIin;
         final String path = request.getServletPath();
 
-        // 1. В белом списке оставляем ТОЛЬКО авторизацию
-        // Публичные GET запросы лучше обрабатывать через SecurityConfig
+        // Пропускаем авторизацию
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Если заголовка нет - идем дальше.
-        // Если эндпоинт требует .authenticated(), Spring сам выдаст 403 позже.
+        // Если заголовка нет или он неверный
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            jwt = authHeader.substring(7);
-            userIin = jwtService.extractUsername(jwt);
+            String jwt = authHeader.substring(7);
+            String userIin = jwtService.extractUsername(jwt);
 
             if (userIin != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtService.isTokenValid(jwt)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userIin,
-                            null,
-                            jwtService.extractAuthorities(jwt)
+                            userIin, null, jwtService.extractAuthorities(jwt)
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    // Токен невалиден (истек и т.д.)
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired or invalid");
+                    return; // Прерываем цепочку
                 }
             }
         } catch (Exception e) {
             log.error("JWT Error: {}", e.getMessage());
-            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
+            return; // Прерываем цепочку
         }
 
         filterChain.doFilter(request, response);
