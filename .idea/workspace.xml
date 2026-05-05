@@ -6,8 +6,25 @@
   <component name="ChangeListManager">
     <list default="true" id="71dcf4d1-14a6-45f1-89d1-59118d21ea10" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/discipline-form/discipline-modal-component/discipline-modal.component.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/discipline-editor.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/Front/src/app/pages/syllabus-component/syllabus-variables-component/syllabus-variables.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Document.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Library.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/Library.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Entity/WeeklyTopic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/SyllabusGeneratorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/SyllabusGeneratorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/WeeklyTopicService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/labrary/digitaldepartment/Service/WeeklyTopicService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/syllabus_tamplate.docx" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/syllabus_tamplate.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Document.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Library.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/Library.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/WeeklyTopic.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Entity/WeeklyTopic.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/SyllabusGeneratorService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/SyllabusGeneratorService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/WeeklyTopicService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/labrary/digitaldepartment/Service/WeeklyTopicService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/templates/syllabus_tamplate.docx" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/syllabus_tamplate.docx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -215,7 +232,8 @@
       <workItem from="1777461651682" duration="190000" />
       <workItem from="1777466316280" duration="135000" />
       <workItem from="1777534883167" duration="6000" />
-      <workItem from="1777875639040" duration="621000" />
+      <workItem from="1777875639040" duration="18646000" />
+      <workItem from="1777962843588" duration="359000" />
     </task>
     <task id="LOCAL-00001" summary="fr">
       <option name="closed" value="true" />
@@ -297,7 +315,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777875726569</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary=".">
+      <option name="closed" value="true" />
+      <created>1777876398031</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1777876398031</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

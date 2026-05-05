@@ -155,27 +155,54 @@
             </div>
 
             <div class="literature-section">
-              <label class="section-label">Список литературы и ресурсов</label>
+              <div class="section-header">
+                <label class="section-label">Список литературы и ресурсов</label>
+                <span class="items-count" *ngIf="doc.syllabus.literature.length">
+      ({{ doc.syllabus.literature.length }})
+    </span>
+              </div>
 
-              <div *ngFor="let item of doc.syllabus.literature; let i = index" class="literature-card">
-                <div class="literature-inputs">
-                  <div class="input-row">
-                    <input type="text" class="custom-input" [(ngModel)]="item.title" placeholder="Название книги">
-                    <input type="text" class="custom-input" [(ngModel)]="item.author" placeholder="Автор">
+              <div class="literature-list">
+                <div *ngFor="let item of doc.syllabus.literature; let i = index"
+                     class="literature-card"
+                     [@listAnimation]> <div class="card-number">{{ i + 1 }}</div>
+
+                  <div class="literature-inputs">
+                    <div class="input-row">
+                      <div class="field-wrapper">
+                        <span class="field-icon material-symbols-outlined">book</span>
+                        <input type="text" class="custom-input" [(ngModel)]="item.title" placeholder="Название книги">                      </div>
+                      <div class="field-wrapper">
+                        <span class="field-icon material-symbols-outlined">person_edit</span>
+                        <input type="text" class="custom-input" [(ngModel)]="item.author" placeholder="Автор">
+                      </div>
+                    </div>
+
+                    <div class="input-row secondary-row">
+                      <div class="field-wrapper">
+                        <span class="field-icon material-symbols-outlined">barcode</span>
+                        <input type="text" class="custom-input" [(ngModel)]="item.isbn" placeholder="ISBN">
+                      </div>
+                      <div class="field-wrapper">
+                        <span class="field-icon material-symbols-outlined">link</span>
+                        <input type="text" class="custom-input" [(ngModel)]="item.url" placeholder="Ссылка (URL)">
+                      </div>
+                    </div>
                   </div>
-                  <div class="input-row">
-                    <input type="text" class="custom-input" [(ngModel)]="item.isbn" placeholder="ISBN">
-                    <input type="text" class="custom-input" [(ngModel)]="item.url" placeholder="Ссылка (URL)">
+
+                  <div class="action-zone">
+                    <button type="button" class="btn-remove-item" (click)="removeLiteratureLine(i)" title="Удалить">
+                      <span class="material-symbols-outlined">delete_forever</span>
+                    </button>
                   </div>
                 </div>
-                <button type="button" class="btn-remove-item" (click)="removeLiteratureLine(i)">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
               </div>
 
               <button type="button" class="btn-add-line" (click)="addLiteratureLine()">
-                <span class="material-symbols-outlined">add</span>
-                Добавить литературу
+                <div class="btn-content">
+                  <span class="material-symbols-outlined">add_circle</span>
+                  <span>Добавить источник</span>
+                </div>
               </button>
             </div>
           </div>
@@ -185,7 +212,11 @@
           <div class="card-header">
             <h3 style="text-transform: capitalize;">{{ activeTab }}</h3>
           </div>
-          <tables [config]="getTableConfig(activeTab)" [data]="getTableData(activeTab)"></tables>
+          <tables
+            [config]="getTableConfig(activeTab)"
+            [data]="getTableData(activeTab)"
+            (changeData)="onTableDataChange($event, activeTab)">
+          </tables>
         </div>
 
         <div class="card preview-card" *ngIf="activeTab === 'preview'">

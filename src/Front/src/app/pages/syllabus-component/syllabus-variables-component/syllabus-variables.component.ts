@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, finalize } from 'rxjs';
 import { SyllabusDocument } from '../../../Services/Document/Document';
 import { ContentService } from '../../../Services/Content/ContentService';
-import { TableConfig } from '../../../models/table-config.model';
 import { TablesComponent } from '../../../shared-new/tables/tables.component';
 import { TableColumnTypes } from '../../../shared-new/tables/table-column-types';
 import { WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
@@ -12,6 +11,17 @@ import { DocumentService } from '../../../Services/Document/DocumetService';
 import { FormsModule } from '@angular/forms';
 import { renderAsync } from 'docx-preview';
 import {LibraryBook} from '../../../Services/Library/Library';
+import {TableConfig} from '../../../models/table-config.model';
+
+export interface TableRowColumn {
+  key: string;
+  title: string;
+  type: TableColumnTypes;
+  width?: string;
+  options?: { value: string; label: string }[];
+  multilingual?: any;
+  objectColumn?: any;
+}
 
 @Component({
   selector: 'app-syllabus-variables',
@@ -37,20 +47,56 @@ export class SyllabusVariablesComponent implements OnInit {
   srsp: WeeklyTopic[] = [];
   srs: WeeklyTopic[] = [];
 
-  lectureConfig: TableConfig = { columns: this.getColumns('lectureTopic') };
-  practiceConfig: TableConfig = { columns: this.getColumns('practiceTopic') };
-  srspConfig: TableConfig = { columns: this.getColumns('srspTopic') };
-  srsConfig: TableConfig = { columns: this.getColumns('spzTopic') };
+  getTableConfig(tab: string): TableConfig {
+    const literatureOptions = this.syllabus()?.syllabus?.literature?.map((lit, index) => ({
+      value: (index + 1).toString(),
+      label: `${index + 1}. ${lit.title || 'Untitled'}`
+    })) || [];
 
-  private getColumns(topicKey: string) {
-    return [
-      { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
-      { key: topicKey, title: 'Тема занятия', type: TableColumnTypes.inputText },
-      { key: 'hours', title: 'Часы', type: TableColumnTypes.inputNumber, width: '100px' },
-      { key: 'references', title: 'Литература', type: TableColumnTypes.inputText },
-      { key: 'reportingForm', title: 'Форма отчетности', type: TableColumnTypes.inputText },
-      { key: 'deadline', title: 'Дедлайн', type: TableColumnTypes.inputText }
+    const optionsWithDefault = [
+      { value: '', label: 'Select source...' },
+      ...literatureOptions
     ];
+
+    let cols: any[] = [];
+
+    if (tab === 'lectures') {
+      cols = [
+        { key: 'weekNumber', title: 'Week/date', type: TableColumnTypes.index, width: '80px' },
+        { key: 'lectureTopic', title: 'Course topics', type: TableColumnTypes.inputText },
+        {
+          key: 'references',
+          title: 'References',
+          type: TableColumnTypes.select,
+          options: optionsWithDefault
+        },
+        { key: 'hours', title: 'Lectures (h/w)', type: TableColumnTypes.inputNumber, width: '90px' }
+      ];
+    } else {
+      const topicKeys: Record<string, string> = {
+        'practices': 'practiceTopic',
+        'srsp': 'srspTopic',
+        'srs': 'spzTopic'
+      };
+
+      cols = [
+        { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
+        { key: topicKeys[tab], title: 'Topic / Assignment title', type: TableColumnTypes.inputText },
+        { key: 'hours', title: 'Hours', type: TableColumnTypes.inputNumber, width: '90px' },
+        {
+          key: 'references',
+          title: 'References',
+          type: TableColumnTypes.select,
+          options: optionsWithDefault
+        },
+        { key: 'reportingForm', title: 'Form of reporting', type: TableColumnTypes.inputText },
+        { key: 'deadline', title: 'Deadline', type: TableColumnTypes.inputText }
+      ];
+    }
+
+    return {
+      columns: cols as TableRowColumn[]
+    };
   }
 
   ngOnInit(): void {
@@ -68,16 +114,65 @@ export class SyllabusVariablesComponent implements OnInit {
       .subscribe({
         next: (res) => {
           const loadedDoc = res.doc;
+
           if (!loadedDoc.syllabus) {
             loadedDoc.syllabus = this.createNewSyllabus(loadedDoc.id!);
           }
           this.syllabus.set(loadedDoc);
-          this.distributeTopics(res.topics);
+
+          const rawTopics = (res.topics && res.topics.length > 0)
+            ? res.topics
+            : this.createDefaultTopics(id);
+
+          this.distributeTopics(rawTopics);
+
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Ошибка загрузки:', err)
+        error: (err) => {
+          console.error('Ошибка загрузки:', err);
+          this.isLoading.set(false);
+        }
       });
   }
+
+
+  private createDefaultTopics(documentId: number): WeeklyTopic[] {
+    const defaultTopics: WeeklyTopic[] = [];
+
+    for (let i = 1; i <= 15; i++) {
+      let lect = '';
+      let ref = 'Basic literature';
+
+
+
+      defaultTopics.push({
+        weekNumber: i,
+        lectureTopic: lect,
+        practiceTopic: lect,
+        srspTopic: i === 2 ? 'PA (Points Assessment)' : '',
+        spzTopic: i === 2 ? 'Choice of the topic (individual presentation)' : '',
+        hours: 1,
+        references: ref,
+        reportingForm: i === 2 ? 'Report/Essay/Presentation' : '',
+        deadline: 'one week period',
+        document: { id: documentId } as any
+      } as WeeklyTopic);
+    }
+
+    return defaultTopics;
+  }
+
+
+  private distributeTopics(topics: WeeklyTopic[]) {
+    if (!topics) return;
+
+    const sortedTopics = [...topics].sort((a, b) => a.weekNumber - b.weekNumber);
+    this.lectures = sortedTopics;
+    this.practices = sortedTopics;
+    this.srsp = sortedTopics;
+    this.srs = sortedTopics;
+  }
+
 
   private createNewSyllabus(id: number) {
     return {
@@ -104,7 +199,6 @@ export class SyllabusVariablesComponent implements OnInit {
       if (!doc.syllabus.literature) {
         doc.syllabus.literature = [];
       }
-      // Инициализируем объект согласно интерфейсу LibraryBook
       const newBook: LibraryBook = {
         title: '',
         author: '',
@@ -120,14 +214,6 @@ export class SyllabusVariablesComponent implements OnInit {
     if (doc?.syllabus?.literature) {
       doc.syllabus.literature.splice(index, 1);
     }
-  }
-
-  private distributeTopics(topics: WeeklyTopic[]) {
-    if (!topics) return;
-    this.lectures = topics.filter(t => t.lectureTopic);
-    this.practices = topics.filter(t => t.practiceTopic);
-    this.srsp = topics.filter(t => t.srspTopic);
-    this.srs = topics.filter(t => t.spzTopic);
   }
 
   setActiveTab(tab: string) {
@@ -175,26 +261,39 @@ export class SyllabusVariablesComponent implements OnInit {
       });
   }
 
-  getTableConfig(tab: string) {
-    const configs: any = {
-      lectures: this.lectureConfig,
-      practices: this.practiceConfig,
-      srsp: this.srspConfig,
-      srs: this.srsConfig
-    };
-    return configs[tab];
-  }
-
-  getTableData(tab: string) {
-    const data: any = {
-      lectures: this.lectures,
-      practices: this.practices,
-      srsp: this.srsp,
-      srs: this.srs
-    };
-    return data[tab];
+  getTableData(tab: string): WeeklyTopic[] {
+    switch (tab) {
+      case 'lectures':
+        return this.lectures;
+      case 'practices':
+        return this.practices;
+      case 'srsp':
+        return this.srsp;
+      case 'srs':
+        return this.srs;
+      default:
+        return [];
+    }
   }
 
   downloadWord(id: number) { this.documentService.downloadSyllabus(id); }
-  goBack() { this.router.navigate(['/syllabus-editor']); }
+  goBack() { this.router.navigate(['/syllabus']); }
+
+
+  onTableDataChange(event: any, tab: string) {
+    const { event: newValue, key, index } = event;
+
+    let targetArray: WeeklyTopic[] = [];
+    switch (tab) {
+      case 'lectures': targetArray = this.lectures; break;
+      case 'practices': targetArray = this.practices; break;
+      case 'srsp': targetArray = this.srsp; break;
+      case 'srs': targetArray = this.srs; break;
+    }
+
+    if (targetArray[index]) {
+      (targetArray[index] as any)[key] = newValue;
+      this.cdr.detectChanges();
+    }
+  }
 }

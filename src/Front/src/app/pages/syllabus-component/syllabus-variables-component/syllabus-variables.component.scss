@@ -184,21 +184,37 @@ $word-blue: #2b579a;
 }
 
 .preview-container {
-  padding: 30px;
-  min-height: 500px;
+  background: #525659; // Темный фон, чтобы видеть границы листов
+  padding: 40px 20px;
   display: flex;
   justify-content: center;
-  position: relative;
 
   #docx-container {
     width: 100%;
-    max-width: 800px;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    min-height: 1000px;
+    max-width: 850px;
+
+    ::ng-deep {
+      .docx-wrapper {
+        background: transparent !important;
+        padding: 0 !important;
+        display: flex;
+        flex-direction: column;
+        gap: 20px; // Расстояние между листами
+      }
+
+      section.docx {
+        background: white !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+        margin: 0 auto !important;
+        padding: 2cm !important; // Поля, чтобы текст не лип к краям
+        min-height: 297mm !important; // Фиксированная высота A4
+        box-sizing: border-box;
+        display: block !important;
+        position: relative;
+      }
+    }
   }
 }
-
 .preview-loader {
   position: absolute;
   top: 50%; left: 50%;
@@ -232,54 +248,6 @@ $word-blue: #2b579a;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.literature-card {
-  display: flex;
-  gap: 15px;
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  align-items: center;
-
-  .literature-inputs {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    .row {
-      display: flex;
-      gap: 10px;
-      input { flex: 1; }
-    }
-  }
-
-  .btn-remove {
-    background: #fee2e2;
-    color: #ef4444;
-    border: none;
-    border-radius: 4px;
-    padding: 8px;
-    cursor: pointer;
-    &:hover { background: #fecaca; }
-  }
-}
-
-.btn-add-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px dashed #3b82f6;
-  padding: 10px;
-  width: 100%;
-  justify-content: center;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 10px;
-  &:hover { background: #dbeafe; }
-}
 
 .header-banner {
   display: flex;
@@ -394,5 +362,150 @@ $word-blue: #2b579a;
 
   &:active {
     transform: translateY(0);
+  }
+}
+
+.literature-section {
+  margin-top: 2rem;
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+
+    .section-label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+
+    .items-count {
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.literature-card {
+  display: flex;
+  gap: 15px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .card-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+}
+
+.literature-inputs {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .field-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 18px;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+
+  .custom-input {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 8px;
+    background: #f8fafc;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #fff;
+    }
+  }
+}
+
+.btn-remove-item {
+  background: #fff1f2;
+  color: #e11d48;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e11d48;
+    color: #fff;
+  }
+}
+
+.btn-add-line {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  &:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #f0f7ff;
   }
 }

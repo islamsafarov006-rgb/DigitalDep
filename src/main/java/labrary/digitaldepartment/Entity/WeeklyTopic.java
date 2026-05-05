@@ -20,6 +20,7 @@ public class WeeklyTopic {
     @Column(nullable = false)
     private Integer weekNumber;
 
+    // Темы занятий для разных типов
     @Column(columnDefinition = "TEXT")
     private String lectureTopic;
 
@@ -27,26 +28,29 @@ public class WeeklyTopic {
     private String practiceTopic;
 
     @Column(columnDefinition = "TEXT")
-    private String srspTopic;
+    private String srspTopic; // Она же SIWT из шаблона
+
+    @Column(columnDefinition = "TEXT")
+    private String srsTopic;  // Добавлено: Темы для СРС (SIS)
 
     @Column(columnDefinition = "TEXT")
     private String spzTopic;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "document_id")
-    @JsonBackReference
-    private Document document;
-
-    // Новые поля
+    // Параметры нагрузки и отчетности (из скриншота)
     @Column(name = "hours")
     private Integer hours;
 
     @Column(columnDefinition = "TEXT", name = "\"references\"")
     private String references;
 
-    @Column(columnDefinition = "TEXT", name = "reporting_form") // Рекомендуется snake_case для БД
+    @Column(columnDefinition = "TEXT", name = "reporting_form")
     private String reportingForm;
 
     @Column(columnDefinition = "TEXT", name = "deadline")
     private String deadline;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    @JsonBackReference
+    private Document document;
 }
