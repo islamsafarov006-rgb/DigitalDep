@@ -184,7 +184,7 @@ $word-blue: #2b579a;
 }
 
 .preview-container {
-  background: #525659; // Темный фон, чтобы видеть границы листов
+  background: #525659;
   padding: 40px 20px;
   display: flex;
   justify-content: center;
@@ -199,15 +199,15 @@ $word-blue: #2b579a;
         padding: 0 !important;
         display: flex;
         flex-direction: column;
-        gap: 20px; // Расстояние между листами
+        gap: 20px;
       }
 
       section.docx {
         background: white !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
         margin: 0 auto !important;
-        padding: 2cm !important; // Поля, чтобы текст не лип к краям
-        min-height: 297mm !important; // Фиксированная высота A4
+        padding: 2cm !important;
+        min-height: 297mm !important;
         box-sizing: border-box;
         display: block !important;
         position: relative;
@@ -329,7 +329,6 @@ $word-blue: #2b579a;
   background: #f3f4f6;
   color: #374151;
 
-  // Пример динамического цвета для статуса DRAFT
   &[data-status="DRAFT"] {
     background: #fef3c7;
     color: #92400e;
@@ -341,7 +340,7 @@ $word-blue: #2b579a;
   align-items: center;
   gap: 10px;
   padding: 12px 20px;
-  background: #2563eb; // Современный синий
+  background: #2563eb;
   color: #ffffff;
   border: none;
   border-radius: 12px;

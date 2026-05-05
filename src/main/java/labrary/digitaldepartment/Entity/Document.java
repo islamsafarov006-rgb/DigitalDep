@@ -59,8 +59,7 @@ public class Document {
         this.syllabus = syllabus;
     }
 
-    // Добавь это в Document.java
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CourseVolume> courseVolumes; // Теперь метод getCourseVolumes() появится
+    private List<CourseVolume> courseVolumes;
 }

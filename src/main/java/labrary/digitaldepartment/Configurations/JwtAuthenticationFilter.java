@@ -32,13 +32,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String path = request.getServletPath();
 
-        // Пропускаем авторизацию
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Если заголовка нет или он неверный
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -56,15 +54,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
-                    // Токен невалиден (истек и т.д.)
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired or invalid");
-                    return; // Прерываем цепочку
+                    return;
                 }
             }
         } catch (Exception e) {
             log.error("JWT Error: {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
-            return; // Прерываем цепочку
+            return;
         }
 
         filterChain.doFilter(request, response);

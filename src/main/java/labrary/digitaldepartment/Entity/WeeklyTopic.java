@@ -20,7 +20,6 @@ public class WeeklyTopic {
     @Column(nullable = false)
     private Integer weekNumber;
 
-    // Темы занятий для разных типов
     @Column(columnDefinition = "TEXT")
     private String lectureTopic;
 
@@ -28,15 +27,14 @@ public class WeeklyTopic {
     private String practiceTopic;
 
     @Column(columnDefinition = "TEXT")
-    private String srspTopic; // Она же SIWT из шаблона
+    private String srspTopic;
 
     @Column(columnDefinition = "TEXT")
-    private String srsTopic;  // Добавлено: Темы для СРС (SIS)
+    private String srsTopic;
 
     @Column(columnDefinition = "TEXT")
     private String spzTopic;
 
-    // Параметры нагрузки и отчетности (из скриншота)
     @Column(name = "hours")
     private Integer hours;
 

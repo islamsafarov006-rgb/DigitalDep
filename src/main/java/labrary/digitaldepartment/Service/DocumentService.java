@@ -23,7 +23,6 @@
         private final DocumentRepository documentRepository;
         private final UserRepository userRepository;
 
-        // Этот метод не трогаем, он у тебя уже есть
         @Transactional
         public Document saveDocument(Document document) {
             String iin = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -42,13 +41,9 @@
             return documentRepository.save(document);
         }
         private void checkAuthority(Document document) {
-            // Достаем ИИН текущего залогиненного пользователя из JWT
             String currentIin = SecurityContextHolder.getContext().getAuthentication().getName();
 
-            // Сравниваем с ИИН автора документа
             if (document.getAuthor() == null || !document.getAuthor().getIin().equals(currentIin)) {
-                // Если ИИН не совпадают, выбрасываем исключение
-                // Spring Security превратит это в 403 Forbidden для фронтенда
                 throw new AccessDeniedException("У вас нет прав для доступа к этому документу");
             }
         }

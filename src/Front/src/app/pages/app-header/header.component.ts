@@ -19,7 +19,6 @@ export class HeaderComponent implements OnInit {
   private translocoService = inject(TranslocoService);
   private authService = inject(AuthService);
 
-  // Получаем данные пользователя. Убедитесь, что AuthService возвращает объект или null.
   user = this.authService.currentUser();
 
   readonly languages = [
@@ -42,7 +41,6 @@ export class HeaderComponent implements OnInit {
 
   private updateVisibility(url: string) {
     const hiddenRoutes = ['/login', '/register'];
-    // Проверка на точное совпадение начала пути
     this.isVisible = !hiddenRoutes.some(route => url.startsWith(route));
   }
 

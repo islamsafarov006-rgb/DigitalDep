@@ -27,7 +27,7 @@ export interface AcademicLoad {
   totalHours: number;
 }
 
-export interface PaymentDetail { // Убрал 's', чтобы совпадало с Java Entity
+export interface PaymentDetail {
   id?: number;
   staffLoad: number;
   hourlyLoad: number;
@@ -35,19 +35,18 @@ export interface PaymentDetail { // Убрал 's', чтобы совпадал�
 
 export interface WeeklyTopic {
   id?: number;
-  topicName: string; // добавьте поля согласно вашей Java WeeklyTopic Entity
+  topicName: string;
   hours?: number;
 }
 
 export interface SyllabusDocument {
   id?: number;
-  discipline: Discipline; // Убрал опциональность, так как в БД nullable=false
+  discipline: Discipline;
   status: DocumentStatus;
   academicYear: string;
   semester: number;
   author?: User;
 
-  // Дочерние объекты
   syllabus?: Syllabus;
   academicLoads?: AcademicLoad[];
   paymentDetails?: PaymentDetail[];

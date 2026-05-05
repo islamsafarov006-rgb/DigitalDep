@@ -39,7 +39,6 @@ export class DisciplineFormComponent implements OnInit {
 
   disciplineForm!: FormGroup;
 
-  // Храним данные для таблицы в обычном свойстве, чтобы ссылка не менялась постоянно
   public tableDataSource: any[] = [];
 
   public syllabusTableConfig: TableConfig = {

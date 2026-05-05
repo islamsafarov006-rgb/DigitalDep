@@ -25,8 +25,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // Внедряем фильтр через final поле. Spring сам его найдет,
-    // если над классом JwtAuthenticationFilter стоит @Component
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -37,12 +35,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Защищаем документы, требуя авторизацию
                         .requestMatchers("/api/documents/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Используем внедренное поле
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

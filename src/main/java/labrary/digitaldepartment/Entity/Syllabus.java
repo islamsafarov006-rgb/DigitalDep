@@ -17,7 +17,7 @@ public class Syllabus {
     @OneToOne
     @MapsId
     @JoinColumn(name = "id")
-    @com.fasterxml.jackson.annotation.JsonBackReference // Чтобы не было бесконечной рекурсии
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private Document document;
 
     private String academicProgramCode;

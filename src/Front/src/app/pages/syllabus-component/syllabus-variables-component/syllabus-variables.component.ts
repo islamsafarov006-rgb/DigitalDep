@@ -52,7 +52,6 @@ export class SyllabusVariablesComponent implements OnInit {
     if (id) this.loadData(+id);
   }
 
-// Оставляем только нужные методы
   loadData(id: number) {
     this.isLoading.set(true);
     forkJoin({
@@ -74,7 +73,6 @@ export class SyllabusVariablesComponent implements OnInit {
       });
   }
 
-// Помощник для получения нужного массива тем во вью
   get currentTopics(): WeeklyTopic[] {
     switch (this.activeTab) {
       case 'lectures': return this.lectures;
@@ -85,7 +83,6 @@ export class SyllabusVariablesComponent implements OnInit {
     }
   }
 
-// Методы для литературы остаются прежними
   addLiteratureLine() {
     const doc = this.syllabus();
     if (doc?.syllabus) {

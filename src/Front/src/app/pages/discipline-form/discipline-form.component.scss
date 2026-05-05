@@ -1,6 +1,6 @@
 .discipline-container {
   padding: 32px;
-  background-color: #f8fafc; // Светло-серый фон для отдыха глаз
+  background-color: #f8fafc;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
 
@@ -23,7 +23,6 @@
     }
   }
 
-  // Кнопки в стиле современных SaaS
   .btn-primary, .btn-secondary {
     padding: 10px 20px;
     border-radius: 10px;
@@ -111,31 +110,25 @@
   }
 }
 
-// Глобальные фиксы для твоих кастомных инпутов внутри таблицы
 :host ::ng-deep {
   .table-wrapper {
-    // Убираем лишние отступы Material внутри ячеек таблицы
     mat-form-field {
       width: 100%;
 
-      // Скрываем блок для ошибок под инпутом, чтобы строка не "раздувалась" по высоте
       .mat-mdc-form-field-subscript-wrapper {
         display: none !important;
       }
 
-      // Убираем стандартный серый фон и внутренние паддинги
       .mat-mdc-text-field-wrapper {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
         background: transparent !important;
       }
 
-      // Убираем подчеркивание при фокусе, чтобы таблица выглядела чище
       .mdc-line-ripple {
         display: none !important;
       }
 
-      // Делаем сам инпут компактнее
       .mat-mdc-form-field-flex {
         height: 40px;
         align-items: center;

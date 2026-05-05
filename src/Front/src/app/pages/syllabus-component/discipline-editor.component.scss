@@ -1,4 +1,3 @@
-// --- Константы и Переменные ---
 $primary: #4f46e5;
 $primary-light: #f5f7ff;
 $text-main: #1e293b;
@@ -6,7 +5,6 @@ $text-muted: #64748b;
 $border-light: #f1f5f9;
 $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-// --- Миксин для статусов (для сокращения кода) ---
 @mixin status-variant($bg, $color) {
   background-color: $bg;
   color: $color;
@@ -19,7 +17,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-// --- Шапка списка ---
 .list-header {
   display: flex;
   justify-content: space-between;
@@ -41,7 +38,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// --- Кнопка создания ---
 .create-btn {
   display: flex;
   align-items: center;
@@ -62,7 +58,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// --- Основной контейнер-карточка ---
 .content-card {
   background: white;
   border-radius: 20px;
@@ -71,7 +66,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-// --- Элемент списка (Строка документа) ---
 .doc-item {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -84,7 +78,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border-bottom: none;
   }
 
-  // Стили для кликабельной строки
   &.clickable-row {
     cursor: pointer;
 
@@ -108,7 +101,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// --- Блок информации ---
 .doc-info {
   display: flex;
   align-items: center;
@@ -154,7 +146,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// --- Статус-бейджи ---
 .status-badge {
   display: flex;
   align-items: center;
@@ -173,7 +164,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background: currentColor;
   }
 
-  // Варианты статусов
   &.active, &.published { @include status-variant(#ecfdf5, #10b981); }
   &.draft { @include status-variant(#f1f5f9, #475569); }
   &.under_review { @include status-variant(#eff6ff, #3b82f6); }
@@ -181,7 +171,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   &.library_check { @include status-variant(#fffbeb, #f59e0b); }
 }
 
-// --- Лоадер и Пустое состояние ---
 .loader-container {
   padding: 60px 0;
   text-align: center;
@@ -202,7 +191,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// --- Адаптивность ---
 @media (max-width: 640px) {
   .doc-item {
     grid-template-columns: 1fr;

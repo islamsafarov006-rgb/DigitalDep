@@ -10,7 +10,6 @@ export class DocumentService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/documents`;
 
-  // --- Существующие методы ---
 
   getById(id: number): Observable<SyllabusDocument> {
     return this.http.get<SyllabusDocument>(`${this.apiUrl}/${id}`);
@@ -36,21 +35,13 @@ export class DocumentService {
   getAll(): Observable<SyllabusDocument[]> {
     return this.http.get<SyllabusDocument[]>(`${this.apiUrl}/my`);
   }
-
-  // --- НОВЫЕ МЕТОДЫ ДЛЯ РАБОТЫ С ДОКУМЕНТОМ ---
-
-  /**
-   * Запрашивает генерацию файла Word и возвращает его как Blob
-   */
   exportToWord(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/export`, {
-      responseType: 'blob' // КРИТИЧНО: указываем, что ждем файл
+      responseType: 'blob'
     });
   }
 
-  /**
-   * Метод для скачивания файла (вспомогательный)
-   */
+
   downloadSyllabus(id: number, fileName: string = 'syllabus.docx'): void {
     this.exportToWord(id).subscribe({
       next: (blob) => {
