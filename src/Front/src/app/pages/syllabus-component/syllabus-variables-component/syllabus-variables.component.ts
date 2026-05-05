@@ -10,8 +10,7 @@ import { WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTop
 import { DocumentService } from '../../../Services/Document/DocumetService';
 import { FormsModule } from '@angular/forms';
 import { renderAsync } from 'docx-preview';
-import {LibraryBook} from '../../../Services/Library/Library';
-import {TableConfig} from '../../../models/table-config.model';
+
 
 export interface TableRowColumn {
   key: string;
@@ -26,7 +25,7 @@ export interface TableRowColumn {
 @Component({
   selector: 'app-syllabus-variables',
   standalone: true,
-  imports: [CommonModule, TablesComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './syllabus-variables.component.html',
   styleUrls: ['./syllabus-variables.component.scss']
 })
@@ -47,63 +46,13 @@ export class SyllabusVariablesComponent implements OnInit {
   srsp: WeeklyTopic[] = [];
   srs: WeeklyTopic[] = [];
 
-  getTableConfig(tab: string): TableConfig {
-    const literatureOptions = this.syllabus()?.syllabus?.literature?.map((lit, index) => ({
-      value: (index + 1).toString(),
-      label: `${index + 1}. ${lit.title || 'Untitled'}`
-    })) || [];
-
-    const optionsWithDefault = [
-      { value: '', label: 'Select source...' },
-      ...literatureOptions
-    ];
-
-    let cols: any[] = [];
-
-    if (tab === 'lectures') {
-      cols = [
-        { key: 'weekNumber', title: 'Week/date', type: TableColumnTypes.index, width: '80px' },
-        { key: 'lectureTopic', title: 'Course topics', type: TableColumnTypes.inputText },
-        {
-          key: 'references',
-          title: 'References',
-          type: TableColumnTypes.select,
-          options: optionsWithDefault
-        },
-        { key: 'hours', title: 'Lectures (h/w)', type: TableColumnTypes.inputNumber, width: '90px' }
-      ];
-    } else {
-      const topicKeys: Record<string, string> = {
-        'practices': 'practiceTopic',
-        'srsp': 'srspTopic',
-        'srs': 'spzTopic'
-      };
-
-      cols = [
-        { key: 'weekNumber', title: '№', type: TableColumnTypes.index, width: '60px' },
-        { key: topicKeys[tab], title: 'Topic / Assignment title', type: TableColumnTypes.inputText },
-        { key: 'hours', title: 'Hours', type: TableColumnTypes.inputNumber, width: '90px' },
-        {
-          key: 'references',
-          title: 'References',
-          type: TableColumnTypes.select,
-          options: optionsWithDefault
-        },
-        { key: 'reportingForm', title: 'Form of reporting', type: TableColumnTypes.inputText },
-        { key: 'deadline', title: 'Deadline', type: TableColumnTypes.inputText }
-      ];
-    }
-
-    return {
-      columns: cols as TableRowColumn[]
-    };
-  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadData(+id);
   }
 
+// Оставляем только нужные методы
   loadData(id: number) {
     this.isLoading.set(true);
     forkJoin({
@@ -113,47 +62,65 @@ export class SyllabusVariablesComponent implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          const loadedDoc = res.doc;
-
-          if (!loadedDoc.syllabus) {
-            loadedDoc.syllabus = this.createNewSyllabus(loadedDoc.id!);
-          }
-          this.syllabus.set(loadedDoc);
-
+          this.syllabus.set(res.doc);
           const rawTopics = (res.topics && res.topics.length > 0)
             ? res.topics
             : this.createDefaultTopics(id);
 
           this.distributeTopics(rawTopics);
-
           this.cdr.detectChanges();
         },
-        error: (err) => {
-          console.error('Ошибка загрузки:', err);
-          this.isLoading.set(false);
-        }
+        error: (err) => console.error('Ошибка:', err)
       });
   }
 
+// Помощник для получения нужного массива тем во вью
+  get currentTopics(): WeeklyTopic[] {
+    switch (this.activeTab) {
+      case 'lectures': return this.lectures;
+      case 'practices': return this.practices;
+      case 'srsp': return this.srsp;
+      case 'srs': return this.srs;
+      default: return [];
+    }
+  }
+
+// Методы для литературы остаются прежними
+  addLiteratureLine() {
+    const doc = this.syllabus();
+    if (doc?.syllabus) {
+      if (!doc.syllabus.literature) doc.syllabus.literature = [];
+      doc.syllabus.literature.push({ title: '', author: '', isbn: '', url: '' });
+      this.cdr.detectChanges();
+    }
+  }
+
+  removeLiteratureLine(index: number) {
+    const doc = this.syllabus();
+    if (doc?.syllabus?.literature) {
+      doc.syllabus.literature.splice(index, 1);
+      this.cdr.detectChanges();
+    }
+  }
 
   private createDefaultTopics(documentId: number): WeeklyTopic[] {
     const defaultTopics: WeeklyTopic[] = [];
 
     for (let i = 1; i <= 15; i++) {
       let lect = '';
-      let ref = 'Basic literature';
+      let ref = 'Clean Code: A Handbook of Agile Software Craftsmanship';
 
 
 
       defaultTopics.push({
         weekNumber: i,
-        lectureTopic: lect,
-        practiceTopic: lect,
-        srspTopic: i === 2 ? 'PA (Points Assessment)' : '',
-        spzTopic: i === 2 ? 'Choice of the topic (individual presentation)' : '',
+        lectureTopic: '',
+        practiceTopic: '',
+        srspTopic:  '',
+        spzTopic:  '',
         hours: 1,
         references: ref,
-        reportingForm: i === 2 ? 'Report/Essay/Presentation' : '',
+        reportingForm: 'Report/Essay/Presentation',
         deadline: 'one week period',
         document: { id: documentId } as any
       } as WeeklyTopic);
@@ -191,29 +158,6 @@ export class SyllabusVariablesComponent implements OnInit {
       numberOfCredits: 0,
       groupOfAcademicPrograms: ''
     };
-  }
-
-  addLiteratureLine() {
-    const doc = this.syllabus();
-    if (doc?.syllabus) {
-      if (!doc.syllabus.literature) {
-        doc.syllabus.literature = [];
-      }
-      const newBook: LibraryBook = {
-        title: '',
-        author: '',
-        isbn: '',
-        url: ''
-      };
-      doc.syllabus.literature.push(newBook);
-    }
-  }
-
-  removeLiteratureLine(index: number) {
-    const doc = this.syllabus();
-    if (doc?.syllabus?.literature) {
-      doc.syllabus.literature.splice(index, 1);
-    }
   }
 
   setActiveTab(tab: string) {

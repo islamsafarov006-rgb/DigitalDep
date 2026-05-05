@@ -10,7 +10,8 @@ import { TablesComponent } from '../../shared-new/tables/tables.component';
 import { Inputs } from '../../shared-new/inputs/inputs';
 import { Selects } from '../../shared-new/selects/selects';
 import { DocumentService } from '../../Services/Document/DocumetService';
-import { DocumentStatus, SyllabusDocument } from '../../Services/Document/Document';
+import { DocumentStatus } from '../../Services/Document/Document';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-discipline-form',
@@ -32,7 +33,7 @@ export class DisciplineFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly docService = inject(DocumentService);
-
+  private router = inject(Router);
   public readonly InputTypes = Inputs;
   public readonly SelectTypes = Selects;
 
@@ -124,4 +125,7 @@ export class DisciplineFormComponent implements OnInit {
         error: (err) => console.error('Ошибка при сохранении:', err)
       });
   }
+
+  goBack() { this.router.navigate(['/syllabus']); }
+
 }

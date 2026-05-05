@@ -147,11 +147,11 @@ public class SyllabusGeneratorService {
             data.put("{{literature}}", formatLiterature(syllabus));
         }
 
-        data.put("{{   academicYear}}", nvl(doc.getAcademicYear()));
+        data.put("{{ academicYear}}", nvl(doc.getAcademicYear()));
         data.put("{{semester}}", String.valueOf(nvlInt(doc.getSemester())));
 
         String assessment = (syllabus != null) ? nvl(syllabus.getFinalAssessment()) : "";
-        data.put("{{   finalAssessment}}", assessment);
+        data.put(" {{ finalAssessment}}", assessment);
 
         List<CourseVolume> volumes = doc.getCourseVolumes();
         if (volumes != null && !volumes.isEmpty()) {

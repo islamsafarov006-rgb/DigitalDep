@@ -20,52 +20,41 @@
     } @else {
       <div class="doc-list">
         @for (doc of documents(); track doc.id) {
-          <div class="doc-item">
+          <div class="doc-item clickable-row" (click)="goToVariables(doc.id!)">
             <div class="doc-info">
               <div class="icon-wrapper">
                 <span class="material-symbols-outlined doc-main-icon">menu_book</span>
               </div>
               <div class="doc-text">
-                <span class="doc-title">
-                  {{ doc.discipline.name || ('SYLLABUS.NO_NAME' | transloco) }}
-                </span>
+              <span class="doc-title">
+                {{ doc.discipline.name || ('SYLLABUS.NO_NAME' | transloco) }}
+              </span>
                 <div class="doc-meta">
-                  <span class="meta-item">
-                    <span class="material-symbols-outlined">calendar_today</span>
-                    {{ 'SYLLABUS.SEMESTER' | transloco }} {{ doc.semester }}
-                  </span>
+                <span class="meta-item">
+                  <span class="material-symbols-outlined">calendar_today</span>
+                  {{ 'SYLLABUS.SEMESTER' | transloco }} {{ doc.semester }}
+                </span>
                   <span class="dot">·</span>
                   <span class="meta-item">
-                    <span class="material-symbols-outlined">history_edu</span>
+                  <span class="material-symbols-outlined">history_edu</span>
                     {{ doc.academicYear }} {{ 'SYLLABUS.YEAR' | transloco }}
-                  </span>
+                </span>
                 </div>
               </div>
             </div>
 
             <div class="status-container">
-              <span class="status-badge" [ngClass]="doc.status || 'draft'">
-                <span class="status-dot"></span>
-                {{ 'SYLLABUS.STATUS.' + (doc.status || 'DRAFT') | transloco }}
-              </span>
-            </div>
-
-
-            <div class="item-actions">
-              <button
-                class="action-btn view"
-                [title]="'SYLLABUS.VIEW' | transloco"
-                (click)="goToVariables(doc.id)"
-                type="button">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
+            <span class="status-badge" [ngClass]="doc.status">
+              <span class="status-dot"></span>
+              {{ 'SYLLABUS.STATUS.' + (doc.status) | transloco }}
+            </span>
             </div>
           </div>
         } @empty {
           <div class="loader-container">
-            <span class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px;">
-              folder_open
-            </span>
+          <span class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px;">
+            folder_open
+          </span>
             <p>{{ 'SYLLABUS.EMPTY' | transloco }}</p>
           </div>
         }

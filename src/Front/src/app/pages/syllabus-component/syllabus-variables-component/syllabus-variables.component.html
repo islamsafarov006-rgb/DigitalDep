@@ -212,11 +212,58 @@
           <div class="card-header">
             <h3 style="text-transform: capitalize;">{{ activeTab }}</h3>
           </div>
-          <tables
-            [config]="getTableConfig(activeTab)"
-            [data]="getTableData(activeTab)"
-            (changeData)="onTableDataChange($event, activeTab)">
-          </tables>
+
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+              <tr>
+                <th>№</th>
+                <th>Тема / Задание</th>
+                <th style="width: 80px;">Часы</th>
+                <th>Литература</th>
+                <th>Форма отчетности</th>
+                <th>Срок</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (topic of currentTopics; track $index) {
+                  <tr>
+                    <td>{{ topic.weekNumber }}</td>
+                    <td>
+                      @if (activeTab === 'lectures') {
+                        <input [(ngModel)]="topic.lectureTopic" class="table-input">
+                      } @else if (activeTab === 'practices') {
+                        <input [(ngModel)]="topic.practiceTopic" class="table-input">
+                      } @else if (activeTab === 'srsp') {
+                        <input [(ngModel)]="topic.srspTopic" class="table-input">
+                      } @else {
+                        <input [(ngModel)]="topic.spzTopic" class="table-input">
+                      }
+                    </td>
+                    <td>
+                      <input type="number" [(ngModel)]="topic.hours" class="table-input">
+                    </td>
+                    <td>
+                      <select [(ngModel)]="topic.references" class="table-select">
+                        <option value="">Выберите источник...</option>
+                        @for (lit of syllabus()?.syllabus?.literature; track $index) {
+                          @if (lit.title) {
+                            <option [value]="lit.title">{{ lit.title }}</option>
+                          }
+                        }
+                      </select>
+                    </td>
+                    <td>
+                      <input [(ngModel)]="topic.reportingForm" class="table-input">
+                    </td>
+                    <td>
+                      <input [(ngModel)]="topic.deadline" class="table-input">
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="card preview-card" *ngIf="activeTab === 'preview'">

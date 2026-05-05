@@ -1,26 +1,25 @@
-// --- Переменные дизайна ---
-$primary: #4f46e5;      // Indigo
-$primary-light: #eef2ff;
-$success: #10b981;      // Emerald
-$success-bg: #ecfdf5;
-$warning: #f59e0b;      // Amber
-$warning-bg: #fff7ed;
-$text-main: #111827;
-$text-muted: #6b7280;
-$border-color: #f1f5f9;
-$bg-body: #f9fafb;
-$transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+// --- Константы и Переменные ---
+$primary: #4f46e5;
+$primary-light: #f5f7ff;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$border-light: #f1f5f9;
+$transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-// --- Глобальные настройки контейнера ---
-.container {
-  padding: 40px 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: transparent;
+// --- Миксин для статусов (для сокращения кода) ---
+@mixin status-variant($bg, $color) {
+  background-color: $bg;
+  color: $color;
 }
 
-// --- Заголовок страницы ---
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+// --- Шапка списка ---
 .list-header {
   display: flex;
   justify-content: space-between;
@@ -28,150 +27,144 @@ $transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   margin-bottom: 32px;
 
   h1 {
-    margin: 0;
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 800;
     color: $text-main;
-    letter-spacing: -0.025em;
+    margin: 0;
+    letter-spacing: -0.02em;
   }
 
   .subtitle {
-    margin: 4px 0 0;
     color: $text-muted;
-    font-size: 1.05rem;
+    margin-top: 4px;
+    font-size: 1rem;
   }
 }
 
 // --- Кнопка создания ---
 .create-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   background: $primary;
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   cursor: pointer;
-  transition: $transition;
-  box-shadow: 0 4px 14px 0 rgba($primary, 0.25);
-
-  .material-symbols-outlined {
-    font-size: 22px;
-    font-variation-settings: 'wght' 600;
-  }
+  transition: $transition-smooth;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba($primary, 0.35);
-  }
-
-  &:active {
-    transform: translateY(0);
+    background: darken($primary, 5%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary, 0.3);
   }
 }
 
-
-// --- Основная карточка-контейнер ---
+// --- Основной контейнер-карточка ---
 .content-card {
   background: white;
-  border-radius: 24px;
-  border: 1px solid $border-color;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  border: 1px solid $border-light;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
-// --- Элемент списка ---
+// --- Элемент списка (Строка документа) ---
 .doc-item {
   display: grid;
-  grid-template-columns: 1fr auto auto; // Контент | Статус | Кнопки
+  grid-template-columns: 1fr auto;
   align-items: center;
-  padding: 24px 32px;
-  border-bottom: 1px solid $border-color;
-  transition: $transition;
+  padding: 20px 32px;
+  border-bottom: 1px solid $border-light;
+  transition: $transition-smooth;
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
-  &:hover {
-    background: #fcfdfe;
-    .icon-wrapper {
-      transform: scale(1.05) rotate(-2deg);
-      background: $primary-light;
-      color: $primary;
+  // Стили для кликабельной строки
+  &.clickable-row {
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f8fafc;
+
+      .icon-wrapper {
+        background: white;
+        color: $primary;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+
+      .doc-title {
+        color: $primary;
+      }
+    }
+
+    &:active {
+      background-color: #f1f5f9;
     }
   }
 }
 
-// --- Информационный блок ---
+// --- Блок информации ---
 .doc-info {
   display: flex;
   align-items: center;
   gap: 20px;
 
   .icon-wrapper {
-    width: 54px;
-    height: 54px;
-    background: #f8fafc;
+    width: 50px;
+    height: 50px;
+    background: #f1f5f9;
     color: #94a3b8;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 16px;
-    transition: $transition;
+    border-radius: 14px;
+    transition: $transition-smooth;
 
-    .doc-main-icon {
-      font-size: 30px;
-      font-variation-settings: 'wght' 300;
-    }
+    .doc-main-icon { font-size: 28px; }
   }
 
   .doc-title {
-    display: block;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: $text-main;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
+    transition: color 0.2s;
   }
 
   .doc-meta {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 0.85rem;
     color: $text-muted;
 
     .meta-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
 
-      .material-symbols-outlined {
-        font-size: 16px;
-        color: #cbd5e1;
-      }
+      .material-symbols-outlined { font-size: 16px; opacity: 0.7; }
     }
-
-    .dot { color: #cbd5e1; font-weight: bold; }
+    .dot { color: #cbd5e1; }
   }
 }
 
-// --- Статус-бейдж ---
-.status-container {
-  padding: 0 40px;
-}
-
+// --- Статус-бейджи ---
 .status-badge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
 
   .status-dot {
     width: 6px;
@@ -180,120 +173,47 @@ $transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: currentColor;
   }
 
-  &.published, &.active {
-    background: $success-bg;
-    color: $success;
-  }
-
-  &.draft {
-    background: #f1f5f9; color: #475569;
-  }
-  &.under_review {
-    background: #e0f2fe; color: #0369a1;
-  }
-  &.rejected {
-    background: #fee2e2; color: #b91c1c;
-  }
-  &.library_check {
-    background: #fef3c7; color: #b45309;
-  }
-  &.signed {
-    background: #dcfce7; color: #15803d;
-  }
-  &.approved {
-    background: #ecfdf5; color: #059669;
-    border: 1px solid rgba($success, 0.2);
-  }
+  // Варианты статусов
+  &.active, &.published { @include status-variant(#ecfdf5, #10b981); }
+  &.draft { @include status-variant(#f1f5f9, #475569); }
+  &.under_review { @include status-variant(#eff6ff, #3b82f6); }
+  &.rejected { @include status-variant(#fef2f2, #ef4444); }
+  &.library_check { @include status-variant(#fffbeb, #f59e0b); }
 }
 
-// --- Кнопки действий ---
-.item-actions {
-  display: flex;
-  gap: 10px;
-
-  .action-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    color: #64748b;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: $transition;
-
-    .material-symbols-outlined {
-      font-size: 22px;
-      font-variation-settings: 'wght' 300;
-    }
-
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-
-    &.view:hover {
-      color: $primary;
-      background: $primary-light;
-      border-color: $primary;
-    }
-
-    &.edit:hover {
-      color: #8b5cf6;
-      background: #f5f3ff;
-      border-color: #8b5cf6;
-    }
-  }
-}
-
-// --- Загрузчик ---
+// --- Лоадер и Пустое состояние ---
 .loader-container {
-  height: 350px;
+  padding: 60px 0;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  color: $text-muted;
+  gap: 16px;
 
   .spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid #f1f5f9;
-    border-top: 3px solid $primary;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top-color: $primary;
     border-radius: 50%;
-    animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    margin-bottom: 20px;
+    animation: spin 0.8s linear infinite;
   }
-
-  p { font-weight: 500; letter-spacing: 0.02em; }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// Настройка Google Icons (Тонкий стиль)
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-// Адаптивность для мобильных
-@media (max-width: 768px) {
+// --- Адаптивность ---
+@media (max-width: 640px) {
   .doc-item {
     grid-template-columns: 1fr;
     gap: 16px;
     padding: 20px;
   }
 
-  .status-container { padding: 0; }
-
   .list-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
-
+    gap: 16px;
     .create-btn { width: 100%; justify-content: center; }
   }
 }
