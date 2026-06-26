@@ -1,7 +1,7 @@
 package labrary.digitaldepartment.Repository;
 
 import labrary.digitaldepartment.Entity.Document;
-import labrary.digitaldepartment.Enums.DocumentStatus;
+import labrary.digitaldepartment.Enums.SyllabusStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

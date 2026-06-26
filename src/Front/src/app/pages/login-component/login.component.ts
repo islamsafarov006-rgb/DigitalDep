@@ -24,7 +24,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.errorMessage = 'Неверный ИИН или пароль';
-        console.error(err);
+        console.error();
       }
     });
   }

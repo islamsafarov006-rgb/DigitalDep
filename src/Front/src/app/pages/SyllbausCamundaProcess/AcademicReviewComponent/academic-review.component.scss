@@ -1,0 +1,202 @@
+.academic-container {
+  padding: 20px;
+  background-color: #fdfdfd;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+  }
+
+  .review-header {
+    margin-bottom: 24px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 12px;
+
+    h2 {
+      margin: 0 0 6px 0;
+      color: #1e293b;
+    }
+    .subtitle {
+      margin: 0;
+      color: #475569;
+    }
+  }
+
+  .info-section {
+    margin-bottom: 32px;
+
+    h3 {
+      color: #334155;
+      font-size: 1.1rem;
+      border-left: 4px solid #3b82f6;
+      padding-left: 8px;
+      margin-bottom: 16px;
+    }
+  }
+
+  // Стили для карточек политики
+  .policy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .policy-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+
+      .label {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 4px;
+      }
+      .value {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #0f172a;
+      }
+      .text-value {
+        margin: 4px 0 0 0;
+        color: #334155;
+        line-height: 1.5;
+      }
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  // Стили для таблицы
+  .table-responsive {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+
+  .topics-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .text-center { text-align: center; }
+    .font-bold { font-weight: bold; }
+  }
+
+  .alert-warning {
+    background-color: #fffbeb;
+    border: 1px solid #fef3c7;
+    color: #b45309;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 0;
+  }
+
+  // Блок принятия решений
+  .decision-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+
+    h3 {
+      border-left-color: #10b981;
+      margin-top: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #334155;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        resize: vertical;
+        font-family: inherit;
+
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+      }
+    }
+
+    .actions-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+
+      @media (max-width: 480px) {
+        flex-direction: column-reverse;
+
+        .btn { width: 100%; }
+      }
+    }
+  }
+
+  // Общие стили кнопок
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &-reject {
+      background-color: #ef4444;
+      color: white;
+      &:hover:not(:disabled) { background-color: #dc2626; }
+    }
+
+    &-approve {
+      background-color: #10b981;
+      color: white;
+      &:hover:not(:disabled) { background-color: #059669; }
+    }
+  }
+}

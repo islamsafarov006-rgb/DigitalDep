@@ -51,6 +51,17 @@
             <version>0.11.5</version>
         </dependency>
         <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+            <version>7.20.0</version> <!-- Используй актуальную версию для Camunda 7 -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+            <version>7.20.0</version> <!-- Добавит админку, Cockpit и Tasklist -->
+        </dependency>
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
             <version>0.11.5</version>

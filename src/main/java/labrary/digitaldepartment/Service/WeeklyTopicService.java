@@ -1,12 +1,17 @@
 package labrary.digitaldepartment.Service;
 
+import labrary.digitaldepartment.Entity.Document;
 import labrary.digitaldepartment.Entity.WeeklyTopic;
+import labrary.digitaldepartment.Repository.DocumentRepository;
 import labrary.digitaldepartment.Repository.WeeklyTopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +24,12 @@ public class WeeklyTopicService {
     }
 
     @Transactional
-    public List<WeeklyTopic> saveAll(List<WeeklyTopic> topics) {
+    public List<WeeklyTopic> saveAll(Long documentId, List<WeeklyTopic> topics) {
+        weeklyTopicRepository.deleteAll(
+                weeklyTopicRepository.findByDocumentIdOrderByWeekNumberAsc(documentId)
+        );
+        weeklyTopicRepository.flush();
+
         return weeklyTopicRepository.saveAll(topics);
     }
 
@@ -39,18 +49,41 @@ public class WeeklyTopicService {
         WeeklyTopic topic = weeklyTopicRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Topic not found with id: " + id));
 
+        // Lecture
         topic.setLectureTopic(updateData.getLectureTopic());
-        topic.setPracticeTopic(updateData.getPracticeTopic());
-        topic.setSrspTopic(updateData.getSrspTopic());
-        topic.setSrsTopic(updateData.getSrsTopic());
-        topic.setSpzTopic(updateData.getSpzTopic());
+        topic.setLectureHours(updateData.getLectureHours());
+        topic.setLectureReferences(updateData.getLectureReferences());
+        topic.setLectureReportingForm(updateData.getLectureReportingForm());
+        topic.setLectureDeadline(updateData.getLectureDeadline());
 
-        topic.setHours(updateData.getHours());
-        topic.setReferences(updateData.getReferences());
-        topic.setReportingForm(updateData.getReportingForm());
-        topic.setDeadline(updateData.getDeadline());
+        // Practice
+        topic.setPracticeTopic(updateData.getPracticeTopic());
+        topic.setPracticeHours(updateData.getPracticeHours());
+        topic.setPracticeReferences(updateData.getPracticeReferences());
+        topic.setPracticeReportingForm(updateData.getPracticeReportingForm());
+        topic.setPracticeDeadline(updateData.getPracticeDeadline());
+
+        // SRSP
+        topic.setSrspTopic(updateData.getSrspTopic());
+        topic.setSrspHours(updateData.getSrspHours());
+        topic.setSrspReferences(updateData.getSrspReferences());
+        topic.setSrspReportingForm(updateData.getSrspReportingForm());
+        topic.setSrspDeadline(updateData.getSrspDeadline());
+
+        // SRS
+        topic.setSrsTopic(updateData.getSrsTopic());
+        topic.setSrsHours(updateData.getSrsHours());
+        topic.setSrsReferences(updateData.getSrsReferences());
+        topic.setSrsReportingForm(updateData.getSrsReportingForm());
+        topic.setSrsDeadline(updateData.getSrsDeadline());
+
+        // SPZ
+        topic.setSpzTopic(updateData.getSpzTopic());
+        topic.setSpzHours(updateData.getSpzHours());
+        topic.setSpzReferences(updateData.getSpzReferences());
+        topic.setSpzReportingForm(updateData.getSpzReportingForm());
+        topic.setSpzDeadline(updateData.getSpzDeadline());
 
         return weeklyTopicRepository.save(topic);
     }
-
 }

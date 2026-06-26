@@ -1,0 +1,34 @@
+.syllabus-page {
+  display: grid;
+  grid-template-columns: 2fr 1fr; // Контент занимает больше места
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.management-card {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.preview-box {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  white-space: pre-wrap; // Сохраняет переносы строк
+}
+
+.action-side {
+  position: sticky;
+  top: 24px; // Панель будет "липнуть" при прокрутке
+  height: fit-content;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column; // Кнопки одна под другой
+  gap: 12px;
+}

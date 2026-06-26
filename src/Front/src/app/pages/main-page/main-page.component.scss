@@ -70,3 +70,26 @@
     height: 24px;
   }
 }
+.card.admin-card {
+  border: 1.5px dashed #2563eb; // Пунктирная синяя линия
+  background: linear-gradient(to bottom right, #ffffff, #f0f5ff);
+
+  &:hover {
+    border-style: solid;
+    background: #e0eafd;
+  }
+}
+.card {
+  // Твои базовые стили карточек...
+
+  &.approval-card {
+    border-left: 4px solid #10b981; // Изумрудная полоса слева для индикации процессов
+
+    &:hover {
+      background-color: #f0fdf4; // Легкий зеленый подсвет при наведении
+      .card-icon svg {
+        color: #10b981;
+      }
+    }
+  }
+}

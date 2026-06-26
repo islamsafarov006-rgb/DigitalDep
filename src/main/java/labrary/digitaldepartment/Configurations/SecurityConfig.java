@@ -35,11 +35,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/documents/**").authenticated()
+                        .requestMatchers("/camunda/app/**", "/camunda/api/**", "/camunda/lib/**", "/camunda/api/cockpit/**").permitAll()
+                        .requestMatchers("/api/v1/syllabus-process/**").permitAll()
+                        .requestMatchers("/api/syllabus/**").permitAll() // ← добавить                        .requestMatchers("/camunda/**").permitAll()
+                        .requestMatchers("/app/**").permitAll()
+                        .requestMatchers("/lib/**").permitAll()
+                        .requestMatchers("/api/engine/**").permitAll()
+                        .requestMatchers("/engine-rest/**").permitAll() // Встроенный REST Camunda
+                        .requestMatchers("/api/v1/syllabus-process/**").permitAll() // Наш кастомный контроллер
+
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .build();
     }
 

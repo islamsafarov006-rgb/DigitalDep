@@ -2,7 +2,7 @@ package labrary.digitaldepartment.Controller;
 
 import labrary.digitaldepartment.Entity.Document;
 import labrary.digitaldepartment.Entity.WeeklyTopic;
-import labrary.digitaldepartment.Enums.DocumentStatus;
+import labrary.digitaldepartment.Enums.SyllabusStatus;
 import labrary.digitaldepartment.Service.DocumentService;
 import labrary.digitaldepartment.Service.SyllabusGeneratorService;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class DocumentController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<Document> changeStatus(
             @PathVariable Long id,
-            @RequestParam DocumentStatus status) {
+            @RequestParam SyllabusStatus status) {
         return ResponseEntity.ok(documentService.updateStatus(id, status));
     }
 

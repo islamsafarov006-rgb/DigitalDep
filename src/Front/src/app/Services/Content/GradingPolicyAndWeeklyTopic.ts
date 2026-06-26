@@ -1,6 +1,7 @@
 export interface WeeklyTopic {
   id?: number;
   documentId?: number;
+  document?: { id: number };
   weekNumber: number;
   lectureTopic: string;
   practiceTopic: string;
@@ -12,11 +13,13 @@ export interface WeeklyTopic {
   deadline?: string;
 }
 
-export interface GradingPolicy {
+export interface GradingPolicyRow {
   id?: number;
-  firstAttestationWeight: number;
-  secondAttestationWeight: number;
-  finalExamWeight: number;
-  attendancePolicy: string;
-  documentId: number;
+  period: string;
+  assignmentName: string;
+  subItem: boolean;
+  bold: boolean;
+  score: number | null;
+  total: number | null;
+  sortOrder: number;
 }

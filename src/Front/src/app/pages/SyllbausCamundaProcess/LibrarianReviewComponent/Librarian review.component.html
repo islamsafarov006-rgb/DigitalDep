@@ -1,0 +1,76 @@
+<div class="review-panel" *ngIf="task(); else noTask">
+
+  <div class="review-header">
+    <div class="badge badge--librarian">Проверка библиотекарем</div>
+    <h2 class="review-title">Список литературы</h2>
+    <p class="review-subtitle" *ngIf="document()">
+      {{ document()!.discipline.name }} · {{ document()!.academicYear }}
+    </p>
+  </div>
+
+  <div class="review-body" *ngIf="!isLoading(); else loadingTpl">
+
+    <div *ngIf="literature().length > 0; else emptyLit" class="lit-list">
+      <div class="lit-item" *ngFor="let book of literature(); let i = index">
+        <span class="lit-index">{{ i + 1 }}</span>
+        <div class="lit-info">
+          <span class="lit-title">{{ book.title }}</span>
+          <span class="lit-author">{{ book.author }}</span>
+          <span class="lit-isbn" *ngIf="book.isbn">ISBN: {{ book.isbn }}</span>
+
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyLit>
+      <div class="empty-state">
+        <span class="empty-icon">📚</span>
+        <p>Список литературы не заполнен</p>
+      </div>
+    </ng-template>
+
+    <div class="comment-section">
+      <label class="comment-label" for="lib-comment">Комментарий библиотекаря</label>
+      <textarea
+        id="lib-comment"
+        class="comment-input"
+        [(ngModel)]="comment"
+        placeholder="Укажите замечания или напишите 'Согласовано'…"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="review-actions">
+      <button
+        class="btn btn--reject"
+        (click)="submit(false)"
+        [disabled]="isSubmitting()"
+      >
+        Отклонить
+      </button>
+      <button
+        class="btn btn--approve"
+        (click)="submit(true)"
+        [disabled]="isSubmitting()"
+      >
+        {{ isSubmitting() ? 'Отправка…' : 'Согласовать' }}
+      </button>
+    </div>
+
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loader-wrap">
+      <div class="spinner"></div>
+      <p>Загрузка литературы…</p>
+    </div>
+  </ng-template>
+
+</div>
+
+<ng-template #noTask>
+  <div class="loader-wrap">
+    <div class="spinner"></div>
+    <p>Загрузка задачи…</p>
+  </div>
+</ng-template>

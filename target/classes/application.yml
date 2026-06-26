@@ -3,24 +3,49 @@ spring:
     name: digital-department-ais
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/digital_department_db
-    username: springuser
-    password: springpass
+    url: jdbc:postgresql://ep-raspy-hill-aqiset9c-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_KI1zLOB8rSNF
     driver-class-name: org.postgresql.Driver
+
+  # ИСПРАВЛЕНО: сдвинуто на 2 пробела вправо, теперь входит в состав spring
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        default_schema: business
         jdbc:
           lob:
             non_contextual_creation: true
 
+  # ИСПРАВЛЕНО: сдвинуто на 2 пробела вправо, теперь входит в состав spring
   jackson:
     serialization:
       write_dates_as_timestamps: false
     default-property-inclusion: non_null
+
+# ИСПРАВЛЕНО: возвращено на самый левый край (0 пробелов), так как это отдельный root-ключ
+camunda.bpm:
+  process-engine-name: digital-department-engine
+  job-execution:
+    enabled: true
+    deployment-aware: true
+
+  webapp:
+    index-redirect-enabled: true
+    header-brand: "Digital Department AIS"
+
+  admin-user:
+    id: admin
+    password: admin
+    first-name: Admin
+    last-name: DigitalDep
+    email: admin@digital-dep.edu
+
+  database:
+    schema-update: true
+    type: postgres

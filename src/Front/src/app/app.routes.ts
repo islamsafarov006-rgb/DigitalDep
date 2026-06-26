@@ -1,6 +1,13 @@
-import { Routes } from '@angular/router';
+import { Router, Routes } from '@angular/router';
 import { authGuard } from './authGuard';
 import { MainPageComponent } from './pages/main-page/main-page.component';
+import { AuthService } from './Services/AuthService/AuthService';
+import { ReviewDashboardComponent } from './pages/ReviewDashboardСomponent/review-dashboard.component';
+import { LibrarianReviewComponent } from './pages/SyllbausCamundaProcess/LibrarianReviewComponent/Librarian review.component';
+import { DeanReviewComponent } from './pages/SyllbausCamundaProcess/DeanReviewComponent/dean-review.component';
+import { inject } from '@angular/core';
+import { AcademicReviewComponent } from './pages/SyllbausCamundaProcess/AcademicReviewComponent/academic-review.component';
+import { TeachersDisciplinesComponent } from './pages/TeachersDisciplinesСomponent/teachers-disciplines.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -17,27 +24,61 @@ export const routes: Routes = [
     component: MainPageComponent,
     canActivate: [authGuard]
   },
+
+  // Маршруты для согласования
   {
-    path: 'syllabus/:id/variables',
-    loadComponent: () => import('./pages/syllabus-component/syllabus-variables-component/syllabus-variables.component')
-      .then(m => m.SyllabusVariablesComponent)
+    path: 'syllabus/review/librarian/:id',
+    component: LibrarianReviewComponent
   },
   {
-    path: 'teacher-data',
-    loadComponent: () => import('./pages/teacher-data-component/teacher-data.component').then(m => m.TeacherDataComponent),
+    path: 'syllabus/review/dean/:id',
+    component: DeanReviewComponent
+  },
+  {
+    path: 'syllabus/review/academic/:id',
+    component: AcademicReviewComponent
+  },
+  {
+    path: 'syllabus/:id/variables',
+    loadComponent: () => import('./pages/SyllbausCamundaProcess/syllabus-variables-component/syllabus-variables.component')
+      .then(m => m.SyllabusVariablesComponent),
     canActivate: [authGuard]
   },
   {
     path: 'syllabus',
-    loadComponent: () => import('./pages/syllabus-component/discipline-editor.component').then(m => m.DisciplineEditorComponent),
+    loadComponent: () => import('./pages/discipline-editor-component/discipline-editor.component')
+      .then(m => m.DisciplineEditorComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'approval-dashboard',
+    component: ReviewDashboardComponent
   },
 
+  // Панель управления (Management)
   {
-    path: 'create-disciplines',
-    loadComponent: () => import('./pages/discipline-form/discipline-form.component').then(m => m.DisciplineFormComponent),
-    canActivate: [authGuard]
+    path: 'management/assign',
+    loadComponent: () => import('./pages/assign-hours/assign-hours.component').then(m => m.AssignHoursComponent),
+    canActivate: [authGuard, () => {
+      const authService = inject(AuthService);
+      const router = inject(Router);
+      if (authService.hasRole(['ADMIN'])) return true;
+      router.navigate(['/main-page']);
+      return false;
+    }]
   },
+  // 🌟 ПЕРЕНЕСЛИ СЮДА: Теперь роут находится выше, чем '**', и защищен проверкой на роль ADMIN
+  {
+    path: 'management/teachers-disciplines',
+    component: TeachersDisciplinesComponent,
+    canActivate: [authGuard, () => {
+      const authService = inject(AuthService);
+      const router = inject(Router);
+      if (authService.hasRole(['ADMIN'])) return true;
+      router.navigate(['/main-page']);
+      return false;
+    }]
+  },
+
   { path: '**', redirectTo: 'login' }
 ];
-

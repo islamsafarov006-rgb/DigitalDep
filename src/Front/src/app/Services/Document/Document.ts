@@ -8,6 +8,11 @@ export enum DocumentStatus {
   SIGNED = 'SIGNED'
 }
 
+export interface AssessmentCriterion {
+  points: number;
+  criterion: string;
+}
+
 export interface Discipline {
   id?: number;
   name: string;
@@ -51,4 +56,5 @@ export interface SyllabusDocument {
   academicLoads?: AcademicLoad[];
   paymentDetails?: PaymentDetail[];
   weeklyTopics?: WeeklyTopic[];
+  assessmentCriteria?: AssessmentCriterion[];
 }

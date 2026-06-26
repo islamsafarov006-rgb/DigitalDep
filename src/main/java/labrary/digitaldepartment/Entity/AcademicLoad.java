@@ -6,7 +6,7 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Table(name = "academic_loads")
+@Table(name = "academic_loads", schema = "business")
 @Getter @Setter
 public class AcademicLoad {
     @Id

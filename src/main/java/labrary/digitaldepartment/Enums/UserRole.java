@@ -4,6 +4,7 @@ public enum UserRole {
     TEACHER,
     LIBRARIAN,
     METHODOLOGIST,
-    DEAN,
+    ACADEMIC_DEPARTMENT,
+    DEANERY,
     ADMIN
 }

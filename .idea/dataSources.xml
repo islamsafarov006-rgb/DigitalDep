@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="digital_department_db@localhost" uuid="ba054acb-4ac4-4939-8981-cd09ba7e7464">
+    <data-source source="LOCAL" name="neondb@ep-raspy-hill-aqiset9c-pooler.c-8.us-east-1.aws.neon.tech" uuid="cf97a667-dc00-4701-8107-c581fef2be55">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/digital_department_db</jdbc-url>
+      <jdbc-url>jdbc:postgresql://ep-raspy-hill-aqiset9c-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&amp;channel_binding=require</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

@@ -1,0 +1,43 @@
+<div class="container">
+  <h1 class="page-title">Список преподавателей и их дисциплин</h1>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Загрузка данных...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-state">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage" class="teachers-list">
+
+    <div *ngIf="teacherGroups.length === 0" class="empty-state">
+      Назначенных дисциплин пока нет.
+    </div>
+
+    <div *ngFor="let group of teacherGroups" class="teacher-card">
+      <div class="teacher-info">
+        <div class="avatar-placeholder">
+          {{ group.fullName.charAt(0) }}
+        </div>
+        <div class="teacher-details">
+          <h3>{{ group.fullName }}</h3>
+          <span class="position-badge">{{ group.position }}</span>
+          <p class="email-text">Email: {{ group.email }}</p>
+        </div>
+      </div>
+
+      <div class="disciplines-section">
+        <h4>Закрепленные предметы ({{ group.disciplines.length }}):</h4>
+        <ul class="discipline-tags">
+          <li *ngFor="let disc of group.disciplines" class="discipline-tag">
+            <span class="disc-code">[{{ disc.code }}]</span>
+            <span class="disc-name">{{ disc.name }}</span>
+            <span class="disc-credits">{{ disc.credits }} ECTS</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

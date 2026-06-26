@@ -1,0 +1,49 @@
+<div class="review-container">
+  <div *ngIf="isLoading()" class="review-loader">
+    <div class="spinner"></div>
+    <p>Загрузка данных...</p>
+  </div>
+
+  <div *ngIf="!isLoading() && syllabus() as doc" class="review-paper-card">
+    <div class="review-header dean-theme">
+      <span class="material-symbols-outlined header-icon">gavel</span>
+      <div class="header-text">
+        <h2>Утверждение силлабуса</h2>
+        <p>Задача: <strong>{{ task?.name }}</strong></p>
+      </div>
+    </div>
+
+    <div class="document-summary-box">
+      <div class="summary-row"><span class="label">Дисциплина:</span><span class="value emphasis">{{ doc.discipline.name }}</span></div>
+      <div class="summary-row"><span class="label">Преподаватель:</span><span class="value">{{ doc.author?.fullName }}</span></div>
+    </div>
+
+    <!-- Контейнер для документа -->
+    <div class="document-preview-section">
+      <div id="docx-container" class="docx-wrapper"></div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="comment-section">
+      <label for="dean-comment" class="section-title-label">Замечания:</label>
+      <textarea id="dean-comment" class="comment-textarea" [(ngModel)]="reviewComment" [disabled]="isSubmitting()"></textarea>
+    </div>
+
+    <div class="review-actions-zone">
+      <button
+        type="button"
+        class="btn-action-reject"
+        (click)="submitDecision(false)">
+        Отклонить
+      </button>
+
+      <button
+        type="button"
+        class="btn-action-approve"
+        (click)="submitDecision(true)">
+        Утвердить
+      </button>
+    </div>
+  </div>
+</div>

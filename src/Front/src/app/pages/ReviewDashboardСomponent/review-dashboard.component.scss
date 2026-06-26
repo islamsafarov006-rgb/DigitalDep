@@ -1,0 +1,241 @@
+
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.5rem;
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .user-role-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #f1f5f9;
+      padding: 0.6rem 1rem;
+      border-radius: 30px;
+      color: #334155;
+      font-size: 14px;
+      border: 1px solid #e2e8f0;
+
+      span.material-symbols-outlined {
+        color: #2563eb;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .status-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid #e2e8f0;
+      background: white;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      span.material-symbols-outlined {
+        font-size: 18px;
+      }
+
+      &:hover {
+        background: #f8fafc;
+        color: #1e293b;
+      }
+
+      &.active {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+      }
+    }
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .tasks-table-wrapper {
+    padding: 1rem;
+    min-height: 300px;
+    position: relative;
+  }
+
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    th {
+      padding: 14px;
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      font-size: 13px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .task-id {
+      font-family: monospace;
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    .task-name-highlight {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .process-id {
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #475569;
+    }
+
+    .date-text {
+      color: #64748b;
+    }
+  }
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.2s;
+
+    span.material-symbols-outlined {
+      font-size: 16px;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &.approve {
+      background: #2563eb;
+    }
+
+    &.edit {
+      background: #d97706;
+    }
+  }
+
+  .status-badge-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #16a34a;
+    font-weight: 600;
+    font-size: 13px;
+    background: #f0fdf4;
+    padding: 4px 10px;
+    border-radius: 20px;
+
+    span {
+      font-size: 16px;
+    }
+  }
+
+  .table-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      margin-top: 12px;
+      color: #64748b;
+      font-size: 14px;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: #64748b;
+
+    .empty-icon {
+      font-size: 48px;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+
+    h4 {
+      margin: 0;
+      color: #334155;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 6px 0 0 0;
+      font-size: 14px;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

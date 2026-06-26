@@ -1,0 +1,132 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.page-title {
+  color: #1a1a1a;
+  margin-bottom: 32px;
+  font-size: 28px;
+}
+
+.teachers-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.teacher-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media(min-width: 768px) {
+  .teacher-card {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.teacher-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 300px;
+}
+
+.avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  background: #e0e7ff;
+  color: #4f46e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.teacher-details h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.position-badge {
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.email-text {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.disciplines-section {
+  flex-grow: 1;
+}
+
+.disciplines-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #374151;
+}
+
+.discipline-tags {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.discipline-tag {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.disc-code {
+  font-weight: bold;
+  color: #15803d;
+}
+
+.disc-credits {
+  background: #dcfce7;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.loading-state, .error-state, .empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.error-state {
+  color: #dc2626;
+}

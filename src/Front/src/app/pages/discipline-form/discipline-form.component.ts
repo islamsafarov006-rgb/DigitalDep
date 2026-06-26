@@ -121,7 +121,7 @@ export class DisciplineFormComponent implements OnInit {
         next: (response) => {
           this.save.emit(response);
         },
-        error: (err) => console.error('Ошибка при сохранении:', err)
+        error: (err) => console.error(err)
       });
   }
 

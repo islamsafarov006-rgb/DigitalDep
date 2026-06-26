@@ -37,6 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (path.startsWith("/camunda") ||
+                path.startsWith("/app") ||
+                path.startsWith("/lib") ||
+                path.startsWith("/api/engine")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

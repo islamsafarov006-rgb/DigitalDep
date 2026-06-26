@@ -1,0 +1,30 @@
+<div class="management-container">
+  <div class="syllabus-page">
+
+    <div class="content-side">
+      <div class="management-card">
+        <div class="header-area">
+          <h2>Просмотр силлабуса</h2>
+        </div>
+        <div class="form-group">
+          <label>Цели курса</label>
+          <div class="preview-box">{{ syllabus?.goals }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-side">
+      <div class="management-card">
+        <h3>Решение</h3>
+        <div class="form-group">
+          <label>Ваш комментарий</label>
+          <textarea class="form-control" [(ngModel)]="comment" rows="5"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn-secondary" (click)="submit(false)">Отклонить</button>
+          <button class="btn-primary" (click)="submit(true)">Одобрить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

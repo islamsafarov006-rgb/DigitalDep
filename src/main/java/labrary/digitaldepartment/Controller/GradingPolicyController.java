@@ -1,10 +1,12 @@
 package labrary.digitaldepartment.Controller;
 
-import labrary.digitaldepartment.Entity.GradingPolicy;
+import labrary.digitaldepartment.DTO.GradingPolicyDto;
 import labrary.digitaldepartment.Service.GradingPolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/grading-policies")
@@ -14,15 +16,24 @@ public class GradingPolicyController {
 
     private final GradingPolicyService service;
 
-    @PostMapping
-    public ResponseEntity<GradingPolicy> save(@RequestBody GradingPolicy policy) {
-        return ResponseEntity.ok(service.saveOrUpdate(policy));
+    // GET /api/grading-policies/syllabus/{syllabusId}
+    @GetMapping("/syllabus/{syllabusId}")
+    public ResponseEntity<List<GradingPolicyDto>> getBySyllabus(@PathVariable Long syllabusId) {
+        List<GradingPolicyDto> policy = service.getBySyllabusId(syllabusId);
+
+        // Если ещё не заполнено — возвращаем дефолтную таблицу
+        if (policy == null || policy.isEmpty()) {
+            policy = service.buildDefault();
+        }
+
+        return ResponseEntity.ok(policy);
     }
 
-    @GetMapping("/document/{documentId}")
-    public ResponseEntity<GradingPolicy> getByDocument(@PathVariable Long documentId) {
-        return service.getByDocumentId(documentId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // POST /api/grading-policies/syllabus/{syllabusId}
+    @PostMapping("/syllabus/{syllabusId}")
+    public ResponseEntity<List<GradingPolicyDto>> saveBySyllabus(
+            @PathVariable Long syllabusId,
+            @RequestBody List<GradingPolicyDto> rows) {
+        return ResponseEntity.ok(service.saveAll(syllabusId, rows));
     }
 }

@@ -62,19 +62,41 @@ public class SyllabusExportDTO {
             this.authorPosition = doc.getAuthor().getPosition();
         }
 
-
         if (doc.getWeeklyTopics() != null) {
             this.weeklyTopics = doc.getWeeklyTopics().stream().map(topic -> {
                 WeeklyTopicDTO dto = new WeeklyTopicDTO();
                 dto.setWeekNumber(topic.getWeekNumber());
+
                 dto.setLectureTopic(topic.getLectureTopic());
+                dto.setLectureHours(topic.getLectureHours());
+                dto.setLectureReferences(topic.getLectureReferences());
+                dto.setLectureReportingForm(topic.getLectureReportingForm());
+                dto.setLectureDeadline(topic.getLectureDeadline());
+
                 dto.setPracticeTopic(topic.getPracticeTopic());
+                dto.setPracticeHours(topic.getPracticeHours());
+                dto.setPracticeReferences(topic.getPracticeReferences());
+                dto.setPracticeReportingForm(topic.getPracticeReportingForm());
+                dto.setPracticeDeadline(topic.getPracticeDeadline());
+
                 dto.setSrspTopic(topic.getSrspTopic());
+                dto.setSrspHours(topic.getSrspHours());
+                dto.setSrspReferences(topic.getSrspReferences());
+                dto.setSrspReportingForm(topic.getSrspReportingForm());
+                dto.setSrspDeadline(topic.getSrspDeadline());
+
+                dto.setSrsTopic(topic.getSrsTopic());
+                dto.setSrsHours(topic.getSrsHours());
+                dto.setSrsReferences(topic.getSrsReferences());
+                dto.setSrsReportingForm(topic.getSrsReportingForm());
+                dto.setSrsDeadline(topic.getSrsDeadline());
+
                 dto.setSpzTopic(topic.getSpzTopic());
-                dto.setHours(topic.getHours());
-                dto.setReferences(topic.getReferences());
-                dto.setReportingForm(topic.getReportingForm());
-                dto.setDeadline(topic.getDeadline());
+                dto.setSpzHours(topic.getSpzHours());
+                dto.setSpzReferences(topic.getSpzReferences());
+                dto.setSpzReportingForm(topic.getSpzReportingForm());
+                dto.setSpzDeadline(topic.getSpzDeadline());
+
                 return dto;
             }).collect(Collectors.toList());
         }

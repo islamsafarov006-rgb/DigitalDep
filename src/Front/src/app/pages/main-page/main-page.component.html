@@ -1,10 +1,11 @@
 <div class="main-page">
-  <h1 class="title">Main Page</h1>
+  <h1 class="title">Панель управления «Цифровая кафедра»</h1>
 
   <div class="cards">
+
+    @if(authService.hasRole(['TEACHER'])){
     <a routerLink="/syllabus" class="card">
       <div class="card-icon">
-        <!-- book icon -->
         <svg viewBox="0 0 24 24" fill="none">
           <path d="M4 19.5V6a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 1.5z" stroke="currentColor" stroke-width="2"/>
           <path d="M6 4v16" stroke="currentColor" stroke-width="2"/>
@@ -18,7 +19,6 @@
 
     <a routerLink="/teacher-data" class="card">
       <div class="card-icon">
-        <!-- chart icon -->
         <svg viewBox="0 0 24 24" fill="none">
           <path d="M4 19V5" stroke="currentColor" stroke-width="2"/>
           <path d="M4 19h16" stroke="currentColor" stroke-width="2"/>
@@ -32,5 +32,51 @@
         <div class="card-desc">Данные по нагрузке преподавателей</div>
       </div>
     </a>
+    }
+    @if (authService.hasRole(['ACADEMIC_DEPARTMENT', 'LIBRARIAN', 'DEANERY', 'METHODOLOGIST'])) {
+      <a routerLink="/approval-dashboard" class="card approval-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Согласование силлабусов</div>
+          <div class="card-desc">Задачи Camunda BPM: утверждение, отклонение и доработка программ</div>
+        </div>
+      </a>
+    }
+
+    @if (authService.hasRole(['ADMIN'])) {
+      <a routerLink="/management/assign" class="card admin-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 8v6M23 11h-6" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Распределение часов</div>
+          <div class="card-desc">Назначить дисциплину преподавателю и заполнить объемы</div>
+        </div>
+      </a>
+
+      <a routerLink="/management/teachers-disciplines" class="card admin-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M19 11h3M19 15h3M19 7h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Преподаватели и предметы</div>
+          <div class="card-desc">Просмотр всех преподавателей кафедры и их закрепленных дисциплин</div>
+        </div>
+      </a>
+    }
+
   </div>
 </div>

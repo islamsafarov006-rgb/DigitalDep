@@ -8,42 +8,81 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
+      <!-- ФИО полностью -->
       <div class="form-group">
         <label>ФИО полностью</label>
-        <input type="text" formControlName="fullName" placeholder="Иванов Иван Иванович">
+        <input type="text" formControlName="fullName" placeholder="Иванов Иван Иванович"
+               [class.invalid-input]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched">
+        @if (registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched) {
+          <small class="validation-error">ФИО обязательно (минимум 3 символа)</small>
+        }
       </div>
 
+      <!-- ИИН и Должность -->
       <div class="row">
         <div class="form-group">
           <label>ИИН</label>
-          <input type="text" formControlName="iin" placeholder="123456789012" maxlength="12">
+          <input type="text" formControlName="iin" placeholder="123456789012" maxlength="12"
+                 [class.invalid-input]="registerForm.get('iin')?.invalid && registerForm.get('iin')?.touched">
+          @if (registerForm.get('iin')?.invalid && registerForm.get('iin')?.touched) {
+            <small class="validation-error">ИИН должен состоять ровно из 12 цифр</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Должность</label>
-          <input type="text" formControlName="position" placeholder="PhD, ассоциированный профессор">
+          <input type="text" formControlName="position" placeholder="PhD, преподаватель"
+                 [class.invalid-input]="registerForm.get('position')?.invalid && registerForm.get('position')?.touched">
+          @if (registerForm.get('position')?.invalid && registerForm.get('position')?.touched) {
+            <small class="validation-error">Укажите вашу должность</small>
+          }
         </div>
       </div>
 
       <div class="form-group">
-        <label>Email (корпоративный)</label>
-        <input type="email" formControlName="email" placeholder="example@iitu.edu.kz">
+        <label>Роль в системе</label>
+        <select formControlName="role" class="form-select">
+          <option value="TEACHER">Преподаватель / Составитель силлабусов</option>
+          <option value="LIBRARIAN">Библиотекарь (Проверка литературы)</option>
+          <option value="METHODOLOGIST">Академический комитет / Методолог</option>
+          <option value="ACADEMIC_DEPARTMENT">Заведующий кафедры </option>
+          <option value="DEANERY">Деканат / Декан факультета</option>
+          <option value="ADMIN">Администратор системы</option>
+        </select>
       </div>
 
+      <!-- Email -->
+      <div class="form-group">
+        <label>Email (корпоративный)</label>
+        <input type="email" formControlName="email" placeholder="example@iitu.edu.kz"
+               [class.invalid-input]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          <small class="validation-error">Введите корректный корпоративный Email</small>
+        }
+      </div>
+
+      <!-- Пароль -->
       <div class="form-group">
         <label>Пароль</label>
-        <input type="password" formControlName="password" placeholder="••••••••">
+        <input type="password" formControlName="password" placeholder="••••••••"
+               [class.invalid-input]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <small class="validation-error">Пароль должен быть не менее 6 символов</small>
+        }
       </div>
 
+      <!-- Ошибка от бэкенда при отправке -->
       <div class="error-alert" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
 
+      <!-- Кнопка отправки -->
       <button type="submit" class="btn-primary" [disabled]="registerForm.invalid">
         Зарегистрироваться
       </button>
 
       <p class="footer-link">
-        Уже есть аккаунт? <a href="/login">Войти</a>
+        Уже есть аккаунт? <a routerLink="/login">Войти</a>
       </p>
     </form>
   </div>

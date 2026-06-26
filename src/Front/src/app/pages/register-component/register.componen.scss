@@ -1,4 +1,5 @@
 $primary-blue: #2563eb;
+$primary-danger: #dc2626; // Переменная для ошибок
 $text-main: #1e293b;
 $text-muted: #64748b;
 $border-color: #e2e8f0;
@@ -53,7 +54,8 @@ $border-color: #e2e8f0;
     margin-left: 2px;
   }
 
-  input {
+  // Общие стили для input и нового выпадающего списка select
+  input, .form-select {
     width: 100%;
     padding: 12px 16px;
     border: 1.5px solid $border-color;
@@ -73,6 +75,38 @@ $border-color: #e2e8f0;
       background: #fff;
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     }
+
+    // Класс-модификатор для некорректно заполненных полей
+    &.invalid-input {
+      border-color: $primary-danger;
+      background-color: #fdf2f2;
+
+      &:focus {
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+      }
+    }
+  }
+
+  // Специфичные настройки для селекта роли
+  .form-select {
+    cursor: pointer;
+    appearance: none; // Скрываем дефолтную стрелку браузера
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+  }
+
+  // Оформление текста ошибки под инпутом
+  .validation-error {
+    color: $primary-danger;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 6px;
+    margin-left: 2px;
+    display: block;
+    animation: fadeIn 0.2s ease;
   }
 }
 
@@ -120,7 +154,7 @@ $border-color: #e2e8f0;
 
 .error-alert {
   background: #fef2f2;
-  color: #dc2626;
+  color: $primary-danger;
   padding: 12px;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -152,5 +186,17 @@ $border-color: #e2e8f0;
       color: #1d4ed8;
       text-decoration: underline;
     }
+  }
+}
+
+// Легкая анимация появления ошибок
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

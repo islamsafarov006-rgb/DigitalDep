@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -31,11 +30,17 @@ public class JwtService {
 
     public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
-        List<String> roles = claims.get("roles", List.class);
-        if (roles == null) return List.of();
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+
+        // Достаем строку по ключу "role", как ты и передаешь в AuthController
+        String role = claims.get("role", String.class);
+
+        if (role == null || role.trim().isEmpty()) {
+            return List.of();
+        }
+
+        // Spring Security по умолчанию требует, чтобы роли начинались с "ROLE_"
+        // Теперь hasRole('ADMIN') в контроллерах будет работать идеально
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.trim()));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -65,13 +70,13 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String generateToken(String iin, java.util.Map<String, Object> extraClaims) {
-        return io.jsonwebtoken.Jwts
+    public String generateToken(String iin, Map<String, Object> extraClaims) {
+        return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(iin)
-                .setIssuedAt(new java.util.Date(System.currentTimeMillis()))
-                .setExpiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSignInKey(), io.jsonwebtoken.SignatureAlgorithm.HS256)
                 .compact();
     }

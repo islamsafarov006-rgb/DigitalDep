@@ -25,9 +25,12 @@ public class WeeklyTopicController {
 
     @PostMapping("/batch")
     public ResponseEntity<List<WeeklyTopic>> saveBatch(@RequestBody List<WeeklyTopic> topics) {
-        return ResponseEntity.ok(weeklyTopicService.saveAll(topics));
+        if (topics == null || topics.isEmpty()) {
+            return ResponseEntity.ok(List.of());
+        }
+        Long documentId = topics.get(0).getDocument().getId();
+        return ResponseEntity.ok(weeklyTopicService.saveAll(documentId, topics));
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<WeeklyTopic> update(@PathVariable Long id, @RequestBody WeeklyTopic topic) {
         topic.setId(id);

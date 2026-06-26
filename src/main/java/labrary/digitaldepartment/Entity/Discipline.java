@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "disciplines")
+@Table(name = "disciplines", schema = "business")
 @Getter
 @Setter
 public class Discipline {
@@ -25,5 +25,21 @@ public class Discipline {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Column(name = "default_lectures")
+    private Integer defaultLectures;
 
+    @Column(name = "default_practice")
+    private Integer defaultPractice;
+
+    @Column(name = "default_siwt")
+    private Integer defaultSiwt;
+
+    @Column(name = "default_siw")
+    private Integer defaultSiw;
+
+    @Column(name = "recommended_course")
+    private Integer recommendedCourse;
+
+    @Column(name = "recommended_semester")
+    private Integer recommendedSemester;
 }
