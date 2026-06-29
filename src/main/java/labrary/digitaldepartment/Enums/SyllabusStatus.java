@@ -7,4 +7,5 @@ public enum SyllabusStatus {
     PENDING_DEANERY,
     IN_FIXING,
     APPROVED,
+    SIGNED
 }

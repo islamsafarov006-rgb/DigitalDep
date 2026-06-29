@@ -1,196 +1,270 @@
+// Единая дизайн-система приложения
+$brand-color: #701a75;
+$brand-light: #fdf4ff;
+$brand-focus: #f5d0fe;
+$text-main: #0f172a;
+$text-muted: #64748b;
+$bg-global: #f8fafc;
+$border-color: #e2e8f0;
+
 .review-panel {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,.08);
-  overflow: hidden;
-  max-width: 680px;
-  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  // Фирменная мягкая и размытая тень
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+  max-width: 760px; // Сделали чуть просторнее
+  margin: 2rem auto;
   font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid $border-color;
+  overflow: hidden;
 }
 
 .review-header {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 100%);
-  padding: 28px 32px 24px;
-  color: #fff;
-}
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 3rem 3rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid $border-color;
 
-.badge {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-}
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    border-radius: 14px;
+    color: $brand-color;
+    background: $brand-light;
+  }
 
-.badge--librarian {
-  background: rgba(255,255,255,.18);
-  color: #fff;
-}
+  .header-text {
+    display: flex;
+    flex-direction: column;
+  }
 
-.review-title {
-  margin: 0 0 6px;
-  font-size: 22px;
-  font-weight: 700;
-}
+  .review-title {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-main;
+    letter-spacing: -0.02em;
+  }
 
-.review-subtitle {
-  margin: 0;
-  opacity: .7;
-  font-size: 14px;
+  .review-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: $text-muted;
+    font-weight: 500;
+  }
 }
 
 .review-body {
-  padding: 28px 32px;
+  padding: 3rem;
 }
 
+// Стилизация списка литературы
 .lit-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-bottom: 2.5rem;
 }
 
 .lit-item {
   display: flex;
+  align-items: center;
   gap: 16px;
-  padding: 16px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border-left: 3px solid #2d5986;
+  padding: 1.25rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border-color: #cbd5e1;
+  }
 }
 
 .lit-index {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  background: #1e3a5f;
-  color: #fff;
+  width: 32px;
+  height: 32px;
+  background: $brand-light;
+  color: $brand-color;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .lit-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .lit-title {
   font-weight: 600;
-  color: #1a2332;
+  color: $text-main;
   font-size: 15px;
 }
 
 .lit-author {
   font-size: 13px;
-  color: #5a6a7e;
+  color: $text-muted;
+  font-weight: 500;
 }
 
 .lit-isbn {
   font-size: 12px;
-  color: #8898aa;
+  color: #94a3b8;
   font-family: monospace;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
 }
 
-.lit-link {
-  font-size: 13px;
-  color: #2d5986;
-  text-decoration: none;
-  margin-top: 4px;
-}
-
-.lit-link:hover { text-decoration: underline; }
-
+// Пустое состояние
 .empty-state {
   text-align: center;
-  padding: 40px;
-  color: #8898aa;
-  background: #f8fafc;
-  border-radius: 8px;
-  margin-bottom: 28px;
+  padding: 3rem;
+  color: $text-muted;
+  background: $bg-global;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  margin-bottom: 2.5rem;
+
+  .empty-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+  }
 }
 
-.empty-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+// Поле ввода комментариев
+.comment-section {
+  margin-bottom: 2.5rem;
 
-.comment-section { margin-bottom: 28px; }
+  .comment-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-main;
+    margin-bottom: 12px;
+  }
 
-.comment-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4a5568;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: .04em;
+  .comment-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid $border-color;
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 15px;
+    font-family: inherit;
+    color: $text-main;
+    background-color: #fafafa;
+    resize: vertical;
+    transition: all 0.2s ease;
+    outline: none;
+
+    &:focus {
+      background-color: #ffffff;
+      border-color: $brand-color;
+      box-shadow: 0 0 0 4px $brand-focus;
+    }
+
+    &:disabled {
+      background-color: #f1f5f9;
+      color: $text-muted;
+      cursor: not-allowed;
+    }
+  }
 }
 
-.comment-input {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 14px;
-  font-family: inherit;
-  resize: vertical;
-  transition: border-color .2s;
-  outline: none;
-}
-
-.comment-input:focus { border-color: #2d5986; }
-
+// Зона кнопок решений
 .review-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: flex-end;
 }
 
 .btn {
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: opacity .15s, transform .1s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
-.btn:disabled { opacity: .55; cursor: not-allowed; }
-.btn:not(:disabled):hover { opacity: .88; }
-.btn:not(:disabled):active { transform: scale(.97); }
-
 .btn--reject {
-  background: #fff;
-  color: #e53e3e;
-  border: 1.5px solid #e53e3e;
+  background: #ffffff;
+  color: #ef4444;
+  border-color: #fca5a5;
+
+  &:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #ef4444;
+    transform: translateY(-1px);
+  }
+  &:active:not(:disabled) { transform: translateY(0); }
 }
 
 .btn--approve {
-  background: #1e3a5f;
-  color: #fff;
+  background: #10b981; // Тот же сочный изумрудный, что и у Декана
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+
+  &:hover:not(:disabled) {
+    background: #059669;
+    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
+    transform: translateY(-1px);
+  }
+  &:active:not(:disabled) { transform: translateY(0); }
 }
 
+// Стили лоадера
 .loader-wrap {
-  padding: 60px 32px;
-  text-align: center;
-  color: #8898aa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 400px;
+  gap: 16px;
+
+  p {
+    color: $text-muted;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+  }
 }
 
 .spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #2d5986;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f1f5f9;
+  border-top-color: $brand-color;
   border-radius: 50%;
-  animation: spin .7s linear infinite;
-  margin: 0 auto 16px;
+  animation: spin 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }

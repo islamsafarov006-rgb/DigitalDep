@@ -3,8 +3,11 @@ package labrary.digitaldepartment.Service;
 import labrary.digitaldepartment.Entity.*;
 import labrary.digitaldepartment.Entity.Document;
 import org.apache.poi.xwpf.usermodel.*;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.springframework.stereotype.Service;
@@ -103,23 +106,49 @@ public class SyllabusGeneratorService {
     }
 
     /**
-     * Ищет плейсхолдер target в конкатенации всех <w:t> ячейки.
-     * Если находит — заменяет его, записывая результат в нужные <w:t> теги
-     * напрямую через CTText (XML-уровень), избегая XmlValueDisconnectedException.
+     * Безопасно собирает все CTText элементы ячейки.
+     * Обходит XmlValueDisconnectedException при работе с клонированными строками,
+     * используя XmlCursor как fallback.
      */
-    private void replaceCrossParaPlaceholder(XWPFTableCell cell, String target, String replacement) {
-        // Собираем все CTText элементы ячейки в порядке обхода
+    private List<CTText> collectCTTexts(XWPFTableCell cell) {
         List<CTText> ctTexts = new ArrayList<>();
         for (XWPFParagraph p : cell.getParagraphs()) {
             for (XWPFRun r : p.getRuns()) {
-                // Получаем CTText напрямую через CTR, минуя XWPFRun.getText()
                 CTR ctr = r.getCTR();
-                for (CTText ct : ctr.getTArray()) {
-                    ctTexts.add(ct);
+                try {
+                    CTText[] arr = ctr.getTArray();
+                    for (CTText ct : arr) {
+                        ctTexts.add(ct);
+                    }
+                } catch (XmlValueDisconnectedException e) {
+                    // CTR отсоединён — пробуем получить через XmlCursor
+                    try {
+                        XmlCursor cursor = ctr.newCursor();
+                        if (cursor.toFirstChild()) {
+                            do {
+                                XmlObject obj = cursor.getObject();
+                                if (obj instanceof CTText) {
+                                    ctTexts.add((CTText) obj);
+                                }
+                            } while (cursor.toNextSibling());
+                        }
+                        cursor.dispose();
+                    } catch (Exception ignored) {
+                        // Полностью недоступный узел — пропускаем
+                    }
                 }
             }
         }
+        return ctTexts;
+    }
 
+    /**
+     * Ищет плейсхолдер target в конкатенации всех <w:t> ячейки.
+     * Если находит — заменяет его, записывая результат в нужные <w:t> теги.
+     * Использует безопасный сбор CTText через collectCTTexts.
+     */
+    private void replaceCrossParaPlaceholder(XWPFTableCell cell, String target, String replacement) {
+        List<CTText> ctTexts = collectCTTexts(cell);
         if (ctTexts.isEmpty()) return;
 
         // Склеиваем всё в одну строку, запоминая границы каждого CTText
@@ -128,14 +157,17 @@ public class SyllabusGeneratorService {
         int[] ends   = new int[ctTexts.size()];
         for (int i = 0; i < ctTexts.size(); i++) {
             starts[i] = sb.length();
-            String val = ctTexts.get(i).getStringValue();
+            String val = null;
+            try {
+                val = ctTexts.get(i).getStringValue();
+            } catch (Exception ignored) {}
             sb.append(val != null ? val : "");
             ends[i] = sb.length();
         }
 
         String fullText = sb.toString();
         int pos = fullText.indexOf(target);
-        if (pos < 0) return; // плейсхолдер не найден в этой ячейке — выходим
+        if (pos < 0) return; // плейсхолдер не найден — выходим
 
         int targetEnd = pos + target.length();
         String rep = replacement != null ? replacement : "";
@@ -150,9 +182,6 @@ public class SyllabusGeneratorService {
         }
         if (firstIdx < 0) return;
 
-        // Строим новое значение для первого CTText:
-        // часть до плейсхолдера + замена + часть после конца плейсхолдера (если есть)
-        String beforeTarget = fullText.substring(starts[firstIdx], pos);
         // Ищем, до какого CTText доходит конец плейсхолдера
         int lastIdx = firstIdx;
         for (int i = firstIdx; i < ctTexts.size(); i++) {
@@ -161,14 +190,16 @@ public class SyllabusGeneratorService {
                 break;
             }
         }
-        String afterTarget = fullText.substring(targetEnd, ends[lastIdx]);
+
+        String beforeTarget = fullText.substring(starts[firstIdx], pos);
+        String afterTarget  = fullText.substring(targetEnd, ends[lastIdx]);
 
         // Пишем результат в первый CTText
-        ctTexts.get(firstIdx).setStringValue(beforeTarget + rep + afterTarget);
+        safeSetText(ctTexts.get(firstIdx), beforeTarget + rep + afterTarget);
 
         // Очищаем промежуточные CTText (между firstIdx и lastIdx включительно)
         for (int i = firstIdx + 1; i <= lastIdx; i++) {
-            ctTexts.get(i).setStringValue("");
+            safeSetText(ctTexts.get(i), "");
         }
     }
 
@@ -184,9 +215,9 @@ public class SyllabusGeneratorService {
         System.out.println("[DEBUG] expandTable: type=" + tableType + " neededRows=" + neededRows);
         if (neededRows <= 0) return;
 
-        XWPFTable    table          = doc.getTables().get(tableIndex);
-        XWPFTableRow templateRow    = table.getRow(DATA_ROW_START);
-        int          existingRows   = DATA_ROW_COUNT;
+        XWPFTable    table        = doc.getTables().get(tableIndex);
+        XWPFTableRow templateRow  = table.getRow(DATA_ROW_START);
+        int          existingRows = DATA_ROW_COUNT;
 
         if (neededRows > existingRows) {
             int insertAt = DATA_ROW_START + existingRows;
@@ -207,24 +238,44 @@ public class SyllabusGeneratorService {
         }
     }
 
+    /**
+     * Клонирует строку таблицы.
+     * ИСПРАВЛЕНИЕ: CTRow вставляется в DOM ПЕРЕД созданием XWPFTableRow,
+     * чтобы все дочерние XML-объекты (CTR, CTText) были «присоединены»
+     * к документу и не бросали XmlValueDisconnectedException.
+     */
     private XWPFTableRow cloneRow(XWPFTable table, XWPFTableRow templateRow, int beforeRowIndex) {
-        CTRow        clonedCT  = (CTRow) templateRow.getCtRow().copy();
-        XWPFTableRow newRow    = new XWPFTableRow(clonedCT, table);
-        XWPFTableRow existing  = table.getRow(beforeRowIndex);
+        // Делаем глубокую копию XML узла шаблонной строки
+        CTRow clonedCT = (CTRow) templateRow.getCtRow().copy();
 
+        // Вставляем в XML-дерево СРАЗУ, до создания XWPFTableRow
+        XWPFTableRow existing = table.getRow(beforeRowIndex);
         if (existing != null) {
             existing.getCtRow().getDomNode().getParentNode()
                     .insertBefore(clonedCT.getDomNode(), existing.getCtRow().getDomNode());
-            try {
-                java.lang.reflect.Field f = XWPFTable.class.getDeclaredField("tableRows");
-                f.setAccessible(true);
-                ((List<XWPFTableRow>) f.get(table)).add(beforeRowIndex, newRow);
-            } catch (Exception e) {
-                table.addRow(newRow);
-            }
         } else {
-            table.addRow(newRow);
+            // Добавляем в конец XML-дерева таблицы
+            table.getCTTbl().getDomNode().appendChild(clonedCT.getDomNode());
         }
+
+        // Создаём XWPFTableRow ПОСЛЕ вставки в DOM — теперь все CTR/CTText «присоединены»
+        XWPFTableRow newRow = new XWPFTableRow(clonedCT, table);
+
+        // Синхронизируем внутренний список строк XWPFTable через рефлексию
+        try {
+            java.lang.reflect.Field f = XWPFTable.class.getDeclaredField("tableRows");
+            f.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            List<XWPFTableRow> rows = (List<XWPFTableRow>) f.get(table);
+            if (beforeRowIndex < rows.size()) {
+                rows.add(beforeRowIndex, newRow);
+            } else {
+                rows.add(newRow);
+            }
+        } catch (Exception e) {
+            // Рефлексия недоступна — строка уже добавлена через DOM, продолжаем
+        }
+
         return newRow;
     }
 
@@ -252,47 +303,78 @@ public class SyllabusGeneratorService {
                 rowData.put("{{siwH"  + idx + "}}", t != null && t.getSpzHours()      != null ? String.valueOf(t.getSpzHours())      : "1");
             }
             case "practice" -> {
-                rowData.put("{{practTopic" + idx + "}}", t != null ? nvl(t.getPracticeTopic())         : "");
+                rowData.put("{{practTopic" + idx + "}}", t != null ? nvl(t.getPracticeTopic())          : "");
                 rowData.put("{{pH"         + idx + "}}", t != null && t.getPracticeHours() != null ? String.valueOf(t.getPracticeHours()) : "1");
-                rowData.put("{{practRef"   + idx + "}}", t != null ? nvl(t.getPracticeReferences())   : "");
-                rowData.put("{{practForm"  + idx + "}}", t != null ? nvl(t.getPracticeReportingForm()): "");
-                rowData.put("{{practDead"  + idx + "}}", t != null ? nvl(t.getPracticeDeadline())     : "");
+                rowData.put("{{practRef"   + idx + "}}", t != null ? nvl(t.getPracticeReferences())    : "");
+                rowData.put("{{practForm"  + idx + "}}", t != null ? nvl(t.getPracticeReportingForm()) : "");
+                rowData.put("{{practDead"  + idx + "}}", t != null ? nvl(t.getPracticeDeadline())      : "");
             }
             case "siw" -> {
-                rowData.put("{{siwTopic" + idx + "}}", t != null ? nvl(t.getSpzTopic())         : "");
+                rowData.put("{{siwTopic" + idx + "}}", t != null ? nvl(t.getSpzTopic())          : "");
                 rowData.put("{{siwH"     + idx + "}}", t != null && t.getSpzHours() != null ? String.valueOf(t.getSpzHours()) : "1");
-                rowData.put("{{siwRef"   + idx + "}}", t != null ? nvl(t.getSpzReferences())   : "");
-                rowData.put("{{siwForm"  + idx + "}}", t != null ? nvl(t.getSpzReportingForm()): "");
-                rowData.put("{{siwDead"  + idx + "}}", t != null ? nvl(t.getSpzDeadline())     : "");
+                rowData.put("{{siwRef"   + idx + "}}", t != null ? nvl(t.getSpzReferences())    : "");
+                rowData.put("{{siwForm"  + idx + "}}", t != null ? nvl(t.getSpzReportingForm()) : "");
+                rowData.put("{{siwDead"  + idx + "}}", t != null ? nvl(t.getSpzDeadline())      : "");
             }
             case "siwt" -> {
-                rowData.put("{{siwtTopic" + idx + "}}", t != null ? nvl(t.getSrspTopic())         : "");
+                rowData.put("{{siwtTopic" + idx + "}}", t != null ? nvl(t.getSrspTopic())          : "");
                 rowData.put("{{siwtH"     + idx + "}}", t != null && t.getSrspHours() != null ? String.valueOf(t.getSrspHours()) : "1");
-                rowData.put("{{siwtRef"   + idx + "}}", t != null ? nvl(t.getSrspReferences())   : "");
-                rowData.put("{{siwtForm"  + idx + "}}", t != null ? nvl(t.getSrspReportingForm()): "");
-                rowData.put("{{siwtDead"  + idx + "}}", t != null ? nvl(t.getSrspDeadline())     : "");
+                rowData.put("{{siwtRef"   + idx + "}}", t != null ? nvl(t.getSrspReferences())    : "");
+                rowData.put("{{siwtForm"  + idx + "}}", t != null ? nvl(t.getSrspReportingForm()) : "");
+                rowData.put("{{siwtDead"  + idx + "}}", t != null ? nvl(t.getSrspDeadline())      : "");
             }
         }
 
         for (XWPFTableCell cell : row.getTableCells()) {
-            // 1. Сначала обрабатываем статичные цифры (номера строк), если они там есть
+            // Читаем текст через безопасный метод (минуем XWPFRun.toString() на клонах)
             for (XWPFParagraph p : cell.getParagraphs()) {
-                try {
-                    String text = p.getParagraphText(); // Вызываем ДО любых деструктивных изменений XML
-                    if (text != null && text.trim().matches("\\d{1,2}")) {
-                        replaceTextInRuns(p, text.trim(), idx);
-                    }
-                } catch (Exception e) {
-                    // Логгируем на всякий случай, если структура параграфа повреждена изначально
-                    System.out.println("[WARN] Сбой при обработке текста параграфа: " + e.getMessage());
+                String cellText = getSafeParagraphText(p);
+                if (cellText != null && cellText.trim().matches("\\d{1,2}")) {
+                    rowData.put(cellText.trim(), idx);
                 }
             }
 
-            // 2. Делаем ВСЕ замены плейсхолдеров ОДНИМ безопасным XML-методом на уровне ячейки.
-            // Он берет сырые структуры CTText и не ломается от "отвязанных" ранов POI.
             for (Map.Entry<String, String> entry : rowData.entrySet()) {
                 replaceCrossParaPlaceholder(cell, entry.getKey(), entry.getValue());
             }
+        }
+    }
+
+    /**
+     * Безопасно читает текст параграфа через CTR,
+     * минуя XWPFRun.toString() который падает с XmlValueDisconnectedException
+     * на клонированных строках.
+     */
+    private String getSafeParagraphText(XWPFParagraph p) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (XWPFRun r : p.getRuns()) {
+                CTR ctr = r.getCTR();
+                try {
+                    for (CTText ct : ctr.getTArray()) {
+                        String val = ct.getStringValue();
+                        if (val != null) sb.append(val);
+                    }
+                } catch (XmlValueDisconnectedException e) {
+                    // CTR отсоединён — пробуем через XmlCursor
+                    try {
+                        XmlCursor cursor = ctr.newCursor();
+                        if (cursor.toFirstChild()) {
+                            do {
+                                XmlObject obj = cursor.getObject();
+                                if (obj instanceof CTText) {
+                                    String val = ((CTText) obj).getStringValue();
+                                    if (val != null) sb.append(val);
+                                }
+                            } while (cursor.toNextSibling());
+                        }
+                        cursor.dispose();
+                    } catch (Exception ignored) {}
+                }
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
         }
     }
 
@@ -341,6 +423,34 @@ public class SyllabusGeneratorService {
                 }
             }
         }
+    }
+
+    /**
+     * Безопасно устанавливает текст в CTText.
+     * Fallback: создаём новый XmlString через parse (избегаем Factory.newValue(Object)).
+     */
+    private void safeSetText(CTText ctText, String value) {
+        try {
+            ctText.setStringValue(value);
+        } catch (XmlValueDisconnectedException e) {
+            try {
+                // Корректный способ создать XmlString без неоднозначного newValue(Object)
+                XmlString xs =
+                        XmlString.Factory.parse(
+                                "<xml-fragment>" + escapeXml(value) + "</xml-fragment>"
+                        );
+                ctText.set(xs);
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private String escapeXml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
     }
 
     // ═════════════════════════════════════════════════════════════

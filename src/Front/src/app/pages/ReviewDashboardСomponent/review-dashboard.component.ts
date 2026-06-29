@@ -37,7 +37,7 @@ export class ReviewDashboardComponent implements OnInit {
       'TEACHER': 'Преподаватель',
       'LIBRARIAN': 'Библиотекарь',
       'METHODOLOGIST': 'Методист',
-      'ACADEMIC_DEPARTMENT': 'Учебный отдел',
+      'ACADEMIC_DEPARTMENT': 'Заведующий кафедрой',
       'DEANERY': 'Деканат',
       'GUEST': 'Гость'
     };
@@ -55,46 +55,70 @@ export class ReviewDashboardComponent implements OnInit {
   }
 
   loadTasks(): void {
-    const role = this.getCurrentRole();
+    let role = this.getCurrentRole();
     const status = this.activeSubTab();
+
+    // Если зашел Завкаф (у которого в БД роль ACADEMIC_DEPARTMENT),
+    // меняем отправляемую роль на ту, которую ждет бэк/Camunda для этого шага
+    if (role === 'ACADEMIC_DEPARTMENT') {
+      role = 'HEAD_OF_DEPARTMENT'; // или 'TEACHER' / смотря какая группа в BPMN
+    }
+
     this.approvalService.fetchTasks(role, status).subscribe({
       next: (data) => console.log('Задачи успешно загружены:', data),
       error: (err) => console.error('Ошибка загрузки задач:', err)
     });
   }
 
-// Единая точка перехода к согласованию
   openTaskReview(task: CamundaTask): void {
-    const role = this.getCurrentRole();
+    let role = this.getCurrentRole();
     let path = '';
 
+    const syllabusId = task.syllabusId;
+    if (!syllabusId) {
+      console.error('Ошибка: у задачи отсутствует syllabusId', task);
+      alert('Ошибка: не удалось определить ID документа.');
+      return;
+    }
+
+    // 1. Финальный шаг для преподавателя (загрузка скана)
+    if (task.taskDefinitionKey === 'Task_UploadSigned' || role === 'TEACHER') {
+      this.router.navigate(['/signed-document', syllabusId], {
+        queryParams: { taskId: task.id }
+      });
+      return;
+    }
+
+    // Подмена роли для соответствия бизнес-логике
+    if (role === 'ACADEMIC_DEPARTMENT') {
+      role = 'HEAD_OF_DEPARTMENT';
+    }
+
+    // 2. Определение пути на основе роли
     if (role === 'LIBRARIAN') {
       path = '/syllabus/review/librarian';
     }
-    // Теперь направляем методиста на тот же компонент, что и Academic Department
-    else if (role === 'METHODOLOGIST' || role === 'ACADEMIC_DEPARTMENT' || role === 'DEANERY') {
+    else if (role === 'METHODOLOGIST') {
       path = '/syllabus/review/academic';
+    }
+    // 🌟 Завкаф и Декан теперь используют новые роуты, ведущие на DeanReviewComponent
+    else if (role === 'HEAD_OF_DEPARTMENT') {
+      path = '/syllabus/review/head';
+    }
+    else if (role === 'DEANERY') {
+      path = '/syllabus/review/dean';
     }
 
     if (path) {
-      const syllabusId = task.syllabusId;
-
-      if (!syllabusId) {
-        console.error('Ошибка: у задачи отсутствует syllabusId', task);
-        alert('Ошибка: не удалось определить ID документа для согласования.');
-        return;
-      }
-
+      // Перенаправляем на DeanReviewComponent: путь /:id + queryParams с taskId
       this.router.navigate([path, syllabusId], {
-        queryParams: {
-          taskId: task.id,
-          taskDefinitionKey: task.taskDefinitionKey
-        }
+        queryParams: { taskId: task.id }
       });
     } else {
       alert('У вас нет прав для доступа к этому разделу');
     }
   }
+
   openTaskFix(task: CamundaTask): void {
     this.router.navigate(['/syllabus/edit', task.processInstanceId], {
       queryParams: { taskId: task.id }

@@ -21,17 +21,26 @@ export class AuthService {
         })
       );
   }
-  // В AuthService
+
   getCurrentRole(): string {
     const user = this.currentUser();
     return user?.role ? user.role.toString().trim().toUpperCase() : 'GUEST';
   }
 
+  getCurrentUserName(): string {
+    const user = this.currentUser();
+    return user?.fio ?? 'Неизвестный пользователь';
+  }
+
+  // 🌟 ДОБАВЛЕНО: Метод извлечения почты из сохраненного JWT-токена
+  getCurrentUserEmail(): string {
+    const user = this.currentUser();
+    return user?.email ?? 'no-email@muit.edu.kz';
+  }
+
   hasRole(allowedRoles: string[]): boolean {
     const user = this.currentUser();
-    if (!user || !user.role) {
-      return false;
-    }
+    if (!user || !user.role) return false;
     const cleanRole = user.role.toString().trim().toUpperCase();
     const cleanAllowedRoles = allowedRoles.map(role => role.trim().toUpperCase());
     return cleanAllowedRoles.includes(cleanRole);
@@ -39,29 +48,17 @@ export class AuthService {
 
   private restoreSession() {
     const token = localStorage.getItem('auth_token');
-    if (token) {
-      this.decodeToken(token);
-    }
-  }
-  getCurrentUserName(): string {
-    const user = this.currentUser();
-    return user?.fio ?? user?.email ?? 'unknown';
+    if (token) this.decodeToken(token);
   }
 
   private decodeToken(token: string) {
     try {
       const payloadBase64 = token.split('.')[1];
       const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
-
       const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+        atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
       );
-
-      const decoded = JSON.parse(jsonPayload);
-      this.currentUser.set(decoded); // Теперь внутри currentUser лежит { role: 'ADMIN', fio: '...', email: '...' }
+      this.currentUser.set(JSON.parse(jsonPayload));
     } catch (e) {
       this.logout();
     }
@@ -77,7 +74,6 @@ export class AuthService {
   }
 
   getAllTeachers(): Observable<any[]> {
-    // Эндпоинт на бэке, который возвращает список юзеров
     return this.http.get<any[]>('http://localhost:8080/api/users/teachers');
   }
 }

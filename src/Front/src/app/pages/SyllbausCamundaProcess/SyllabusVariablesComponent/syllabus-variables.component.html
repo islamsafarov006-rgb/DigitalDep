@@ -56,7 +56,15 @@
                 <span class="material-symbols-outlined">school</span>
                 <span>{{ doc.semester }} семестр</span>
               </div>
-              <span class="status-pill" [attr.data-status]="doc.status">{{ doc.status }}</span>
+
+              @let currentStatus = doc.syllabus?.status || doc.status || 'DRAFT';
+              <div class="status-container" style="display: inline-block; margin-left: 8px;">
+                <span class="status-badge" [ngClass]="currentStatus.toLowerCase().replaceAll('_', '-')">
+                  <span class="status-dot"></span>
+                  {{ 'SYLLABUS.STATUS.' + currentStatus | transloco }}
+                </span>
+              </div>
+
             </div>
           </div>
         </div>
@@ -82,7 +90,6 @@
         </div>
       </header>
 
-      <!-- ── Навигация по табам ── -->
       <nav class="tabs-navigation">
         <button [class.active]="activeTab() === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные силлабуса</button>
         <button [class.active]="activeTab() === 'lectures'"     (click)="setActiveTab('lectures')">Лекции</button>
@@ -93,13 +100,17 @@
           <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">grading</span>
           Оценивание
         </button>
+        <button [class.active]="activeTab() === 'comments'" (click)="setActiveTab('comments')" class="tab-comments">
+          <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">forum</span>
+          Замечания проверяющих
+          <span class="comment-badge" *ngIf="getApprovalComments().length">{{ getApprovalComments().length }}</span>
+        </button>
         <button [class.active]="activeTab() === 'preview'" (click)="setActiveTab('preview')" class="tab-preview">
           <span class="material-symbols-outlined">visibility</span>
           Предпросмотр
         </button>
       </nav>
 
-      <!-- ── Баннер доработки ── -->
       <div *ngIf="activeFixTask()"
            style="background:#fef3c7; border-left:4px solid #d97706; padding:1rem;
                   margin:1rem 0; border-radius:4px; display:flex; align-items:center; gap:12px;">
@@ -115,9 +126,6 @@
 
       <div class="tab-content-animation">
 
-        <!-- ═══════════════════════════════════════════════════════
-             ТАБ: Данные силлабуса
-        ════════════════════════════════════════════════════════ -->
         <div class="card" *ngIf="activeTab() === 'syllabusData' && doc.syllabus">
           <div class="card-header">
             <span class="material-symbols-outlined">edit_note</span>
@@ -152,9 +160,7 @@
               </div>
             </div>
 
-            <!-- Новые поля: Цели, задачи и результаты (на основе image_d4fba1.png) -->
             <div class="course-details-section" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
-
               <div class="labeled-input-group">
                 <label style="font-weight: 600; color: #1e293b;">Course Goals (Цели курса)</label>
                 <textarea [(ngModel)]="doc.syllabus.goals" class="custom-input" style="min-height: 80px; padding: 8px; width: 100%;" placeholder="Enter course goals..."></textarea>
@@ -179,16 +185,14 @@
                 <label style="font-weight: 600; color: #1e293b;">Course Policy (Политика курса):</label>
                 <textarea [(ngModel)]="doc.syllabus.coursePolicy" class="custom-input" style="min-height: 100px; padding: 8px; width: 100%;" placeholder="Enter course policy and regulations..."></textarea>
               </div>
-
             </div>
 
-            <!-- Литература -->
             <div class="literature-section" style="margin-top:3rem;">
               <div class="section-header">
                 <label class="section-label">Список литературы и ресурсов</label>
                 <span class="items-count" *ngIf="doc.syllabus.literature.length">
-          ({{ doc.syllabus.literature.length }})
-        </span>
+                  ({{ doc.syllabus.literature.length }})
+                </span>
               </div>
               <div class="literature-list">
                 <div *ngFor="let item of doc.syllabus.literature; let i = index" class="literature-card">
@@ -220,7 +224,6 @@
               </button>
             </div>
 
-            <!-- Критерии оценивания -->
             <div class="assessment-section" style="margin-top:3rem;">
               <div class="section-header" style="margin-bottom:1rem;">
                 <label class="section-label" style="font-weight:600; color:#1e293b;">
@@ -242,9 +245,9 @@
                              style="width:100%; text-align:center; border:none; background:transparent; font-weight:700; font-size:16px;">
                     </td>
                     <td style="padding:8px;">
-                <textarea [(ngModel)]="item.criterion"
-                          style="width:100%; border:1px solid #f1f5f9; border-radius:4px; padding:8px; min-height:50px; font-family:inherit;"
-                          placeholder="Описание критерия..."></textarea>
+                        <textarea [(ngModel)]="item.criterion"
+                                  style="width:100%; border:1px solid #f1f5f9; border-radius:4px; padding:8px; min-height:50px; font-family:inherit;"
+                                  placeholder="Описание критерия..."></textarea>
                     </td>
                   </tr>
                   </tbody>
@@ -253,9 +256,7 @@
             </div>
           </div>
         </div>
-        <!-- ═══════════════════════════════════════════════════════
-             ТАБ: Лекции / Практика / СРСП / СРС
-        ════════════════════════════════════════════════════════ -->
+
         <div class="card" *ngIf="['lectures', 'practices', 'srsp', 'srs'].includes(activeTab())">
           <div class="card-header">
             <h3 style="text-transform:capitalize;">Раздел: {{ activeTab() }}</h3>
@@ -348,12 +349,6 @@
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════
-             ТАБ: Оценивание (Grading Policy)
-        ════════════════════════════════════════════════════════ -->
-        <!-- ═══════════════════════════════════════════════════════
-       ТАБ: Оценивание (Grading Policy)
-  ════════════════════════════════════════════════════════ -->
         <div class="card" *ngIf="activeTab() === 'grading'">
           <div class="card-header">
             <span class="material-symbols-outlined">grading</span>
@@ -361,96 +356,59 @@
           </div>
 
           <div style="padding:1.5rem;">
-
-            <!-- Автосчёт итогов -->
             <div style="display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap;">
               @for (period of ['1st attestation', '2nd attestation']; track period) {
                 <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px;
                     padding:12px 20px; display:flex; flex-direction:column; gap:4px;">
                   <span style="font-size:12px; color:#3b82f6; font-weight:600;">{{ period }}</span>
                   <span style="font-size:22px; font-weight:700; color:#1e40af;">
-            {{ getTotalByPeriod(period) }}
+                    {{ getTotalByPeriod(period) }}
                     <span style="font-size:14px; color:#64748b; font-weight:400;">/ 100</span>
-          </span>
+                  </span>
                   <span [style.color]="getTotalByPeriod(period) === 100 ? '#16a34a' : '#ef4444'"
                         style="font-size:11px; font-weight:600;">
-            {{ getTotalByPeriod(period) === 100 ? '✓ Баллы сходятся' : '✗ Сумма ≠ 100' }}
-          </span>
+                    {{ getTotalByPeriod(period) === 100 ? '✓ Баллы сходятся' : '✗ Сумма ≠ 100' }}
+                  </span>
                 </div>
               }
               <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px;
                   padding:12px 20px; display:flex; align-items:center;">
-        <span style="font-size:13px; color:#15803d; font-weight:600;">
-          Итог: 0,3 × 1st + 0,3 × 2nd + 0,4 × Exam = 100
-        </span>
+                <span style="font-size:13px; color:#15803d; font-weight:600;">
+                  Итог: 0,3 × 1st + 0,3 × 2nd + 0,4 × Exam = 100
+                </span>
               </div>
             </div>
 
-            <!-- 🌟 Быстрое добавление строк -->
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
                 padding:1rem 1.2rem; margin-bottom:1.5rem;">
-              <p style="margin:0 0 10px 0; font-size:13px; font-weight:600; color:#374151;">
-                Быстрое добавление
-              </p>
+              <p style="margin:0 0 10px 0; font-size:13px; font-weight:600; color:#374151;">Быстрое добавление</p>
               <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-
-                <!-- Добавить N практик -->
-                <div style="display:flex; align-items:center; gap:6px; background:white;
-                    border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
                   <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (1st att):</span>
-                  <input type="number" [(ngModel)]="quickAddPractice1" min="1" max="20"
-                         style="width:48px; border:1px solid #e2e8f0; border-radius:4px;
-                   padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('1st attestation', 'Practice', quickAddPractice1)"
-                          style="padding:4px 10px; background:#3b82f6; color:white; border:none;
-                   border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">
-                    + Добавить
-                  </button>
+                  <input type="number" [(ngModel)]="quickAddPractice1" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                  <button (click)="quickAddRows('1st attestation', 'Practice', quickAddPractice1)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
                 </div>
 
-                <!-- Добавить N практик (2nd) -->
-                <div style="display:flex; align-items:center; gap:6px; background:white;
-                    border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
                   <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (2nd att):</span>
-                  <input type="number" [(ngModel)]="quickAddPractice2" min="1" max="20"
-                         style="width:48px; border:1px solid #e2e8f0; border-radius:4px;
-                   padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('2nd attestation', 'Practice', quickAddPractice2)"
-                          style="padding:4px 10px; background:#3b82f6; color:white; border:none;
-                   border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">
-                    + Добавить
-                  </button>
+                  <input type="number" [(ngModel)]="quickAddPractice2" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                  <button (click)="quickAddRows('2nd attestation', 'Practice', quickAddPractice2)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
                 </div>
 
-                <!-- Добавить N лабок (2nd) -->
-                <div style="display:flex; align-items:center; gap:6px; background:white;
-                    border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
                   <span style="font-size:12px; color:#64748b; white-space:nowrap;">Лаб. работы (2nd att):</span>
-                  <input type="number" [(ngModel)]="quickAddLab" min="1" max="20"
-                         style="width:48px; border:1px solid #e2e8f0; border-radius:4px;
-                   padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('2nd attestation', 'Lab', quickAddLab)"
-                          style="padding:4px 10px; background:#7c3aed; color:white; border:none;
-                   border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">
-                    + Добавить
-                  </button>
+                  <input type="number" [(ngModel)]="quickAddLab" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                  <button (click)="quickAddRows('2nd attestation', 'Lab', quickAddLab)" style="padding:4px 10px; background:#7c3aed; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
                 </div>
 
-                <!-- Разделитель -->
                 <span style="color:#e2e8f0; font-size:20px;">|</span>
 
-                <!-- Одиночные кнопки для любого периода -->
                 @for (period of gradingPeriods; track period) {
-                  <button (click)="addGradingRow(period)"
-                          style="padding:5px 12px; border:1px dashed #93c5fd; border-radius:6px;
-                   background:#eff6ff; color:#1d4ed8; cursor:pointer; font-size:12px;">
-                    + {{ period }}
-                  </button>
+                  <button (click)="addGradingRow(period)" style="padding:5px 12px; border:1px dashed #93c5fd; border-radius:6px; background:#eff6ff; color:#1d4ed8; cursor:pointer; font-size:12px;">+ {{ period }}</button>
                 }
               </div>
             </div>
 
-            <!-- Таблица оценивания -->
             <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
               <table style="width:100%; border-collapse:collapse; font-size:13px;">
                 <thead>
@@ -465,96 +423,101 @@
                 </thead>
                 <tbody>
                   @for (row of gradingPolicy; track $index; let i = $index) {
-                    <tr [style.background]="row.period === 'Total' ? '#f8fafc'
-                                  : row.bold && !row.subItem ? '#f0f7ff'
-                                  : 'white'"
-                        style="border-bottom:1px solid #f1f5f9;">
-
-                      <!-- Period -->
+                    <tr [style.background]="row.period === 'Total' ? '#f8fafc' : row.bold && !row.subItem ? '#f0f7ff' : 'white'" style="border-bottom:1px solid #f1f5f9;">
                       <td style="padding:8px 12px; vertical-align:middle; border-right:1px solid #f1f5f9;">
                         @if (isFirstInPeriod(i)) {
-                          <span style="font-weight:600; font-size:12px; color:#1e40af; white-space:nowrap;">
-                    {{ row.period }}
-                  </span>
+                          <span style="font-weight:600; font-size:12px; color:#1e40af; white-space:nowrap;">{{ row.period }}</span>
                         }
                       </td>
-
-                      <!-- Assignment name -->
                       <td style="padding:6px 8px; border-right:1px solid #f1f5f9;">
                         <div style="display:flex; align-items:center; gap:4px;">
-                          @if (row.subItem) {
-                            <span style="display:inline-block; width:20px; min-width:20px; color:#94a3b8;">└</span>
-                          }
-                          <input [(ngModel)]="row.assignmentName"
-                                 [style.font-weight]="row.bold ? '700' : '400'"
-                                 [style.color]="row.period === 'Total' ? '#64748b' : '#0f172a'"
-                                 style="border:1px solid #e2e8f0; border-radius:4px; padding:5px 8px;
-                           width:100%; font-size:13px; font-family:inherit; background:white;">
+                          @if (row.subItem) { <span style="display:inline-block; width:20px; min-width:20px; color:#94a3b8;">└</span> }
+                          <input [(ngModel)]="row.assignmentName" [style.font-weight]="row.bold ? '700' : '400'" [style.color]="row.period === 'Total' ? '#64748b' : '#0f172a'" style="border:1px solid #e2e8f0; border-radius:4px; padding:5px 8px; width:100%; font-size:13px; font-family:inherit; background:white;">
                         </div>
                       </td>
-
-                      <!-- Score -->
                       <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
-                        <input type="number" [(ngModel)]="row.score"
-                               [style.font-weight]="row.bold ? '700' : '400'"
-                               style="width:64px; text-align:center; border:1px solid #e2e8f0;
-                         border-radius:4px; padding:5px; font-size:13px;">
+                        <input type="number" [(ngModel)]="row.score" [style.font-weight]="row.bold ? '700' : '400'" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px;">
                       </td>
-
-                      <!-- Total -->
                       <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
-                        <input type="number" [(ngModel)]="row.total"
-                               style="width:64px; text-align:center; border:1px solid #e2e8f0;
-                         border-radius:4px; padding:5px; font-size:13px; font-weight:700;">
+                        <input type="number" [(ngModel)]="row.total" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px; font-weight:700;">
                       </td>
-
-                      <!-- Стиль -->
                       <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
                         <div style="display:flex; gap:8px; justify-content:center;">
-                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;">
-                            <input type="checkbox" [(ngModel)]="row.bold"> жирный
-                          </label>
-                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;">
-                            <input type="checkbox" [(ngModel)]="row.subItem"> отступ
-                          </label>
+                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.bold"> жирный</label>
+                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.subItem"> отступ</label>
                         </div>
                       </td>
-
-                      <!-- Удалить -->
                       <td style="padding:4px; text-align:center;">
-                        <button (click)="removeGradingRow(i)"
-                                style="background:none; border:none; cursor:pointer; color:#ef4444;
-                         padding:4px; border-radius:4px; display:flex; align-items:center;"
-                                title="Удалить строку">
+                        <button (click)="removeGradingRow(i)" style="background:none; border:none; cursor:pointer; color:#ef4444; padding:4px; border-radius:4px; display:flex; align-items:center;" title="Удалить строку">
                           <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
                         </button>
                       </td>
                     </tr>
                   }
-
                   @if (gradingPolicy.length === 0) {
                     <tr>
-                      <td colspan="6" style="padding:2rem; text-align:center; color:#94a3b8; font-size:14px;">
-                        Таблица пуста. Воспользуйтесь быстрым добавлением выше.
-                      </td>
+                      <td colspan="6" style="padding:2rem; text-align:center; color:#94a3b8; font-size:14px;">Таблица пуста. Воспользуйтесь быстрым добавлением выше.</td>
                     </tr>
                   }
                 </tbody>
               </table>
             </div>
-
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════
-             ТАБ: Предпросмотр
-        ════════════════════════════════════════════════════════ -->
+        <button [class.active]="activeTab() === 'comments'" (click)="setActiveTab('comments')" class="tab-comments">
+          <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">forum</span>
+          Замечания проверяющих
+          <span class="comment-badge" *ngIf="getApprovalComments().length">{{ getApprovalComments().length }}</span>
+        </button>
+
+        <div class="card" *ngIf="activeTab() === 'comments'">
+          <div class="card-header">
+            <span class="material-symbols-outlined">forum</span>
+            <h3>История замечаний и решений по раундам согласования</h3>
+          </div>
+
+          <div class="comments-layout">
+            <div class="comments-feed" style="max-height: none; overflow: visible;">
+
+              <div *ngIf="getApprovalComments().length === 0" class="comments-empty">
+                <span class="material-symbols-outlined">check_circle</span>
+                <p>Замечаний от проверяющих органов пока нет. Документ находится в статусе: <strong>{{ doc.status }}</strong></p>
+              </div>
+
+              <div class="comment-item" *ngFor="let comment of getApprovalComments()">
+                <div class="comment-avatar" [style.background]="comment.decision === 'REJECTED' ? '#ef4444' : '#10b981'">
+                  {{ comment.authorName.charAt(0) || 'U' }}
+                </div>
+                <div class="comment-body">
+                  <div class="comment-meta">
+                    <span class="author-name">{{ comment.authorName }}</span>
+                    <span class="author-role" [attr.data-role]="comment.authorRole">{{ comment.authorRole }}</span>
+
+                    <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600;"
+                          [style.background]="comment.decision === 'APPROVED' ? '#dcfce7' : '#fee2e2'"
+                          [style.color]="comment.decision === 'APPROVED' ? '#15803d' : '#991b1b'">
+              {{ comment.decision === 'APPROVED' ? 'Утверждено' : 'Отклонено' }}
+            </span>
+
+                    <span class="comment-date" *ngIf="comment.date">{{ comment.date | date:'dd.MM.yyyy, HH:mm' }}</span>
+                  </div>
+                  <div class="comment-text">
+                    {{ comment.text }}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
         <div class="card preview-card" *ngIf="activeTab() === 'preview'">
           <div class="preview-toolbar">
             <div class="toolbar-info">
               <span class="material-symbols-outlined info-icon">Description</span>
               <div class="toolbar-text">
-                <p class="title">Предпросмотр документа</p>                <p class="subtitle">Визуализация финального .docx файла</p>
+                <p class="title">Предпросмотр документа</p>
+                <p class="subtitle">Визуализация финального .docx файла</p>
               </div>
             </div>
             <div class="toolbar-actions">

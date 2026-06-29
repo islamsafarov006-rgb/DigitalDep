@@ -57,11 +57,12 @@
     "CREATE_SYLLABUS": "Создать Силлабус",
     "STATUS": {
       "DRAFT": "Черновик",
-      "UNDER_REVIEW": "На проверке",
-      "REJECTED": "Отклонен",
-      "LIBRARY_CHECK": "Проверка библиотекой",
-      "SIGNED": "Подписан",
-      "APPROVED": "Утвержден"
+      "PENDING_LIBRARIAN_AND_ACADEMIC": "Проверка библиотекой и КО",
+      "PENDING_HEAD_OF_DEPARTMENT": "На подписи у завкафедрой",
+      "PENDING_DEANERY": "На утверждении в деканате",
+      "IN_FIXING": "Требуется доработка",
+      "APPROVED": "Утвержден",
+      "SIGNED": "Подписан и заверен"
     }
   },
   "sidebar": {

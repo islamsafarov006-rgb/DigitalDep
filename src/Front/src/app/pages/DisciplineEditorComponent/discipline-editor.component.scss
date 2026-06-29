@@ -21,7 +21,7 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 
   h1 {
     font-size: 2rem;
@@ -38,23 +38,39 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-.create-btn {
+.list-tabs {
   display: flex;
-  align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: $primary;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: $transition-smooth;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
 
-  &:hover {
-    background: darken($primary, 5%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba($primary, 0.3);
+  button {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-muted;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    transition: $transition-smooth;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover {
+      color: #701a75;
+      background-color: #fdf4ff;
+    }
+
+    &.active {
+      color: #701a75;
+      border-bottom: 3px solid #701a75;
+      font-weight: 700;
+    }
+
+    .tab-icon { font-size: 18px; }
   }
 }
 
@@ -74,30 +90,20 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-bottom: 1px solid $border-light;
   transition: $transition-smooth;
 
-  &:last-child {
-    border-bottom: none;
-  }
+  &:last-child { border-bottom: none; }
 
   &.clickable-row {
     cursor: pointer;
-
     &:hover {
       background-color: #f8fafc;
-
-      .icon-wrapper {
+      .icon-wrapper:not(.approved-icon) {
         background: white;
         color: $primary;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       }
-
-      .doc-title {
-        color: $primary;
-      }
+      .doc-title { color: #701a75; }
     }
-
-    &:active {
-      background-color: #f1f5f9;
-    }
+    &:active { background-color: #f1f5f9; }
   }
 }
 
@@ -116,6 +122,11 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     justify-content: center;
     border-radius: 14px;
     transition: $transition-smooth;
+
+    &.approved-icon {
+      background: #f0fdf4 !important;
+      color: #10b981 !important;
+    }
 
     .doc-main-icon { font-size: 28px; }
   }
@@ -139,7 +150,6 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       gap: 4px;
-
       .material-symbols-outlined { font-size: 16px; opacity: 0.7; }
     }
     .dot { color: #cbd5e1; }
@@ -152,10 +162,10 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   gap: 8px;
   padding: 6px 12px;
   border-radius: 8px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 
   .status-dot {
     width: 6px;
@@ -164,11 +174,13 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background: currentColor;
   }
 
-  &.active, &.published { @include status-variant(#ecfdf5, #10b981); }
   &.draft { @include status-variant(#f1f5f9, #475569); }
-  &.under_review { @include status-variant(#eff6ff, #3b82f6); }
-  &.rejected { @include status-variant(#fef2f2, #ef4444); }
-  &.library_check { @include status-variant(#fffbeb, #f59e0b); }
+  &.pending_librarian_and_academic { @include status-variant(#fffbeb, #b45309); }
+  &.pending_head_of_department { @include status-variant(#e0f2fe, #0369a1); }
+  &.pending_deanery { @include status-variant(#eff6ff, #1d4ed8); }
+  &.in_fixing { @include status-variant(#fef2f2, #dc2626); }
+  &.approved { @include status-variant(#ecfdf5, #10b981); }
+  &.signed { @include status-variant(#fdf4ff, #701a75); }
 }
 
 .loader-container {
@@ -187,21 +199,12 @@ $transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
+  .empty-folder-icon { font-size: 48px; color: #cbd5e1; margin-bottom: 16px; }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 640px) {
-  .doc-item {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 20px;
-  }
-
-  .list-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    .create-btn { width: 100%; justify-content: center; }
-  }
+  .doc-item { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
+  .list-header { flex-direction: column; align-items: flex-start; gap: 16px; }
 }

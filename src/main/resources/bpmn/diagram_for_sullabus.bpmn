@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.12.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  id="Definitions_1"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.12.0">
   <bpmn:process id="syllabus-approval-process" name="Digital Department Syllabus Approval with Rejection" isExecutable="true" camunda:historyTimeToLive="180">
-    
+
     <bpmn:startEvent id="StartEvent_1" name="Силлабус отправлен">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -11,97 +20,111 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_Start</bpmn:outgoing>
     </bpmn:startEvent>
-    
-    <bpmn:sequenceFlow id="Flow_Start" sourceRef="StartEvent_1" targetRef="Gateway_Fork" />
-    
+
+    <bpmn:sequenceFlow id="Flow_Start" sourceRef="StartEvent_1" targetRef="Gateway_Merge" />
+
     <bpmn:userTask id="Task_FixSyllabus" name="Доработка силлабуса преподавателем" camunda:assignee="${initiator}">
       <bpmn:incoming>Flow_LibAcad_Rejected</bpmn:incoming>
       <bpmn:incoming>Flow_Head_Rejected</bpmn:incoming>
       <bpmn:incoming>Flow_Dean_Rejected</bpmn:incoming>
       <bpmn:outgoing>Flow_After_Fix</bpmn:outgoing>
     </bpmn:userTask>
-    
-    <bpmn:sequenceFlow id="Flow_After_Fix" sourceRef="Task_FixSyllabus" targetRef="Gateway_Fork" />
-    
-    <bpmn:parallelGateway id="Gateway_Fork">
-      <bpmn:incoming>Flow_After_Fix</bpmn:incoming>
+
+    <bpmn:sequenceFlow id="Flow_After_Fix" sourceRef="Task_FixSyllabus" targetRef="Gateway_Merge" />
+
+    <bpmn:exclusiveGateway id="Gateway_Merge" name="Слияние потоков">
       <bpmn:incoming>Flow_Start</bpmn:incoming>
+      <bpmn:incoming>Flow_After_Fix</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_ParallelSplit</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:sequenceFlow id="Flow_To_ParallelSplit" sourceRef="Gateway_Merge" targetRef="Gateway_Fork" />
+
+    <bpmn:parallelGateway id="Gateway_Fork">
+      <bpmn:incoming>Flow_To_ParallelSplit</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Librarian</bpmn:outgoing>
       <bpmn:outgoing>Flow_To_Academic</bpmn:outgoing>
     </bpmn:parallelGateway>
-    
+
     <bpmn:userTask id="Task_Librarian" name="Проверка библиотекарем" camunda:candidateGroups="LIBRARIAN">
       <bpmn:incoming>Flow_To_Librarian</bpmn:incoming>
       <bpmn:outgoing>Flow_From_Librarian</bpmn:outgoing>
     </bpmn:userTask>
-    
+
     <bpmn:userTask id="Task_Academic" name="Проверка учебным отделом" camunda:candidateGroups="METHODOLOGIST">
       <bpmn:incoming>Flow_To_Academic</bpmn:incoming>
       <bpmn:outgoing>Flow_From_Academic</bpmn:outgoing>
     </bpmn:userTask>
-    
+
     <bpmn:parallelGateway id="Gateway_Join">
       <bpmn:incoming>Flow_From_Librarian</bpmn:incoming>
       <bpmn:incoming>Flow_From_Academic</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Check_LibAcad</bpmn:outgoing>
     </bpmn:parallelGateway>
-    
+
     <bpmn:exclusiveGateway id="Gateway_Check_LibAcad" name="Одобрено обоими?">
       <bpmn:incoming>Flow_To_Check_LibAcad</bpmn:incoming>
       <bpmn:outgoing>Flow_LibAcad_Approved</bpmn:outgoing>
       <bpmn:outgoing>Flow_LibAcad_Rejected</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    
+
     <bpmn:sequenceFlow id="Flow_LibAcad_Approved" name="Да" sourceRef="Gateway_Check_LibAcad" targetRef="Task_HeadOfDepartment">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${libApproved == true &amp;&amp; academicApproved == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
+
     <bpmn:sequenceFlow id="Flow_LibAcad_Rejected" name="Нет (на доработку)" sourceRef="Gateway_Check_LibAcad" targetRef="Task_FixSyllabus">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${libApproved == false || academicApproved == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
-    <bpmn:userTask id="Task_HeadOfDepartment" name="Согласование зав. кафедрой" camunda:candidateGroups="HEAD_OF_DEPARTMENT">
+
+    <bpmn:userTask id="Task_HeadOfDepartment" name="Согласование зав. кафедрой" camunda:candidateGroups="ACADEMIC_DEPARTMENT">
       <bpmn:incoming>Flow_LibAcad_Approved</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Check_Head</bpmn:outgoing>
     </bpmn:userTask>
-    
+
     <bpmn:exclusiveGateway id="Gateway_Check_Head" name="Завкаф одобрил?">
       <bpmn:incoming>Flow_To_Check_Head</bpmn:incoming>
       <bpmn:outgoing>Flow_Head_Approved</bpmn:outgoing>
       <bpmn:outgoing>Flow_Head_Rejected</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    
+
     <bpmn:sequenceFlow id="Flow_Head_Approved" name="Да" sourceRef="Gateway_Check_Head" targetRef="Task_Deanery">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${headApproved == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
+
     <bpmn:sequenceFlow id="Flow_Head_Rejected" name="Нет" sourceRef="Gateway_Check_Head" targetRef="Task_FixSyllabus">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${headApproved == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
+
     <bpmn:userTask id="Task_Deanery" name="Утверждение в деканате" camunda:candidateGroups="DEANERY">
       <bpmn:incoming>Flow_Head_Approved</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Check_Dean</bpmn:outgoing>
     </bpmn:userTask>
-    
+
     <bpmn:exclusiveGateway id="Gateway_Check_Dean" name="Деканат одобрил?">
       <bpmn:incoming>Flow_To_Check_Dean</bpmn:incoming>
       <bpmn:outgoing>Flow_Dean_Approved</bpmn:outgoing>
       <bpmn:outgoing>Flow_Dean_Rejected</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    
-    <bpmn:sequenceFlow id="Flow_Dean_Approved" name="Да" sourceRef="Gateway_Check_Dean" targetRef="EndEvent_1">
+
+    <bpmn:sequenceFlow id="Flow_Dean_Approved" name="Да" sourceRef="Gateway_Check_Dean" targetRef="Task_UploadSigned">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${deanApproved == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
+
     <bpmn:sequenceFlow id="Flow_Dean_Rejected" name="Нет" sourceRef="Gateway_Check_Dean" targetRef="Task_FixSyllabus">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${deanApproved == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    
-    <bpmn:endEvent id="EndEvent_1" name="Силлабус полностью утвержден">
+
+    <bpmn:userTask id="Task_UploadSigned" name="Загрузка подписанного скана преподавателем" camunda:assignee="${initiator}">
       <bpmn:incoming>Flow_Dean_Approved</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_Final_End</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:sequenceFlow id="Flow_To_Final_End" sourceRef="Task_UploadSigned" targetRef="EndEvent_Final" />
+
+    <bpmn:endEvent id="EndEvent_Final" name="Силлабус полностью утвержден">
+      <bpmn:incoming>Flow_To_Final_End</bpmn:incoming>
     </bpmn:endEvent>
-    
+
     <bpmn:sequenceFlow id="Flow_To_Librarian" sourceRef="Gateway_Fork" targetRef="Task_Librarian" />
     <bpmn:sequenceFlow id="Flow_To_Academic" sourceRef="Gateway_Fork" targetRef="Task_Academic" />
     <bpmn:sequenceFlow id="Flow_From_Librarian" sourceRef="Task_Librarian" targetRef="Gateway_Join" />
@@ -109,38 +132,43 @@
     <bpmn:sequenceFlow id="Flow_To_Check_LibAcad" sourceRef="Gateway_Join" targetRef="Gateway_Check_LibAcad" />
     <bpmn:sequenceFlow id="Flow_To_Check_Head" sourceRef="Task_HeadOfDepartment" targetRef="Gateway_Check_Head" />
     <bpmn:sequenceFlow id="Flow_To_Check_Dean" sourceRef="Task_Deanery" targetRef="Gateway_Check_Dean" />
-    
+
   </bpmn:process>
-  
+
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="syllabus-approval-process">
       <bpmndi:BPMNShape id="Start_di" bpmnElement="StartEvent_1"><dc:Bounds x="152" y="142" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Merge_di" bpmnElement="Gateway_Merge" isMarkerVisible="true"><dc:Bounds x="235" y="135" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Fork_di" bpmnElement="Gateway_Fork"><dc:Bounds x="315" y="135" width="50" height="50" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Fix_di" bpmnElement="Task_FixSyllabus"><dc:Bounds x="420" y="340" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Fork_di" bpmnElement="Gateway_Fork"><dc:Bounds x="245" y="135" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lib_di" bpmnElement="Task_Librarian"><dc:Bounds x="350" y="50" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Acad_di" bpmnElement="Task_Academic"><dc:Bounds x="350" y="210" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Join_di" bpmnElement="Gateway_Join"><dc:Bounds x="505" y="135" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CheckLA_di" bpmnElement="Gateway_Check_LibAcad" isMarkerVisible="true"><dc:Bounds x="605" y="135" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Head_di" bpmnElement="Task_HeadOfDepartment"><dc:Bounds x="730" y="120" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CheckH_di" bpmnElement="Gateway_Check_Head" isMarkerVisible="true"><dc:Bounds x="885" y="135" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Dean_di" bpmnElement="Task_Deanery"><dc:Bounds x="990" y="120" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CheckD_di" bpmnElement="Gateway_Check_Dean" isMarkerVisible="true"><dc:Bounds x="1145" y="135" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="End_di" bpmnElement="EndEvent_1"><dc:Bounds x="1272" y="142" width="36" height="36" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="E1_di" bpmnElement="Flow_Start"><di:waypoint x="188" y="160" /><di:waypoint x="245" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E2_di" bpmnElement="Flow_After_Fix"><di:waypoint x="420" y="380" /><di:waypoint x="270" y="380" /><di:waypoint x="270" y="185" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E3_di" bpmnElement="Flow_To_Librarian"><di:waypoint x="270" y="135" /><di:waypoint x="270" y="90" /><di:waypoint x="350" y="90" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E4_di" bpmnElement="Flow_To_Academic"><di:waypoint x="270" y="185" /><di:waypoint x="270" y="250" /><di:waypoint x="350" y="250" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E5_di" bpmnElement="Flow_From_Librarian"><di:waypoint x="450" y="90" /><di:waypoint x="530" y="90" /><di:waypoint x="530" y="135" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E6_di" bpmnElement="Flow_From_Academic"><di:waypoint x="450" y="250" /><di:waypoint x="530" y="250" /><di:waypoint x="530" y="185" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E7_di" bpmnElement="Flow_To_Check_LibAcad"><di:waypoint x="555" y="160" /><di:waypoint x="605" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E8_di" bpmnElement="Flow_LibAcad_Approved"><di:waypoint x="655" y="160" /><di:waypoint x="730" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E9_di" bpmnElement="Flow_LibAcad_Rejected"><di:waypoint x="630" y="185" /><di:waypoint x="630" y="360" /><di:waypoint x="520" y="360" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E10_di" bpmnElement="Flow_To_Check_Head"><di:waypoint x="830" y="160" /><di:waypoint x="885" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E11_di" bpmnElement="Flow_Head_Approved"><di:waypoint x="935" y="160" /><di:waypoint x="990" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E12_di" bpmnElement="Flow_Head_Rejected"><di:waypoint x="910" y="185" /><di:waypoint x="910" y="380" /><di:waypoint x="520" y="380" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E13_di" bpmnElement="Flow_To_Check_Dean"><di:waypoint x="1090" y="160" /><di:waypoint x="1145" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E14_di" bpmnElement="Flow_Dean_Approved"><di:waypoint x="1195" y="160" /><di:waypoint x="1272" y="160" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E15_di" bpmnElement="Flow_Dean_Rejected"><di:waypoint x="1170" y="185" /><di:waypoint x="1170" y="400" /><di:waypoint x="520" y="400" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lib_di" bpmnElement="Task_Librarian"><dc:Bounds x="420" y="50" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Acad_di" bpmnElement="Task_Academic"><dc:Bounds x="420" y="210" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Join_di" bpmnElement="Gateway_Join"><dc:Bounds x="565" y="135" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckLA_di" bpmnElement="Gateway_Check_LibAcad" isMarkerVisible="true"><dc:Bounds x="665" y="135" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Head_di" bpmnElement="Task_HeadOfDepartment"><dc:Bounds x="780" y="120" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckH_di" bpmnElement="Gateway_Check_Head" isMarkerVisible="true"><dc:Bounds x="935" y="135" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Dean_di" bpmnElement="Task_Deanery"><dc:Bounds x="1040" y="120" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckD_di" bpmnElement="Gateway_Check_Dean" isMarkerVisible="true"><dc:Bounds x="1195" y="135" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Upload_di" bpmnElement="Task_UploadSigned"><dc:Bounds x="1310" y="120" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="EndEvent_Final"><dc:Bounds x="1472" y="142" width="36" height="36" /></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="E1_di" bpmnElement="Flow_Start"><di:waypoint x="188" y="160" /><di:waypoint x="235" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MergeToSplit_di" bpmnElement="Flow_To_ParallelSplit"><di:waypoint x="285" y="160" /><di:waypoint x="315" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E2_di" bpmnElement="Flow_After_Fix"><di:waypoint x="420" y="380" /><di:waypoint x="260" y="380" /><di:waypoint x="260" y="185" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E3_di" bpmnElement="Flow_To_Librarian"><di:waypoint x="340" y="135" /><di:waypoint x="340" y="90" /><di:waypoint x="420" y="90" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E4_di" bpmnElement="Flow_To_Academic"><di:waypoint x="340" y="185" /><di:waypoint x="340" y="250" /><di:waypoint x="420" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E5_di" bpmnElement="Flow_From_Librarian"><di:waypoint x="520" y="90" /><di:waypoint x="590" y="90" /><di:waypoint x="590" y="135" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E6_di" bpmnElement="Flow_From_Academic"><di:waypoint x="520" y="250" /><di:waypoint x="590" y="250" /><di:waypoint x="590" y="185" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E7_di" bpmnElement="Flow_To_Check_LibAcad"><di:waypoint x="615" y="160" /><di:waypoint x="665" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E8_di" bpmnElement="Flow_LibAcad_Approved"><di:waypoint x="715" y="160" /><di:waypoint x="780" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E9_di" bpmnElement="Flow_LibAcad_Rejected"><di:waypoint x="690" y="185" /><di:waypoint x="690" y="360" /><di:waypoint x="520" y="360" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E10_di" bpmnElement="Flow_To_Check_Head"><di:waypoint x="880" y="160" /><di:waypoint x="935" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E11_di" bpmnElement="Flow_Head_Approved"><di:waypoint x="985" y="160" /><di:waypoint x="1040" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E12_di" bpmnElement="Flow_Head_Rejected"><di:waypoint x="960" y="185" /><di:waypoint x="960" y="380" /><di:waypoint x="520" y="380" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E13_di" bpmnElement="Flow_To_Check_Dean"><di:waypoint x="1140" y="160" /><di:waypoint x="1195" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E14_di" bpmnElement="Flow_Dean_Approved"><di:waypoint x="1245" y="160" /><di:waypoint x="1310" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E15_di" bpmnElement="Flow_Dean_Rejected"><di:waypoint x="1220" y="185" /><di:waypoint x="1220" y="400" /><di:waypoint x="520" y="400" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E16_di" bpmnElement="Flow_To_Final_End"><di:waypoint x="1410" y="160" /><di:waypoint x="1472" y="160" /></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

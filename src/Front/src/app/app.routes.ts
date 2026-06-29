@@ -1,19 +1,26 @@
 import { Router, Routes } from '@angular/router';
 import { authGuard } from './authGuard';
-import { MainPageComponent } from './pages/main-page/main-page.component';
+import { MainPageComponent } from './pages/MainPageComponent/main-page.component';
 import { AuthService } from './Services/AuthService/AuthService';
 import { ReviewDashboardComponent } from './pages/ReviewDashboardСomponent/review-dashboard.component';
-import { LibrarianReviewComponent } from './pages/SyllbausCamundaProcess/LibrarianReviewComponent/Librarian review.component';
-import { DeanReviewComponent } from './pages/SyllbausCamundaProcess/DeanReviewComponent/dean-review.component';
 import { inject } from '@angular/core';
-import { AcademicReviewComponent } from './pages/SyllbausCamundaProcess/AcademicReviewComponent/academic-review.component';
 import { TeachersDisciplinesComponent } from './pages/TeachersDisciplinesСomponent/teachers-disciplines.component';
+import { SignedDocumentComponent } from './pages/SyllbausCamundaProcess/SignedDocumentСomponent/signed-document.component';
+import { SyllabusReviewComponent } from './pages/SyllbausCamundaProcess/ReviewComponent/syllabus-review.component';
+import { DeanReviewComponent } from './pages/SyllbausCamundaProcess/DeanReviewComponent/dean-review.component';
+import {
+  LibrarianReviewComponent
+} from './pages/SyllbausCamundaProcess/LibrarianReviewComponent/Librarian review.component';
+import {FeedbackWidgetComponent} from './pages/FeedbacksComponents/FeedbackWidgetComponent/feedback-widget.component';
+import {
+  FeedbackHistoryComponent
+} from './pages/FeedbacksComponents/FeedbackHistoryComponent/feedback-history.component'; // 🌟 Импортируем новый компонент
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'register',
-    loadComponent: () => import('./pages/register-component/register.componen').then(m => m.RegisterComponent)
+    loadComponent: () => import('./pages/RegisterComponent/register.componen').then(m => m.RegisterComponent)
   },
   {
     path: 'login',
@@ -25,40 +32,66 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // Маршруты для согласования
+  // ─────────────────────────────────────────────────────────────────
+  // Маршруты для согласования (Распределенные по компонентам)
+  // ─────────────────────────────────────────────────────────────────
   {
-    path: 'syllabus/review/librarian/:id',
-    component: LibrarianReviewComponent
+    path: 'syllabus/review/librarian/:taskId',
+    component: LibrarianReviewComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'syllabus/review/dean/:id',
-    component: DeanReviewComponent
+    path: 'syllabus/review/academic/:taskId', // Сюда переходит Методист (METHODOLOGIST)
+    component: SyllabusReviewComponent,
+    canActivate: [authGuard]
+  },
+
+  // 🌟 Новые роуты для Завкафа и Декана. Используют DeanReviewComponent и принимают :id силлабуса
+  {
+    path: 'syllabus/review/head/:id', // Соответствует url.includes('/review/head')
+    component: DeanReviewComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'syllabus/review/academic/:id',
-    component: AcademicReviewComponent
+    path: 'syllabus/review/dean/:id', // Соответствует url.includes('/review/dean')
+    component: DeanReviewComponent,
+    canActivate: [authGuard]
   },
+
+  // ─────────────────────────────────────────────────────────────────
+
   {
     path: 'syllabus/:id/variables',
-    loadComponent: () => import('./pages/SyllbausCamundaProcess/syllabus-variables-component/syllabus-variables.component')
+    loadComponent: () => import('./pages/SyllbausCamundaProcess/SyllabusVariablesComponent/syllabus-variables.component')
       .then(m => m.SyllabusVariablesComponent),
     canActivate: [authGuard]
   },
   {
     path: 'syllabus',
-    loadComponent: () => import('./pages/discipline-editor-component/discipline-editor.component')
+    loadComponent: () => import('./pages/DisciplineEditorComponent/discipline-editor.component')
       .then(m => m.DisciplineEditorComponent),
     canActivate: [authGuard]
   },
   {
+    path: 'feedback-history',
+    component: FeedbackHistoryComponent
+  },
+  {
     path: 'approval-dashboard',
-    component: ReviewDashboardComponent
+    component: ReviewDashboardComponent,
+    canActivate: [authGuard]
   },
 
-  // Панель управления (Management)
+  // Финальный шаг загрузки скана (добавлен guard для безопасности)
+  {
+    path: 'signed-document/:id',
+    component: SignedDocumentComponent,
+    canActivate: [authGuard]
+  },
+
   {
     path: 'management/assign',
-    loadComponent: () => import('./pages/assign-hours/assign-hours.component').then(m => m.AssignHoursComponent),
+    loadComponent: () => import('./pages/AssignHoursComponent/assign-hours.component').then(m => m.AssignHoursComponent),
     canActivate: [authGuard, () => {
       const authService = inject(AuthService);
       const router = inject(Router);
@@ -67,7 +100,6 @@ export const routes: Routes = [
       return false;
     }]
   },
-  // 🌟 ПЕРЕНЕСЛИ СЮДА: Теперь роут находится выше, чем '**', и защищен проверкой на роль ADMIN
   {
     path: 'management/teachers-disciplines',
     component: TeachersDisciplinesComponent,

@@ -1,0 +1,68 @@
+<header class="header" *ngIf="isVisible()">
+  <div class="header-left">
+    <div class="logo-badge">DD</div>
+    <div class="brand-info">
+      <h2>Digital Department</h2>
+      <span class="system-tag">AIS Platform</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="lang-dropdown" [class.open]="langMenuOpen">
+      <button class="lang-trigger" (click)="langMenuOpen = !langMenuOpen" type="button">
+        <span class="lang-flag">{{ getActiveLangFlag() }}</span>
+        <span class="lang-code">{{ getActiveLang() | uppercase }}</span>
+        <svg class="lang-chevron" viewBox="0 0 16 16" fill="none">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="lang-menu" *ngIf="langMenuOpen">
+        <button
+          *ngFor="let lang of languages"
+          class="lang-option"
+          [class.active]="getActiveLang() === lang.code"
+          (click)="changeLanguage(lang.code)"
+          type="button"
+        >
+          <span class="lang-flag">{{ lang.flag }}</span>
+          <span class="lang-option-code">{{ lang.code | uppercase }}</span>
+          <span class="lang-option-name">{{ lang.name }}</span>
+          <svg *ngIf="getActiveLang() === lang.code" class="lang-check" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="feedback-btn" (click)="openFeedback()" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>Мои обращения</span>
+    </button>
+
+    <div class="divider"></div>
+
+    @if (user()) {
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="user-name">{{ user().fio }}</span>
+          <span class="user-position">{{ user().position || 'Преподаватель' }}</span>
+        </div>
+        <div class="avatar">{{ userAvatarLetter() }}</div>
+      </div>
+    }
+
+    <button class="logout-btn" (click)="logout()" type="button" title="Выйти из системы">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      <span>Выйти</span>
+    </button>
+  </div>
+</header>

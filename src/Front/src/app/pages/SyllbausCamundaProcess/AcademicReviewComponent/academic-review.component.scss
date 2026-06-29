@@ -1,202 +1,308 @@
-.academic-container {
-  padding: 20px;
-  background-color: #fdfdfd;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+// Наша единая дизайн-система
+$brand-color: #701a75;
+$brand-light: #fdf4ff;
+$brand-focus: #f5d0fe;
+$text-main: #0f172a;
+$text-muted: #64748b;
+$bg-global: #f8fafc;
+$border-color: #e2e8f0;
 
-  .loading-spinner {
-    text-align: center;
-    padding: 40px;
-    color: #64748b;
+.academic-container {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 1.5rem;
+  width: 100%;
+  min-height: 100vh;
+  background-color: $bg-global;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.academic-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+  width: 100%;
+  max-width: 1000px; // Широкий формат для удобного чтения таблиц
+  padding: 3rem;
+  border: 1px solid $border-color;
+  height: fit-content;
+}
+
+// Шапка
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 2.5rem;
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    border-radius: 14px;
+    color: $brand-color;
+    background: $brand-light;
   }
 
-  .review-header {
-    margin-bottom: 24px;
-    border-bottom: 2px solid #edf2f7;
-    padding-bottom: 12px;
-
+  .header-text {
     h2 {
-      margin: 0 0 6px 0;
-      color: #1e293b;
+      margin: 0 0 4px 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: $text-main;
+      letter-spacing: -0.02em;
     }
     .subtitle {
       margin: 0;
-      color: #475569;
-    }
-  }
-
-  .info-section {
-    margin-bottom: 32px;
-
-    h3 {
-      color: #334155;
-      font-size: 1.1rem;
-      border-left: 4px solid #3b82f6;
-      padding-left: 8px;
-      margin-bottom: 16px;
-    }
-  }
-
-  // Стили для карточек политики
-  .policy-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-
-    .policy-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 14px;
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-
-      .label {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 4px;
+      font-size: 14px;
+      color: $text-muted;
+      strong {
+        color: $brand-color;
+        font-weight: 600;
       }
-      .value {
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: #0f172a;
-      }
-      .text-value {
-        margin: 4px 0 0 0;
-        color: #334155;
-        line-height: 1.5;
-      }
-
-      &.full-width {
-        grid-column: 1 / -1;
-      }
-    }
-  }
-
-  // Стили для таблицы
-  .table-responsive {
-    overflow-x: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-  }
-
-  .topics-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    font-size: 0.9rem;
-
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #edf2f7;
-    }
-
-    th {
-      background-color: #f1f5f9;
-      color: #475569;
-      font-weight: 600;
-    }
-
-    tr:hover {
-      background-color: #f8fafc;
-    }
-
-    .text-center { text-align: center; }
-    .font-bold { font-weight: bold; }
-  }
-
-  .alert-warning {
-    background-color: #fffbeb;
-    border: 1px solid #fef3c7;
-    color: #b45309;
-    padding: 12px;
-    border-radius: 6px;
-    margin: 0;
-  }
-
-  // Блок принятия решений
-  .decision-section {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 20px;
-    border-radius: 8px;
-
-    h3 {
-      border-left-color: #10b981;
-      margin-top: 0;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-
-      label {
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: #334155;
-      }
-
-      textarea {
-        width: 100%;
-        min-height: 100px;
-        padding: 10px;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        resize: vertical;
-        font-family: inherit;
-
-        &:focus {
-          outline: none;
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-      }
-    }
-
-    .actions-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-
-      @media (max-width: 480px) {
-        flex-direction: column-reverse;
-
-        .btn { width: 100%; }
-      }
-    }
-  }
-
-  // Общие стили кнопок
-  .btn {
-    padding: 10px 20px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    &-reject {
-      background-color: #ef4444;
-      color: white;
-      &:hover:not(:disabled) { background-color: #dc2626; }
-    }
-
-    &-approve {
-      background-color: #10b981;
-      color: white;
-      &:hover:not(:disabled) { background-color: #059669; }
     }
   }
 }
+
+// Секции
+.info-section {
+  margin-bottom: 3rem;
+
+  h3 {
+    color: $text-main;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.table-subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-main;
+  margin: 2rem 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// Таблицы нового поколения
+.table-responsive {
+  overflow-x: auto;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.topics-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+
+  th {
+    background-color: #f8fafc;
+    color: $text-muted;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 16px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  td {
+    padding: 14px 16px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    line-height: 1.5;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover {
+    background-color: #fbfbfe;
+  }
+
+  .text-center { text-align: center; }
+  .font-bold { font-weight: 600; color: $brand-color; }
+  .small-text { font-size: 13px; color: $text-muted; }
+}
+
+// Оповещения
+.alert-warning {
+  background-color: #fffbeb;
+  border: 1px dashed #fef3c7;
+  color: #b45309;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.error-box {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+
+  p { margin: 0; font-weight: 500; font-size: 14px; }
+}
+
+// Форма решения (Заключение комиссии)
+.decision-section {
+  background: #ffffff;
+  border: 1px solid $border-color;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-main;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 1rem;
+      border: 1px solid $border-color;
+      border-radius: 10px;
+      font-size: 15px;
+      color: $text-main;
+      background-color: #fafafa;
+      resize: vertical;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        background-color: #ffffff;
+        border-color: $brand-color;
+        box-shadow: 0 0 0 4px $brand-focus;
+      }
+
+      &:disabled {
+        background-color: #f1f5f9;
+        color: $text-muted;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .actions-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+
+    @media (max-width: 600px) {
+      flex-direction: column-reverse;
+      .btn { width: 100%; }
+    }
+  }
+}
+
+// Кнопки по брендбуку
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &-reject {
+    background: #ffffff;
+    color: #ef4444;
+    border-color: #fca5a5;
+
+    &:hover:not(:disabled) {
+      background: #fef2f2;
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+    &:active:not(:disabled) { transform: translateY(0); }
+  }
+
+  &-approve {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+
+    &:hover:not(:disabled) {
+      background: #059669;
+      box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
+      transform: translateY(-1px);
+    }
+    &:active:not(:disabled) { transform: translateY(0); }
+  }
+}
+
+// Лоадер
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 400px;
+  gap: 16px;
+
+  p {
+    color: $text-muted;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  &:after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f1f5f9;
+    border-top-color: $brand-color;
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

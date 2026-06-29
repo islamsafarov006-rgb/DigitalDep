@@ -32,12 +32,15 @@ public class SyllabusApprovalController {
         String roleUpper = role.toUpperCase();
 
         if (status.equalsIgnoreCase("completed")) {
-            List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+            List<HistoricTaskInstance> historicTasks = historyService
+                    .createHistoricTaskInstanceQuery()
                     .taskDefinitionKey(getTaskKeyByRole(roleUpper))
                     .finished()
                     .list();
 
-            return historicTasks.stream().map(this::mapHistoricTaskToMap).collect(Collectors.toList());
+            return historicTasks.stream()
+                    .map(t -> mapHistoricTaskToMap(t))
+                    .collect(Collectors.toList());
 
         } else if (status.equalsIgnoreCase("fix")) {
             List<Task> fixTasks = taskService.createTaskQuery()
@@ -45,46 +48,63 @@ public class SyllabusApprovalController {
                     .active()
                     .list();
 
-            return fixTasks.stream().map(this::mapTaskToMap).collect(Collectors.toList());
+            return fixTasks.stream()
+                    .map(this::mapTaskToMap)
+                    .collect(Collectors.toList());
 
         } else {
-            // Если роль — одна из ролей деканата, ищем по группе DEANERY (или как в вашем BPMN)
-            String searchGroup = (roleUpper.equals("ACADEMIC_DEPARTMENT") || roleUpper.equals("DEANERY"))
-                    ? "DEANERY"
-                    : roleUpper;
+            // active — ищем по candidateGroup
+            String searchGroup = mapRoleToGroup(roleUpper);
 
             List<Task> activeTasks = taskService.createTaskQuery()
                     .taskCandidateGroup(searchGroup)
                     .active()
                     .list();
 
-            return activeTasks.stream().map(this::mapTaskToMap).collect(Collectors.toList());
+            return activeTasks.stream()
+                    .map(this::mapTaskToMap)
+                    .collect(Collectors.toList());
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // Маппинг активной задачи → Map
+    // ─────────────────────────────────────────────────────────────────
+
     private Map<String, Object> mapTaskToMap(Task task) {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", task.getId());
-        map.put("name", task.getName() != null ? task.getName() : "");
-        map.put("taskDefinitionKey", task.getTaskDefinitionKey() != null ? task.getTaskDefinitionKey() : "");
-        map.put("processInstanceId", task.getProcessInstanceId() != null ? task.getProcessInstanceId() : "");
-        map.put("syllabusId", getSyllabusId(task.getId()));
-        map.put("createTime", task.getCreateTime() != null ? task.getCreateTime().toString() : "");
+        map.put("id",                task.getId());
+        map.put("name",              nvl(task.getName()));
+        map.put("taskDefinitionKey", nvl(task.getTaskDefinitionKey()));
+        map.put("processInstanceId", nvl(task.getProcessInstanceId()));
+        map.put("assignee",          task.getAssignee() != null ? task.getAssignee() : "");
+        map.put("createTime",        task.getCreateTime() != null ? task.getCreateTime().toString() : "");
+        map.put("syllabusId",        getSyllabusIdFromTask(task.getId()));
         return map;
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Маппинг завершённой задачи → Map
+    // ─────────────────────────────────────────────────────────────────
 
     private Map<String, Object> mapHistoricTaskToMap(HistoricTaskInstance task) {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", task.getId());
-        map.put("name", task.getName() != null ? task.getName() : "");
-        map.put("taskDefinitionKey", task.getTaskDefinitionKey() != null ? task.getTaskDefinitionKey() : "");
-        map.put("processInstanceId", task.getProcessInstanceId() != null ? task.getProcessInstanceId() : "");
-        map.put("syllabusId", "");
-        map.put("endTime", task.getEndTime() != null ? task.getEndTime().toString() : "");
+        map.put("id",                task.getId());
+        map.put("name",              nvl(task.getName()));
+        map.put("taskDefinitionKey", nvl(task.getTaskDefinitionKey()));
+        map.put("processInstanceId", nvl(task.getProcessInstanceId()));
+        map.put("assignee",          task.getAssignee() != null ? task.getAssignee() : "");
+        map.put("createTime",        task.getStartTime() != null ? task.getStartTime().toString() : "");
+        map.put("endTime",           task.getEndTime()   != null ? task.getEndTime().toString()   : "");
+        map.put("syllabusId",        getSyllabusIdFromProcess(task.getProcessInstanceId()));
         return map;
     }
 
-    private String getSyllabusId(String taskId) {
+    // ─────────────────────────────────────────────────────────────────
+    // Вспомогательные методы
+    // ─────────────────────────────────────────────────────────────────
+
+    private String getSyllabusIdFromTask(String taskId) {
         try {
             Object val = taskService.getVariable(taskId, "syllabusId");
             return val != null ? val.toString() : "";
@@ -93,13 +113,41 @@ public class SyllabusApprovalController {
         }
     }
 
+    private String getSyllabusIdFromProcess(String processInstanceId) {
+        try {
+            var variable = historyService
+                    .createHistoricVariableInstanceQuery()
+                    .processInstanceId(processInstanceId)
+                    .variableName("syllabusId")
+                    .singleResult();
+            return variable != null && variable.getValue() != null
+                    ? variable.getValue().toString()
+                    : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private String mapRoleToGroup(String role) {
+        return switch (role) {
+            case "DEANERY"             -> "DEANERY";
+            case "ACADEMIC_DEPARTMENT" -> "ACADEMIC_DEPARTMENT";
+            default                    -> role; // LIBRARIAN, METHODOLOGIST
+        };
+    }
+
     private String getTaskKeyByRole(String role) {
         return switch (role) {
-            case "LIBRARIAN" -> "Task_Librarian";
-            case "METHODOLOGIST" -> "Task_Academic"; // Если в BPMN это имя задачи
-            case "ACADEMIC_DEPARTMENT", "DEANERY" -> "Task_Deanery";
-            case "TEACHER" -> "Task_FixSyllabus";
-            default -> "Task_FixSyllabus";
+            case "LIBRARIAN"           -> "Task_Librarian";
+            case "METHODOLOGIST"       -> "Task_Academic";
+            case "DEANERY"             -> "Task_Deanery";
+            case "ACADEMIC_DEPARTMENT" -> "Task_HeadOfDepartment";
+            case "TEACHER"             -> "Task_FixSyllabus";
+            default                    -> "Task_FixSyllabus";
         };
+    }
+
+    private String nvl(String val) {
+        return val != null ? val : "";
     }
 }

@@ -4,10 +4,13 @@ import { Department } from '../Department/department';
 
 export enum DocumentStatus {
   DRAFT = 'DRAFT',
-  UNDER_REVIEW = 'UNDER_REVIEW',
+  PENDING_LIBRARIAN_AND_ACADEMIC = 'PENDING_LIBRARIAN_AND_ACADEMIC',
+  PENDING_HEAD_OF_DEPARTMENT = 'PENDING_HEAD_OF_DEPARTMENT',
+  PENDING_DEANERY = 'PENDING_DEANERY',
+  IN_FIXING = 'IN_FIXING',
+  APPROVED = 'APPROVED',
   SIGNED = 'SIGNED'
 }
-
 export interface AssessmentCriterion {
   points: number;
   criterion: string;

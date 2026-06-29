@@ -9,16 +9,25 @@ import { DocumentService } from '../../../Services/Document/DocumetService';
 import { FormsModule } from '@angular/forms';
 import { renderAsync } from 'docx-preview';
 import { CamundaTask, SyllabusProcessService } from '../../../Services/SyllabusTaskService/SyllabusProcessService';
+import {TranslocoPipe} from '@jsverse/transloco';
 
 interface ExtendedWeeklyTopic extends Omit<WeeklyTopic, 'references'> {
   references: string | string[];
   isOpen?: boolean;
 }
 
+interface ProcessedComment {
+  authorName: string;
+  authorRole: string;
+  text: string;
+  date: string | null;
+  decision: string;
+}
+
 @Component({
   selector: 'app-syllabus-variables',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslocoPipe],
   templateUrl: './syllabus-variables.component.html',
   styleUrls: ['./syllabus-variables.component.scss']
 })
@@ -50,6 +59,59 @@ export class SyllabusVariablesComponent implements OnInit {
   // 🌟 Таблица оценивания
   gradingPolicy: GradingPolicyRow[] = [];
   readonly gradingPeriods = ['1st attestation', '2nd attestation', 'Exam', 'Total'];
+
+  // 🌟 Вычисляемая история замечаний проверяющих на основе полей сущности Syllabus
+  getApprovalComments = computed<ProcessedComment[]>(() => {
+    const doc = this.syllabus();
+    if (!doc || !doc.syllabus) return [];
+
+    const s = doc.syllabus as any;
+    const commentsList: ProcessedComment[] = [];
+
+    if (s.librarianComments && s.librarianComments.trim() !== '') {
+      commentsList.push({
+        authorName: s.librarianApprover || 'Библиотекарь',
+        authorRole: 'Библиотекарь',
+        text: s.librarianComments,
+        date: s.librarianDecidedAt || null,
+        decision: s.librarianDecision || 'PENDING'
+      });
+    }
+    if (s.academicComments && s.academicComments.trim() !== '') {
+      commentsList.push({
+        authorName: s.academicApprover || 'Методист / Учебный отдел',
+        authorRole: 'Методист',
+        text: s.academicComments,
+        date: s.academicDecidedAt || null,
+        decision: s.academicDecision || 'PENDING'
+      });
+    }
+    if (s.headComments && s.headComments.trim() !== '') {
+      commentsList.push({
+        authorName: s.headApprover || 'Заведующий кафедрой',
+        authorRole: 'Заведующий кафедрой',
+        text: s.headComments,
+        date: s.headDecidedAt || null,
+        decision: s.headDecision || 'PENDING'
+      });
+    }
+    if (s.deanComments && s.deanComments.trim() !== '') {
+      commentsList.push({
+        authorName: s.deanApprover || 'Деканат',
+        authorRole: 'Декан',
+        text: s.deanComments,
+        date: s.deanDecidedAt || null,
+        decision: s.deanDecision || 'PENDING'
+      });
+    }
+
+    // Сортировка: сначала старые замечания, в конце — самые свежие
+    return commentsList.sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+  });
 
   currentTopics = computed<ExtendedWeeklyTopic[]>(() => {
     const tab = this.activeTab();
@@ -97,8 +159,8 @@ export class SyllabusVariablesComponent implements OnInit {
               finalAssessment: '',
               numberOfCredits: 0,
               groupOfAcademicPrograms: '',
-              courseGoals: '',
-              courseObjectives: '',
+              goals: '',
+              objectives: '',
               learningOutcomes: '',
               courseDescription: '',
               coursePolicy: '',
@@ -141,6 +203,7 @@ export class SyllabusVariablesComponent implements OnInit {
         error: (err) => console.error('Ошибка при загрузке данных силлабуса:', err)
       });
   }
+
   checkCamundaStatus() {
     const currentDoc = this.syllabus();
     if (!currentDoc) return;
@@ -245,6 +308,7 @@ export class SyllabusVariablesComponent implements OnInit {
     this.srsp      = buildRows(this.siwtHours());
     this.srs       = buildRows(this.siwHours());
   }
+
   private createDefaultTopics(documentId: number): WeeklyTopic[] {
     const maxRows = Math.max(
       this.lectureHours(), this.practiceHours(),
@@ -321,19 +385,16 @@ export class SyllabusVariablesComponent implements OnInit {
 
   removeGradingRow(index: number) {
     this.gradingPolicy.splice(index, 1);
-    // Пересчитываем sortOrder
     this.gradingPolicy.forEach((r, i) => r.sortOrder = i + 1);
     this.cdr.detectChanges();
   }
 
-  // Сумма score строк верхнего уровня (не subItem) за период
   getTotalByPeriod(period: string): number {
     return this.gradingPolicy
       .filter(r => r.period === period && !r.subItem)
       .reduce((sum, r) => sum + (r.score ?? 0), 0);
   }
 
-  // Первая строка периода — для rowspan-визуализации
   isFirstInPeriod(index: number): boolean {
     if (index === 0) return true;
     return this.gradingPolicy[index - 1].period !== this.gradingPolicy[index].period;
@@ -431,7 +492,6 @@ export class SyllabusVariablesComponent implements OnInit {
 
     const label = type === 'Practice' ? 'Exercise' : 'Lab work';
 
-    // Считаем сколько уже есть строк такого типа в этом периоде
     const existing = this.gradingPolicy.filter(r =>
       r.period === period && r.assignmentName.startsWith(label)
     ).length;

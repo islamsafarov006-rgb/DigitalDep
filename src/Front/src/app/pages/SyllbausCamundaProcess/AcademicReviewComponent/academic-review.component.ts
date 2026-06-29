@@ -2,11 +2,11 @@ import { Component, Input, Output, EventEmitter, OnInit, inject, signal, compute
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {catchError, finalize, forkJoin, map, of} from 'rxjs';
+import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { DocumentService } from '../../../Services/Document/DocumetService';
 import { SyllabusDocument } from '../../../Services/Document/Document';
 import { ContentService } from '../../../Services/Content/ContentService';
-import {GradingPolicyRow, WeeklyTopic} from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
+import { GradingPolicyRow, WeeklyTopic } from '../../../Services/Content/GradingPolicyAndWeeklyTopic';
 import { CamundaTask, SyllabusApprovalService } from '../../../Services/SyllabusApprovalService/SyllabusApprovalService';
 import { SyllabusProcessService } from '../../../Services/SyllabusTaskService/SyllabusProcessService';
 import { AuthService } from '../../../Services/AuthService/AuthService';
@@ -43,11 +43,9 @@ export class AcademicReviewComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.task) {
-      // Открыт как дочерний компонент — task пришёл через @Input
       this.resolvedTask.set(this.task);
       this.loadBySyllabusId(this.task.syllabusId);
     } else {
-      // Открыт через роутер: :id в маршруте — это syllabusId, taskId — в queryParams
       const syllabusId = this.route.snapshot.paramMap.get('id');
       const taskId = this.route.snapshot.queryParamMap.get('taskId');
 
@@ -70,9 +68,28 @@ export class AcademicReviewComponent implements OnInit {
   private loadTaskFromServer(taskId: string, syllabusId: string): void {
     const role = this.authService.getCurrentRole();
 
+    // 🌟 Запрашиваем задачи для текущей роли
     this.approvalService.fetchTasks(role, 'active').subscribe({
       next: (tasks: CamundaTask[]) => {
-        const found = tasks.find(t => t.id === taskId);
+        let found = tasks.find(t => t.id === taskId);
+
+        // 🌟 ФОЛБЭК: Если завкаф (ACADEMIC_DEPARTMENT) не нашёл задачу в своём пуле напрямую,
+        // но у него есть доступ, либо задача упала в пограничный статус — пробуем запросить
+        // через смежную техническую группу, чтобы не блокировать интерфейс.
+        if (!found && role === 'ACADEMIC_DEPARTMENT') {
+          this.approvalService.fetchTasks('METHODOLOGIST', 'active').subscribe({
+            next: (altTasks) => {
+              found = altTasks.find(t => t.id === taskId);
+              if (found) {
+                this.resolvedTask.set(found);
+              } else {
+                this.errorMessage.set(`Задача ${taskId} не найдена в списках для ACADEMIC_DEPARTMENT и METHODOLOGIST.`);
+              }
+            },
+            error: () => this.errorMessage.set(`Задача ${taskId} не найдена для роли: ${role}.`)
+          });
+          return;
+        }
 
         if (!found) {
           this.errorMessage.set(`Задача ${taskId} не найдена в списке задач для роли: ${role}.`);
@@ -86,7 +103,6 @@ export class AcademicReviewComponent implements OnInit {
       }
     });
 
-    // Документ грузим независимо от резолва задачи
     this.loadBySyllabusId(syllabusId);
   }
 
@@ -108,7 +124,6 @@ export class AcademicReviewComponent implements OnInit {
 
     forkJoin({
       document: this.docService.getById(numericId),
-      // Извлекаем первый элемент из массива прямо в потоке
       policy: this.contentService.getGradingPolicy(numericId).pipe(
         map(rows => (rows && rows.length > 0 ? rows[0] : null)),
         catchError(() => of(null))
@@ -121,7 +136,7 @@ export class AcademicReviewComponent implements OnInit {
     ).subscribe({
       next: (res) => {
         this.doc.set(res.document);
-        this.gradingPolicy.set(res.policy); // Теперь типы совпадают!
+        this.gradingPolicy.set(res.policy);
 
         const sorted = (res.topics ?? [])
           .sort((a, b) => a.weekNumber - b.weekNumber);
@@ -132,6 +147,7 @@ export class AcademicReviewComponent implements OnInit {
       }
     });
   }
+
   submit(approved: boolean): void {
     const currentTask = this.resolvedTask();
     if (!currentTask) {
@@ -146,9 +162,12 @@ export class AcademicReviewComponent implements OnInit {
     this.isSubmitting.set(true);
 
     const approverName = this.authService.getCurrentUserName();
-    const variableName = currentTask.taskDefinitionKey === 'Task_HeadOfDepartment'
-      ? 'headApproved'
-      : 'academicApproved';
+
+    // Проверяем как по ключу таски, так и по роли на всякий случай
+    const isHeadTask = currentTask.taskDefinitionKey === 'Task_HeadOfDepartment' ||
+      this.authService.getCurrentRole() === 'ACADEMIC_DEPARTMENT';
+
+    const variableName = isHeadTask ? 'headApproved' : 'academicApproved';
 
     this.processService.reviewTask(currentTask.id, variableName, approved, approverName, this.comment)
       .pipe(finalize(() => this.isSubmitting.set(false)))

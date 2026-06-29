@@ -1,11 +1,15 @@
 <div class="review-panel" *ngIf="task(); else noTask">
 
   <div class="review-header">
-    <div class="badge badge--librarian">Проверка библиотекарем</div>
-    <h2 class="review-title">Список литературы</h2>
-    <p class="review-subtitle" *ngIf="document()">
-      {{ document()!.discipline.name }} · {{ document()!.academicYear }}
-    </p>
+    <div class="icon-wrapper">
+      <span class="material-symbols-outlined header-icon">local_library</span>
+    </div>
+    <div class="header-text">
+      <h2 class="review-title">Проверка списка литературы</h2>
+      <p class="review-subtitle" *ngIf="document()">
+        {{ document()!.discipline.name }} · {{ document()!.academicYear }} уч. год
+      </p>
+    </div>
   </div>
 
   <div class="review-body" *ngIf="!isLoading(); else loadingTpl">
@@ -17,7 +21,6 @@
           <span class="lit-title">{{ book.title }}</span>
           <span class="lit-author">{{ book.author }}</span>
           <span class="lit-isbn" *ngIf="book.isbn">ISBN: {{ book.isbn }}</span>
-
         </div>
       </div>
     </div>
@@ -30,12 +33,13 @@
     </ng-template>
 
     <div class="comment-section">
-      <label class="comment-label" for="lib-comment">Комментарий библиотекаря</label>
+      <label class="comment-label" for="lib-comment">Замечания и комментарии библиотекаря:</label>
       <textarea
         id="lib-comment"
         class="comment-input"
         [(ngModel)]="comment"
-        placeholder="Укажите замечания или напишите 'Согласовано'…"
+        [disabled]="isSubmitting()"
+        placeholder="Укажите замечания по книгам или введите комментарий..."
         rows="4"
       ></textarea>
     </div>

@@ -1,19 +1,16 @@
-import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/AuthService';
 import { finalize } from 'rxjs';
 import { DocumentService } from '../../Services/Document/DocumetService';
-import { SyllabusDocument } from '../../Services/Document/Document';
+import {DocumentStatus, SyllabusDocument} from '../../Services/Document/Document';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-syllabus-editor',
   standalone: true,
-  imports: [
-    CommonModule,
-    TranslocoModule
-  ],
+  imports: [CommonModule, TranslocoModule],
   templateUrl: './discipline-editor.component.html',
   styleUrl: './discipline-editor.component.scss'
 })
@@ -24,6 +21,7 @@ export class DisciplineEditorComponent implements OnInit {
 
   documents = signal<SyllabusDocument[]>([]);
   isLoading = signal(false);
+  activeListTab = signal<'all' | 'approved'>('all');
 
   ngOnInit() {
     this.loadDocuments();
@@ -38,10 +36,19 @@ export class DisciplineEditorComponent implements OnInit {
       });
   }
 
+  filteredDocuments() {
+    const docs = this.documents();
+    if (this.activeListTab() === 'approved') {
+      return docs.filter(d => d.status === DocumentStatus.APPROVED || d.status === DocumentStatus.SIGNED);
+    }
+    return docs.filter(d => d.status !== DocumentStatus.APPROVED && d.status !== DocumentStatus.SIGNED);
+  }
 
-
-  goToVariables(docId: number | undefined) {
-    this.router.navigate(['/syllabus', docId, 'variables']);
+  handleRowClick(doc: SyllabusDocument) {
+    if (doc.status === DocumentStatus.APPROVED || doc.status === DocumentStatus.SIGNED) {
+      this.router.navigate(['/syllabus', doc.id, 'variables'], { queryParams: { tab: 'uploadSigned' } });
+    } else {
+      this.router.navigate(['/syllabus', doc.id, 'variables']);
+    }
   }
 }
-

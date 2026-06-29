@@ -1,47 +1,47 @@
 <div class="academic-container">
 
-  <!-- Ошибка -->
   <div *ngIf="errorMessage()" class="error-box">
     <span class="material-symbols-outlined">error</span>
     <p>{{ errorMessage() }}</p>
   </div>
 
-  <!-- Загрузка -->
   <div *ngIf="isLoading()" class="loading-spinner">
-    <p>Загрузка данных академического комитета...</p>
+    <p>Загрузка данных академической экспертизы...</p>
   </div>
 
-  <!-- Контент — показывается только если нет ошибки и загрузка завершена -->
-  <div *ngIf="!isLoading() && !errorMessage()">
+  <div class="academic-card" *ngIf="!isLoading() && !errorMessage()">
 
     <header class="review-header">
-      <h2>Академическая экспертиза силлабуса</h2>
-      <p class="subtitle">Дисциплина: <strong>{{ doc()?.discipline?.name || 'Не указана' }}</strong></p>
+      <div class="icon-wrapper">
+        <span class="material-symbols-outlined">history_edu</span>
+      </div>
+      <div class="header-text">
+        <h2>Академическая экспертиза силлабуса</h2>
+        <p class="subtitle">Дисциплина: <strong>{{ doc()?.discipline?.name || 'Не указана' }}</strong></p>
+      </div>
     </header>
 
-
     <section class="info-section">
-      <h3>2. Календарно-тематический план (по неделям)</h3>
+      <h3>Календарно-тематический план (по неделям)</h3>
 
       <div *ngIf="weeklyTopics().length > 0; else noTopics">
 
-        <!-- ЛЕКЦИИ -->
-        <h4 class="table-subtitle">📖 Лекции</h4>
+        <h4 class="table-subtitle">📖 Лекционные занятия</h4>
         <div class="table-responsive">
           <table class="topics-table">
             <thead>
             <tr>
-              <th>Неделя</th>
+              <th style="width: 80px;" class="text-center">Неделя</th>
               <th>Тема лекции</th>
-              <th>Часы</th>
-              <th>Литература</th>
+              <th style="width: 70px;" class="text-center">Часы</th>
+              <th>Основная и доп. литература</th>
               <th>Форма отчётности</th>
               <th>Дедлайн</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let topic of weeklyTopics()">
-              <td class="text-center font-bold">{{ topic.weekNumber }}</td>
+              <td class="text-center font-bold">#{{ topic.weekNumber }}</td>
               <td>{{ topic.lectureTopic || '—' }}</td>
               <td class="text-center">{{ topic.hours || '—' }}</td>
               <td class="small-text">{{ topic.references || '—' }}</td>
@@ -52,22 +52,21 @@
           </table>
         </div>
 
-        <!-- ПРАКТИЧЕСКИЕ / СЕМИНАРЫ -->
         <h4 class="table-subtitle">🛠 Практические занятия / Семинары</h4>
         <div class="table-responsive">
           <table class="topics-table">
             <thead>
             <tr>
-              <th>Неделя</th>
-              <th>Тема практики</th>
-              <th>Часы</th>
+              <th style="width: 80px;" class="text-center">Неделя</th>
+              <th>Тема практического занятия</th>
+              <th style="width: 70px;" class="text-center">Часы</th>
               <th>Форма отчётности</th>
               <th>Дедлайн</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let topic of weeklyTopics()">
-              <td class="text-center font-bold">{{ topic.weekNumber }}</td>
+              <td class="text-center font-bold">#{{ topic.weekNumber }}</td>
               <td>{{ topic.practiceTopic || '—' }}</td>
               <td class="text-center">{{ topic.hours || '—' }}</td>
               <td>{{ topic.reportingForm || '—' }}</td>
@@ -77,20 +76,19 @@
           </table>
         </div>
 
-        <!-- СРСП -->
-        <h4 class="table-subtitle">📝 СРСП (Самостоятельная работа под руководством преподавателя)</h4>
+        <h4 class="table-subtitle">📝 Самостоятельная работа (СРСП)</h4>
         <div class="table-responsive">
           <table class="topics-table">
             <thead>
             <tr>
-              <th>Неделя</th>
-              <th>Тема СРСП</th>
-              <th>Дедлайн</th>
+              <th style="width: 80px;" class="text-center">Неделя</th>
+              <th>Тема СРСП (задания, вопросы)</th>
+              <th>Сроки выполнения / Дедлайн</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let topic of weeklyTopics()">
-              <td class="text-center font-bold">{{ topic.weekNumber }}</td>
+              <td class="text-center font-bold">#{{ topic.weekNumber }}</td>
               <td>{{ topic.srspTopic || '—' }}</td>
               <td>{{ topic.deadline || '—' }}</td>
             </tr>
@@ -98,20 +96,19 @@
           </table>
         </div>
 
-        <!-- СПЗ -->
-        <h4 class="table-subtitle">🎯 СПЗ (Самостоятельная практическая работа)</h4>
+        <h4 class="table-subtitle">🎯 Практическая самостоятельная работа (СПЗ)</h4>
         <div class="table-responsive">
           <table class="topics-table">
             <thead>
             <tr>
-              <th>Неделя</th>
+              <th style="width: 80px;" class="text-center">Неделя</th>
               <th>Тема СПЗ</th>
-              <th>Дедлайн</th>
+              <th>Сроки выполнения / Дедлайн</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let topic of weeklyTopics()">
-              <td class="text-center font-bold">{{ topic.weekNumber }}</td>
+              <td class="text-center font-bold">#{{ topic.weekNumber }}</td>
               <td>{{ topic.spzTopic || '—' }}</td>
               <td>{{ topic.deadline || '—' }}</td>
             </tr>
@@ -120,19 +117,21 @@
         </div>
 
       </div>
+
       <ng-template #noTopics>
-        <p class="alert-warning">Календарный план по неделям не найден.</p>
+        <p class="alert-warning">Календарный план по неделям пуст или не был сгенерирован.</p>
       </ng-template>
     </section>
+
     <section class="decision-section">
-      <h3>3. Заключение академического комитета</h3>
+      <h3>Заключение экспертной комиссии</h3>
 
       <div class="form-group">
-        <label for="academic-comment">Замечания / Комментарии комиссии:</label>
+        <label for="academic-comment">Замечания, рекомендации и комментарии:</label>
         <textarea
           id="academic-comment"
           [(ngModel)]="comment"
-          placeholder="Введите обоснование в случае отклонения или рекомендации..."
+          placeholder="Напишите экспертное заключение или укажите список доработок для автора силлабуса..."
           [disabled]="isSubmitting()">
         </textarea>
       </div>
@@ -142,14 +141,14 @@
           class="btn btn-reject"
           (click)="submit(false)"
           [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Отправка...' : 'Отклонить / На доработку' }}
+          {{ isSubmitting() ? 'Отправка...' : 'Вернуть на доработку' }}
         </button>
 
         <button
           class="btn btn-approve"
           (click)="submit(true)"
           [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Утверждение...' : 'Одобрить силлабус' }}
+          {{ isSubmitting() ? 'Утверждение...' : 'Одобрить план силлабуса' }}
         </button>
       </div>
     </section>

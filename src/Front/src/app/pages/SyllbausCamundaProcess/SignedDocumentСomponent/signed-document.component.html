@@ -1,0 +1,44 @@
+<div class="syllabus-card">
+  <div class="card-header">
+    <div class="icon-circle success">
+      <i class="status-icon">✓</i>
+    </div>
+    <h2>Силлабус утверждён</h2>
+    <p class="subtitle">Остался финальный шаг: скачайте документ, поставьте печати, отсканируйте и загрузите его обратно в систему.</p>
+  </div>
+
+  <div class="card-body">
+    <div class="action-block">
+      <button class="btn btn-primary" (click)="downloadPdf()">
+        <span class="icon">📥</span> Скачать для печати (PDF)
+      </button>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="upload-section">
+      <h3>Загрузить подписанный скан</h3>
+
+      <label class="file-drop-zone" [class.file-selected]="selectedFile">
+        <input type="file" accept=".pdf" (change)="onFileSelected($event)" class="hidden-file-input" />
+        <span class="upload-icon">📄</span>
+        <span class="file-name">
+          {{ selectedFile ? selectedFile.name : 'Выберите файл в формате PDF или перетащите сюда' }}
+        </span>
+      </label>
+
+      <button
+        class="btn btn-success"
+        (click)="uploadScan()"
+        [disabled]="!selectedFile || isSubmitting()">
+        <span class="icon" *ngIf="!isSubmitting()">📤</span>
+        <span class="spinner" *ngIf="isSubmitting()"></span>
+        {{ isSubmitting() ? 'Загрузка...' : 'Загрузить скан' }}
+      </button>
+
+      <div *ngIf="uploadSuccess" class="success-banner">
+        <span class="icon">✅</span> Скан успешно загружен! Процесс завершен.
+      </div>
+    </div>
+  </div>
+</div>

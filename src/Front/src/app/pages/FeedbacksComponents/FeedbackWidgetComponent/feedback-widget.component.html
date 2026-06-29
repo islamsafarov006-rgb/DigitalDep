@@ -1,0 +1,60 @@
+<button class="feedback-trigger" [class.hide]="isOpen()" (click)="toggleWidget()">
+  <span class="material-symbols-outlined">maps_ugc</span>
+  <span>Обратная связь</span>
+</button>
+
+@if (isOpen()) {
+  <div class="feedback-container">
+    <div class="feedback-card-header">
+      <div class="header-title">
+        <span class="material-symbols-outlined">bug_report</span>
+        <h3>Нашли ошибку или есть идея?</h3>
+      </div>
+      <button class="btn-close" (click)="toggleWidget()">✕</button>
+    </div>
+
+    <div class="feedback-card-body">
+      <div class="input-wrapper">
+        <textarea
+          [(ngModel)]="messageText"
+          placeholder="Опишите проблему... Можно просто нажать Ctrl+V, чтобы прикрепить скриншот из буфера!"
+          rows="5"
+          [disabled]="isSubmitting()">
+        </textarea>
+      </div>
+
+      @if (imagePreview) {
+        <div class="preview-container">
+          <img [src]="imagePreview" alt="Скриншот">
+          <button class="btn-delete-file" (click)="removeScreenshot()" title="Удалить скриншот">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      } @else {
+        <label class="attachment-label">
+          <span class="material-symbols-outlined">attach_file</span>
+          <span>Прикрепить изображение</span>
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" [disabled]="isSubmitting()">
+        </label>
+      }
+    </div>
+
+
+    <div class="feedback-card-footer">
+      <button class="btn-link-history" (click)="navigateToHistory()">
+        <span class="material-symbols-outlined">history</span>
+        История
+      </button>
+
+      <button class="btn-send" (click)="submitFeedback()" [disabled]="isSubmitting() || !messageText.trim()">
+        @if (isSubmitting()) {
+          <span class="spinner"></span>
+          <span>Отправка...</span>
+        } @else {
+          <span class="material-symbols-outlined">send</span>
+          <span>Отправить</span>
+        }
+      </button>
+    </div>
+  </div>
+}

@@ -1,39 +1,55 @@
 <div class="review-container">
   <div *ngIf="isLoading()" class="review-loader">
     <div class="spinner"></div>
-    <p>Загрузка данных...</p>
+    <p>Загрузка данных силлабуса...</p>
   </div>
 
   <div *ngIf="!isLoading() && syllabus() as doc" class="review-paper-card">
-    <div class="review-header dean-theme">
-      <span class="material-symbols-outlined header-icon">gavel</span>
+
+    <div class="review-header">
+      <div class="icon-wrapper">
+        <span class="material-symbols-outlined header-icon">gavel</span>
+      </div>
       <div class="header-text">
         <h2>Утверждение силлабуса</h2>
-        <p>Задача: <strong>{{ task?.name }}</strong></p>
+        <p>Задача: <strong>{{ task?.name || 'Экспертиза документа' }}</strong></p>
       </div>
     </div>
 
     <div class="document-summary-box">
-      <div class="summary-row"><span class="label">Дисциплина:</span><span class="value emphasis">{{ doc.discipline.name }}</span></div>
-      <div class="summary-row"><span class="label">Преподаватель:</span><span class="value">{{ doc.author?.fullName }}</span></div>
+      <div class="summary-item">
+        <span class="label">Дисциплина</span>
+        <span class="value emphasis">{{ doc.discipline.name }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Преподаватель</span>
+        <span class="value">{{ doc.author?.fullName || 'Не указан' }}</span>
+      </div>
     </div>
 
-    <!-- Контейнер для документа -->
     <div class="document-preview-section">
+      <div class="section-caption">Предпросмотр документа:</div>
       <div id="docx-container" class="docx-wrapper"></div>
     </div>
 
     <hr class="divider" />
 
     <div class="comment-section">
-      <label for="dean-comment" class="section-title-label">Замечания:</label>
-      <textarea id="dean-comment" class="comment-textarea" [(ngModel)]="reviewComment" [disabled]="isSubmitting()"></textarea>
+      <label for="dean-comment" class="section-title-label">Замечания и комментарии:</label>
+      <textarea
+        id="dean-comment"
+        class="comment-textarea"
+        placeholder="Введите обоснование в случае отклонения силлабуса или оставьте комментарий..."
+        [(ngModel)]="reviewComment"
+        [disabled]="isSubmitting()">
+      </textarea>
     </div>
 
     <div class="review-actions-zone">
       <button
         type="button"
         class="btn-action-reject"
+        [disabled]="isSubmitting()"
         (click)="submitDecision(false)">
         Отклонить
       </button>
@@ -41,9 +57,11 @@
       <button
         type="button"
         class="btn-action-approve"
+        [disabled]="isSubmitting()"
         (click)="submitDecision(true)">
-        Утвердить
+        Утвердить силлабус
       </button>
     </div>
+
   </div>
 </div>

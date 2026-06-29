@@ -3,17 +3,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-// Описываем интерфейс структуры задачи, которую возвращает наш Spring Boot бэкенд
 export interface CamundaTask {
   id: string;
   name: string;
   processInstanceId: string;
-  taskDefinitionKey: string;  // ← добавить
-  syllabusId?: string;        // ← добавить
+  taskDefinitionKey: string;
+  syllabusId?: string;
   createTime?: string;
   endTime?: string;
+  variables?: Record<string, any>;
 }
-
 @Injectable({
   providedIn: 'root'
 })

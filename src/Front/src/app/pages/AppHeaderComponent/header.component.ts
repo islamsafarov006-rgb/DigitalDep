@@ -1,16 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, computed, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/AuthService';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatFormField } from '@angular/material/form-field';
-import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatFormField, MatSelect, MatOption, MatSelectTrigger],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -19,7 +17,12 @@ export class HeaderComponent implements OnInit {
   private translocoService = inject(TranslocoService);
   private authService = inject(AuthService);
 
-  user = this.authService.currentUser();
+  user = computed(() => this.authService.currentUser());
+
+  userAvatarLetter = computed(() => {
+    const fio = this.user()?.fio;
+    return fio ? fio.charAt(0).toUpperCase() : 'U';
+  });
 
   readonly languages = [
     { code: 'ru', flag: '🇷🇺', name: 'Русский' },
@@ -27,7 +30,17 @@ export class HeaderComponent implements OnInit {
     { code: 'en', flag: '🇺🇸', name: 'English' }
   ];
 
-  isVisible = true;
+  isVisible = signal(true);
+  langMenuOpen = false;
+
+  // Безопасное закрытие дропдауна при клике в любое другое место экрана
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.lang-dropdown')) {
+      this.langMenuOpen = false;
+    }
+  }
 
   ngOnInit() {
     this.updateVisibility(this.router.url);
@@ -41,7 +54,11 @@ export class HeaderComponent implements OnInit {
 
   private updateVisibility(url: string) {
     const hiddenRoutes = ['/login', '/register'];
-    this.isVisible = !hiddenRoutes.some(route => url.startsWith(route));
+    this.isVisible.set(!hiddenRoutes.some(route => url.startsWith(route)));
+  }
+
+  openFeedback() {
+    this.router.navigate(['/feedback-history']);
   }
 
   logout() {
@@ -51,6 +68,7 @@ export class HeaderComponent implements OnInit {
 
   changeLanguage(langCode: string) {
     this.translocoService.setActiveLang(langCode);
+    this.langMenuOpen = false;
   }
 
   getActiveLang(): string {

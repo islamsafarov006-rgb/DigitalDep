@@ -8,7 +8,6 @@ spring:
     password: npg_KI1zLOB8rSNF
     driver-class-name: org.postgresql.Driver
 
-  # ИСПРАВЛЕНО: сдвинуто на 2 пробела вправо, теперь входит в состав spring
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -22,13 +21,29 @@ spring:
           lob:
             non_contextual_creation: true
 
-  # ИСПРАВЛЕНО: сдвинуто на 2 пробела вправо, теперь входит в состав spring
   jackson:
     serialization:
       write_dates_as_timestamps: false
     default-property-inclusion: non_null
 
-# ИСПРАВЛЕНО: возвращено на самый левый край (0 пробелов), так как это отдельный root-ключ
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: digitaldep.iitu@mail.ru
+    password: FscPZZHtk5PzuTOyzeX2
+    protocol: smtps
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+
 camunda.bpm:
   process-engine-name: digital-department-engine
   job-execution:
