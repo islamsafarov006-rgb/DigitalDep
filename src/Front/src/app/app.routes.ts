@@ -8,13 +8,12 @@ import { TeachersDisciplinesComponent } from './pages/TeachersDisciplinesСompon
 import { SignedDocumentComponent } from './pages/SyllbausCamundaProcess/SignedDocumentСomponent/signed-document.component';
 import { SyllabusReviewComponent } from './pages/SyllbausCamundaProcess/ReviewComponent/syllabus-review.component';
 import { DeanReviewComponent } from './pages/SyllbausCamundaProcess/DeanReviewComponent/dean-review.component';
+import {LibrarianReviewComponent} from './pages/SyllbausCamundaProcess/LibrarianReviewComponent/Librarian review.component';
+import {FeedbackHistoryComponent} from './pages/FeedbacksComponents/FeedbackHistoryComponent/feedback-history.component';
+import {TeacherDataComponent} from './pages/TeacherDataComponent/teacher-data.component';
 import {
-  LibrarianReviewComponent
-} from './pages/SyllbausCamundaProcess/LibrarianReviewComponent/Librarian review.component';
-import {FeedbackWidgetComponent} from './pages/FeedbacksComponents/FeedbackWidgetComponent/feedback-widget.component';
-import {
-  FeedbackHistoryComponent
-} from './pages/FeedbacksComponents/FeedbackHistoryComponent/feedback-history.component'; // 🌟 Импортируем новый компонент
+  AcademicReviewComponent
+} from './pages/SyllbausCamundaProcess/AcademicReviewComponent/academic-review.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,35 +30,31 @@ export const routes: Routes = [
     component: MainPageComponent,
     canActivate: [authGuard]
   },
+  {
+    path: 'teacher-data',
+    component: TeacherDataComponent,
+    canActivate: [authGuard]
+  },
 
-  // ─────────────────────────────────────────────────────────────────
-  // Маршруты для согласования (Распределенные по компонентам)
-  // ─────────────────────────────────────────────────────────────────
   {
     path: 'syllabus/review/librarian/:taskId',
     component: LibrarianReviewComponent,
     canActivate: [authGuard]
   },
   {
-    path: 'syllabus/review/academic/:taskId', // Сюда переходит Методист (METHODOLOGIST)
-    component: SyllabusReviewComponent,
-    canActivate: [authGuard]
+    path: 'syllabus/:id/review', //  Теперь совпадает с .paramMap.get('id')
+    component: AcademicReviewComponent
   },
-
-  // 🌟 Новые роуты для Завкафа и Декана. Используют DeanReviewComponent и принимают :id силлабуса
   {
-    path: 'syllabus/review/head/:id', // Соответствует url.includes('/review/head')
+    path: 'syllabus/review/head/:id',
     component: DeanReviewComponent,
     canActivate: [authGuard]
   },
   {
-    path: 'syllabus/review/dean/:id', // Соответствует url.includes('/review/dean')
+    path: 'syllabus/review/dean/:id',
     component: DeanReviewComponent,
     canActivate: [authGuard]
   },
-
-  // ─────────────────────────────────────────────────────────────────
-
   {
     path: 'syllabus/:id/variables',
     loadComponent: () => import('./pages/SyllbausCamundaProcess/SyllabusVariablesComponent/syllabus-variables.component')
@@ -81,8 +76,6 @@ export const routes: Routes = [
     component: ReviewDashboardComponent,
     canActivate: [authGuard]
   },
-
-  // Финальный шаг загрузки скана (добавлен guard для безопасности)
   {
     path: 'signed-document/:id',
     component: SignedDocumentComponent,

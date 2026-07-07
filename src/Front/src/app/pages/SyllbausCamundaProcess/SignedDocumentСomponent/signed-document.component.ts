@@ -1,10 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { SyllabusProcessService } from '../../../Services/SyllabusTaskService/SyllabusProcessService';
+import {SignedDocumentService} from '../../../Services/SignedDocumentService/SignedDocumentService';
 
 @Component({
   selector: 'app-signed-document',
@@ -16,8 +15,8 @@ import { SyllabusProcessService } from '../../../Services/SyllabusTaskService/Sy
 export class SignedDocumentComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
   private camundaService = inject(SyllabusProcessService);
+  private signedDocService = inject(SignedDocumentService); // Внедряем наш новый сервис
 
   // Поддержка открытия внутри общего дашборда задач
   @Input() task!: any;
@@ -50,21 +49,15 @@ export class SignedDocumentComponent implements OnInit {
   }
 
   downloadPdf() {
-    this.http.get(
-      `${environment.apiUrl}/api/signed-documents/download-pdf/${this.documentId}`,
-      { responseType: 'blob' }
-    ).subscribe({
+    this.signedDocService.downloadPdf(this.documentId).subscribe({
       next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `syllabus_${this.documentId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // Используем чистый хелпер из сервиса вместо ручного создания <a> в DOM
+        this.signedDocService.saveFileFromBlob(blob, `syllabus_${this.documentId}.pdf`);
       },
-      error: (err) => console.error('Ошибка при скачивании PDF:', err)
+      error: (err) => {
+        console.error('Ошибка при скачивании PDF:', err);
+        alert(err.error || 'Не удалось скачать PDF-файл.');
+      }
     });
   }
 
@@ -81,19 +74,14 @@ export class SignedDocumentComponent implements OnInit {
     if (!this.selectedFile) return;
 
     this.isSubmitting.set(true);
-    const formData = new FormData();
-    formData.append('file', this.selectedFile);
 
-    // 1. Сначала загружаем скан в бэкенд (меняем статус на SIGNED в БД)
-    this.http.post(
-      `${environment.apiUrl}/api/signed-documents/upload/${this.documentId}`,
-      formData
-    ).subscribe({
+    // Вызываем метод загрузки из сервиса (внутри него собирается FormData)
+    this.signedDocService.uploadScan(this.documentId, this.selectedFile).subscribe({
       next: () => {
         this.uploadSuccess = true;
         this.selectedFile = null;
 
-        // 2. Если задача привязана к Camunda, завершаем её, чтобы закрыть процесс
+        // Если задача привязана к Camunda, завершаем её, чтобы закрыть процесс
         if (this.resolvedTaskId) {
           this.completeCamundaTask();
         } else {
@@ -104,13 +92,12 @@ export class SignedDocumentComponent implements OnInit {
       error: (err) => {
         console.error('Ошибка загрузки скана:', err);
         this.isSubmitting.set(false);
-        alert('Не удалось загрузить файл на сервер.');
+        alert(err.error || 'Не удалось загрузить файл на сервер.');
       }
     });
   }
 
   private completeCamundaTask() {
-    // Вызываем твой сервис Camunda. Передаем, например, 'scanUploaded' = true
     this.camundaService.reviewTask(
       this.resolvedTaskId!,
       'scanUploaded',
@@ -125,7 +112,7 @@ export class SignedDocumentComponent implements OnInit {
           if (this.task) {
             this.close.emit(); // Закрываем модалку в дашборде
           } else {
-            this.router.navigate(['/approval-dashboard']); // Или редирект на список задач
+            this.router.navigate(['/approval-dashboard']); // Редирект на список задач
           }
         },
         error: (err) => {

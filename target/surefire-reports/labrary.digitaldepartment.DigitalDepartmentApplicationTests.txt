@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: labrary.digitaldepartment.DigitalDepartmentApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.11 s -- in labrary.digitaldepartment.DigitalDepartmentApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 37.52 s -- in labrary.digitaldepartment.DigitalDepartmentApplicationTests

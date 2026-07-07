@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, inject, signal, compute
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, finalize, forkJoin, map, of } from 'rxjs';
+import { catchError, finalize, forkJoin, map, of, combineLatest } from 'rxjs'; // 🌟 Импортируем combineLatest
 import { DocumentService } from '../../../Services/Document/DocumetService';
 import { SyllabusDocument } from '../../../Services/Document/Document';
 import { ContentService } from '../../../Services/Content/ContentService';
@@ -46,64 +46,79 @@ export class AcademicReviewComponent implements OnInit {
       this.resolvedTask.set(this.task);
       this.loadBySyllabusId(this.task.syllabusId);
     } else {
-      const syllabusId = this.route.snapshot.paramMap.get('id');
-      const taskId = this.route.snapshot.queryParamMap.get('taskId');
+      // 🌟 ИСПРАВЛЕНО: Используем combineLatest вместо forkJoin, так как потоки роута не завершаются сами
+      combineLatest({
+        params: this.route.paramMap.pipe(map(p => p.get('id'))),
+        queryParams: this.route.queryParamMap.pipe(map(q => q.get('taskId')))
+      }).subscribe({
+        next: ({ params, queryParams }) => {
+          const syllabusId = params;
+          const taskId = queryParams;
 
-      if (!syllabusId) {
-        this.errorMessage.set('Не удалось определить ID силлабуса из URL.');
-        this.isLoading.set(false);
-        return;
-      }
+          if (!syllabusId) {
+            this.errorMessage.set('Не удалось определить ID силлабуса из URL (параметр :id отсутствует).');
+            this.isLoading.set(false);
+            return;
+          }
 
-      if (!taskId) {
-        this.errorMessage.set('Не удалось определить ID задачи из URL.');
-        this.isLoading.set(false);
-        return;
-      }
+          if (!taskId) {
+            this.errorMessage.set('Не удалось определить ID задачи из URL (query-параметр ?taskId отсутствует).');
+            this.isLoading.set(false);
+            return;
+          }
 
-      this.loadTaskFromServer(taskId, syllabusId);
+          this.loadTaskFromServer(taskId, syllabusId);
+        },
+        error: (err) => {
+          this.errorMessage.set('Ошибка инициализации параметров маршрута: ' + err.message);
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 
   private loadTaskFromServer(taskId: string, syllabusId: string): void {
     const role = this.authService.getCurrentRole();
+    this.isLoading.set(true);
 
-    // 🌟 Запрашиваем задачи для текущей роли
     this.approvalService.fetchTasks(role, 'active').subscribe({
       next: (tasks: CamundaTask[]) => {
         let found = tasks.find(t => t.id === taskId);
 
-        // 🌟 ФОЛБЭК: Если завкаф (ACADEMIC_DEPARTMENT) не нашёл задачу в своём пуле напрямую,
-        // но у него есть доступ, либо задача упала в пограничный статус — пробуем запросить
-        // через смежную техническую группу, чтобы не блокировать интерфейс.
         if (!found && role === 'ACADEMIC_DEPARTMENT') {
           this.approvalService.fetchTasks('METHODOLOGIST', 'active').subscribe({
             next: (altTasks) => {
               found = altTasks.find(t => t.id === taskId);
               if (found) {
                 this.resolvedTask.set(found);
+                this.loadBySyllabusId(syllabusId);
               } else {
                 this.errorMessage.set(`Задача ${taskId} не найдена в списках для ACADEMIC_DEPARTMENT и METHODOLOGIST.`);
+                this.isLoading.set(false);
               }
             },
-            error: () => this.errorMessage.set(`Задача ${taskId} не найдена для роли: ${role}.`)
+            error: () => {
+              this.errorMessage.set(`Задача ${taskId} не найдена для роли: ${role}.`);
+              this.isLoading.set(false);
+            }
           });
           return;
         }
 
         if (!found) {
           this.errorMessage.set(`Задача ${taskId} не найдена в списке задач для роли: ${role}.`);
+          this.isLoading.set(false);
           return;
         }
 
         this.resolvedTask.set(found);
+        this.loadBySyllabusId(syllabusId);
       },
       error: (err: any) => {
         this.errorMessage.set('Ошибка при загрузке задач из сервиса: ' + (err.message || err));
+        this.isLoading.set(false);
       }
     });
-
-    this.loadBySyllabusId(syllabusId);
   }
 
   private loadBySyllabusId(syllabusId: string | undefined): void {
@@ -113,8 +128,8 @@ export class AcademicReviewComponent implements OnInit {
       return;
     }
 
-    const numericId = Number(syllabusId);
-    if (isNaN(numericId)) {
+    const numericSyllabusId = Number(syllabusId);
+    if (isNaN(numericSyllabusId)) {
       this.errorMessage.set(`syllabusId "${syllabusId}" не является числом.`);
       this.isLoading.set(false);
       return;
@@ -122,28 +137,68 @@ export class AcademicReviewComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    forkJoin({
-      document: this.docService.getById(numericId),
-      policy: this.contentService.getGradingPolicy(numericId).pipe(
-        map(rows => (rows && rows.length > 0 ? rows[0] : null)),
-        catchError(() => of(null))
-      ),
-      topics: this.contentService.getWeeklyTopics(numericId).pipe(
-        catchError(() => of([]))
-      )
-    }).pipe(
-      finalize(() => this.isLoading.set(false))
-    ).subscribe({
-      next: (res) => {
-        this.doc.set(res.document);
-        this.gradingPolicy.set(res.policy);
+    // Шаг 1: Сначала получаем сам документ по ID силлабуса
+    this.docService.getById(numericSyllabusId).subscribe({
+      next: (documentData) => {
+        this.doc.set(documentData);
 
-        const sorted = (res.topics ?? [])
-          .sort((a, b) => a.weekNumber - b.weekNumber);
-        this.weeklyTopics.set(sorted);
+        // Извлекаем правильный documentId с бэкенда.
+        // Если у вас корневой объект — это Document, то его ID берем из documentData.id
+        const documentId = documentData?.id;
+
+        if (!documentId) {
+          console.error('ID документа не найден в ответе сервера:', documentData);
+          this.errorMessage.set('Ошибка данных: Не удалось определить ID документа для загрузки тем.');
+          this.isLoading.set(false);
+          return;
+        }
+
+        // Шаг 2: Теперь параллельно загружаем темы (по documentId) и политику (по syllabusId)
+        forkJoin({
+          policy: this.contentService.getGradingPolicy(numericSyllabusId).pipe(
+            catchError((err) => {
+              console.error('Ошибка загрузки политики оценивания:', err);
+              return of(null);
+            })
+          ),
+          topics: this.contentService.getWeeklyTopics(documentId).pipe( // 🌟 Передаем именно documentId!
+            catchError((err) => {
+              console.error('Ошибка загрузки еженедельного плана:', err);
+              return of([]);
+            })
+          )
+        })
+          .pipe(finalize(() => this.isLoading.set(false)))
+          .subscribe({
+            next: (res) => {
+              // Записываем политику оценивания
+              if (res.policy && Array.isArray(res.policy)) {
+                this.gradingPolicy.set(res.policy[0] || null);
+              } else {
+                this.gradingPolicy.set(res.policy);
+              }
+
+              // Проверяем структуру пришедших тем
+              const rawTopics = res.topics ?? [];
+              if (rawTopics.length > 0 && ('assignmentName' in rawTopics[0])) {
+                console.error('🚨 Сервер всё равно вернул политику вместо тем. Проверьте контроллер /weekly-topics/document/ на бэке!');
+                this.errorMessage.set('Ошибка сервера: критическое смещение данных (версии структуры не совпадают).');
+                this.weeklyTopics.set([]);
+                return;
+              }
+
+              // Сортируем темы по неделям
+              const sorted = [...rawTopics].sort((a, b) => (a.weekNumber || 0) - (b.weekNumber || 0));
+              this.weeklyTopics.set(sorted);
+            },
+            error: (err) => {
+              this.errorMessage.set('Ошибка выполнения параллельных запросов данных контента: ' + err.message);
+            }
+          });
       },
       error: (err: any) => {
-        this.errorMessage.set('Ошибка при загрузке документа: ' + (err.message || err));
+        this.errorMessage.set('Ошибка при загрузке основного документа: ' + (err.message || err));
+        this.isLoading.set(false);
       }
     });
   }
@@ -160,10 +215,8 @@ export class AcademicReviewComponent implements OnInit {
     }
 
     this.isSubmitting.set(true);
-
     const approverName = this.authService.getCurrentUserName();
 
-    // Проверяем как по ключу таски, так и по роли на всякий случай
     const isHeadTask = currentTask.taskDefinitionKey === 'Task_HeadOfDepartment' ||
       this.authService.getCurrentRole() === 'ACADEMIC_DEPARTMENT';
 

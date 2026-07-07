@@ -36,6 +36,10 @@ public class DocumentService {
         document.setAuthor(teacher);
         document.setStatus(SyllabusStatus.DRAFT);
 
+        // 🌟 Добавили сохранение учебного года и семестра
+        document.setAcademicYear(request.getAcademicYear());
+        document.setSemester(request.getSemester());
+
         document = documentRepository.save(document);
 
         CourseVolume volume = new CourseVolume();

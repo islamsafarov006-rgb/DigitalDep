@@ -22,15 +22,24 @@
       <tr>
         <th>ID Таски</th>
         <th>Процесс</th>
-        <th>Управление</th>
+        <th>Дисциплина</th> <!-- 🌟 Новая колонка -->
+        <th>Преподаватель</th> <!-- 🌟 Новая колонка -->
+        <th style="text-align: center;">Управление</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let task of tasksList()">
         <td>#{{ task.id }}</td>
         <td>{{ task.name }}</td>
-        <td style="text-align: center;">
+        <td>{{ task.disciplineName || '—' }}</td>
+        <td>{{ task.teacherName || '—' }}</td>
+        <!-- 🌟 Получаем название дисциплины через метод -->
+        <td>{{ getDisciplineName(task) }}</td>
 
+        <!-- 🌟 Получаем имя преподавателя через метод -->
+        <td>{{ getTeacherName(task) }}</td>
+
+        <td style="text-align: center;">
           <button
             *ngIf="activeSubTab() === 'active'"
             class="btn-action approve"
@@ -50,5 +59,9 @@
       </tr>
       </tbody>
     </table>
+
+    <div *ngIf="!isTasksLoading() && tasksList().length === 0" style="padding: 25px; text-align: center; color: #777;">
+      Список задач пуст.
+    </div>
   </div>
 </div>

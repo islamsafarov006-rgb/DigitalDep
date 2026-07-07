@@ -4,550 +4,558 @@
     <p>Загрузка данных силлабуса...</p>
   </div>
 
-  <div *ngIf="!isLoading() && syllabus() as doc" class="dashboard-grid">
+  <div *ngIf="!isLoading() && syllabus() as doc">
 
-    <aside class="info-sidebar">
-      <div class="card">
-        <div class="card-header">
-          <span class="material-symbols-outlined">person</span>
-          <h3>Преподаватель</h3>
-        </div>
-        <div class="card-content">
-          <div class="info-block">
-            <p class="main-text">{{ doc.author?.fullName }}</p>
-            <p class="sub-text role">{{ doc.author?.position }}</p>
-            <a href="mailto:{{ doc.author?.email }}" class="email-link">
-              <span class="material-symbols-outlined">mail</span>
-              {{ doc.author?.email }}
-            </a>
-          </div>
-        </div>
-      </div>
+    <!-- Силлабус утверждён: показываем финальный экран (скачать → подписать → загрузить скан)
+         вместо формы редактирования. -->
+    <div *ngIf="isApprovedAwaitingSignature(); else editorView"
+         class="signed-document-wrapper" style="max-width:640px; margin:2rem auto;">
+      <app-signed-document (close)="onSignedDocumentClosed()"></app-signed-document>
+    </div>
 
-      <div class="card">
-        <div class="card-header">
-          <span class="material-symbols-outlined">account_balance</span>
-          <h3>Кафедра</h3>
-        </div>
-        <div class="card-content">
-          <div class="info-block">
-            <p class="main-text">{{ doc.author?.department?.nameRu }}</p>
-            <p class="sub-text faculty">{{ doc.author?.department?.faculty?.name }}</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <ng-template #editorView>
+      <div class="dashboard-grid">
 
-    <main class="table-area">
-      <header class="header-banner">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <div class="header-main-section">
-          <button class="btn-icon-back" (click)="goBack()" title="Назад">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-          <div class="header-title">
-            <h1>{{ doc.discipline.name }}</h1>
-            <div class="status-row">
-              <div class="meta-info">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span>{{ doc.academicYear }} год</span>
+        <aside class="info-sidebar">
+          <div class="card">
+            <div class="card-header">
+              <span class="material-symbols-outlined">person</span>
+              <h3>Преподаватель</h3>
+            </div>
+            <div class="card-content">
+              <div class="info-block">
+                <p class="main-text">{{ doc.author?.fullName }}</p>
+                <p class="sub-text role">{{ doc.author?.position }}</p>
+                <a href="mailto:{{ doc.author?.email }}" class="email-link">
+                  <span class="material-symbols-outlined">mail</span>
+                  {{ doc.author?.email }}
+                </a>
               </div>
-              <div class="meta-info">
-                <span class="material-symbols-outlined">school</span>
-                <span>{{ doc.semester }} семестр</span>
-              </div>
+            </div>
+          </div>
 
-              @let currentStatus = doc.syllabus?.status || doc.status || 'DRAFT';
-              <div class="status-container" style="display: inline-block; margin-left: 8px;">
+          <div class="card">
+            <div class="card-header">
+              <span class="material-symbols-outlined">account_balance</span>
+              <h3>Кафедра</h3>
+            </div>
+            <div class="card-content">
+              <div class="info-block">
+                <p class="main-text">{{ doc.author?.department?.nameRu }}</p>
+                <p class="sub-text faculty">{{ doc.author?.department?.faculty?.name }}</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="table-area">
+          <header class="header-banner">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+            <div class="header-main-section">
+              <button class="btn-icon-back" (click)="goBack()" title="Назад">
+                <span class="material-symbols-outlined">arrow_back</span>
+              </button>
+              <div class="header-title">
+                <h1>{{ doc.discipline.name }}</h1>
+                <div class="status-row">
+                  <div class="meta-info">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    <span>{{ doc.academicYear }} год</span>
+                  </div>
+                  <div class="meta-info">
+                    <span class="material-symbols-outlined">school</span>
+                    <span>{{ doc.semester }} семестр</span>
+                  </div>
+
+                  @let currentStatus = doc.syllabus?.status || doc.status || 'DRAFT';
+                  <div class="status-container" style="display: inline-block; margin-left: 8px;">
                 <span class="status-badge" [ngClass]="currentStatus.toLowerCase().replaceAll('_', '-')">
                   <span class="status-dot"></span>
                   {{ 'SYLLABUS.STATUS.' + currentStatus | transloco }}
                 </span>
+                  </div>
+
+                </div>
               </div>
-
             </div>
-          </div>
-        </div>
 
-        <div class="export-actions" style="display:flex; gap:10px; align-items:center;">
-          <button
-            [style.background]="activeFixTask() ? '#d97706' : '#2563eb'"
-            [style.color]="'white'"
-            style="border:none; padding:0.6rem 1.2rem; border-radius:6px; font-weight:500;
+            <div class="export-actions" style="display:flex; gap:10px; align-items:center;">
+              <button
+                [style.background]="activeFixTask() ? '#d97706' : '#2563eb'"
+                [style.color]="'white'"
+                style="border:none; padding:0.6rem 1.2rem; border-radius:6px; font-weight:500;
                    display:flex; align-items:center; gap:8px; cursor:pointer; transition:background 0.2s;"
-            (click)="submitToApprovalPipeline()"
-            [disabled]="isLoading()">
+                (click)="submitToApprovalPipeline()"
+                [disabled]="isLoading()">
             <span class="material-symbols-outlined">
               {{ activeFixTask() ? 'assignment_return' : 'send_and_archive' }}
             </span>
-            <span>{{ activeFixTask() ? 'Отправить исправления' : 'Отправить на согласование' }}</span>
-          </button>
+                <span>{{ activeFixTask() ? 'Отправить исправления' : 'Отправить на согласование' }}</span>
+              </button>
 
-          <button class="btn-download" (click)="downloadWord(doc.id!)">
-            <span class="material-symbols-outlined">file_download</span>
-            <span>Экспорт в .DOCX</span>
-          </button>
-        </div>
-      </header>
+              <button class="btn-download" (click)="downloadWord(doc.id!)">
+                <span class="material-symbols-outlined">file_download</span>
+                <span>Экспорт в .DOCX</span>
+              </button>
+            </div>
+          </header>
 
-      <nav class="tabs-navigation">
-        <button [class.active]="activeTab() === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные силлабуса</button>
-        <button [class.active]="activeTab() === 'lectures'"     (click)="setActiveTab('lectures')">Лекции</button>
-        <button [class.active]="activeTab() === 'practices'"    (click)="setActiveTab('practices')">Практика</button>
-        <button [class.active]="activeTab() === 'srsp'"         (click)="setActiveTab('srsp')">СРСП</button>
-        <button [class.active]="activeTab() === 'srs'"          (click)="setActiveTab('srs')">СРС</button>
-        <button [class.active]="activeTab() === 'grading'"      (click)="setActiveTab('grading')">
-          <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">grading</span>
-          Оценивание
-        </button>
-        <button [class.active]="activeTab() === 'comments'" (click)="setActiveTab('comments')" class="tab-comments">
-          <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">forum</span>
-          Замечания проверяющих
-          <span class="comment-badge" *ngIf="getApprovalComments().length">{{ getApprovalComments().length }}</span>
-        </button>
-        <button [class.active]="activeTab() === 'preview'" (click)="setActiveTab('preview')" class="tab-preview">
-          <span class="material-symbols-outlined">visibility</span>
-          Предпросмотр
-        </button>
-      </nav>
+          <nav class="tabs-navigation">
+            <button [class.active]="activeTab() === 'syllabusData'" (click)="setActiveTab('syllabusData')">Данные силлабуса</button>
+            <button [class.active]="activeTab() === 'lectures'"     (click)="setActiveTab('lectures')">Лекции</button>
+            <button [class.active]="activeTab() === 'practices'"    (click)="setActiveTab('practices')">Практика</button>
+            <button [class.active]="activeTab() === 'srsp'"         (click)="setActiveTab('srsp')">СРСП</button>
+            <button [class.active]="activeTab() === 'srs'"          (click)="setActiveTab('srs')">СРС</button>
+            <button [class.active]="activeTab() === 'grading'"      (click)="setActiveTab('grading')">
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">grading</span>
+              Оценивание
+            </button>
+            <button [class.active]="activeTab() === 'comments'" (click)="setActiveTab('comments')" class="tab-comments">
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">forum</span>
+              Замечания проверяющих
+              <span class="comment-badge" *ngIf="getApprovalComments().length">{{ getApprovalComments().length }}</span>
+            </button>
+            <button [class.active]="activeTab() === 'preview'" (click)="setActiveTab('preview')" class="tab-preview">
+              <span class="material-symbols-outlined">visibility</span>
+              Предпросмотр
+            </button>
+          </nav>
 
-      <div *ngIf="activeFixTask()"
-           style="background:#fef3c7; border-left:4px solid #d97706; padding:1rem;
+          <div *ngIf="activeFixTask()"
+               style="background:#fef3c7; border-left:4px solid #d97706; padding:1rem;
                   margin:1rem 0; border-radius:4px; display:flex; align-items:center; gap:12px;">
-        <span class="material-symbols-outlined" style="color:#d97706; font-size:28px;">warning</span>
-        <div>
-          <h4 style="margin:0; color:#92400e; font-size:15px; font-weight:600;">Требуется доработка силлабуса</h4>
-          <p style="margin:4px 0 0 0; color:#b45309; font-size:13px;">
-            Этот документ был отклонен проверяющими. Внесите исправления и нажмите
-            <strong>«Отправить исправления»</strong> вверху экрана.
-          </p>
-        </div>
-      </div>
-
-      <div class="tab-content-animation">
-
-        <div class="card" *ngIf="activeTab() === 'syllabusData' && doc.syllabus">
-          <div class="card-header">
-            <span class="material-symbols-outlined">edit_note</span>
-            <h3>Редактирование разделов программы</h3>
+            <span class="material-symbols-outlined" style="color:#d97706; font-size:28px;">warning</span>
+            <div>
+              <h4 style="margin:0; color:#92400e; font-size:15px; font-weight:600;">Требуется доработка силлабуса</h4>
+              <p style="margin:4px 0 0 0; color:#b45309; font-size:13px;">
+                Этот документ был отклонен проверяющими. Внесите исправления и нажмите
+                <strong>«Отправить исправления»</strong> вверху экрана.
+              </p>
+            </div>
           </div>
 
-          <div class="form-content">
-            <div class="form-grid">
-              <div class="labeled-input-group">
-                <label>Код программы</label>
-                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramCode">
-              </div>
-              <div class="labeled-input-group">
-                <label>Название ОП</label>
-                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramTitle">
-              </div>
-              <div class="labeled-input-group">
-                <label>Цикл дисциплин</label>
-                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.courseCycle">
-              </div>
-              <div class="labeled-input-group">
-                <label>Итоговый контроль</label>
-                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.finalAssessment">
-              </div>
-              <div class="labeled-input-group">
-                <label>Кредиты (ECTS)</label>
-                <input type="number" class="custom-input" [(ngModel)]="doc.syllabus.numberOfCredits">
-              </div>
-              <div class="labeled-input-group">
-                <label>Группа ОП</label>
-                <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.groupOfAcademicPrograms">
-              </div>
-            </div>
+          <div class="tab-content-animation">
 
-            <div class="course-details-section" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
-              <div class="labeled-input-group">
-                <label style="font-weight: 600; color: #1e293b;">Course Goals (Цели курса)</label>
-                <textarea [(ngModel)]="doc.syllabus.goals" class="custom-input" style="min-height: 80px; padding: 8px; width: 100%;" placeholder="Enter course goals..."></textarea>
+            <div class="card" *ngIf="activeTab() === 'syllabusData' && doc.syllabus">
+              <div class="card-header">
+                <span class="material-symbols-outlined">edit_note</span>
+                <h3>Редактирование разделов программы</h3>
               </div>
 
-              <div class="labeled-input-group">
-                <label style="font-weight: 600; color: #1e293b;">The objectives of the course are (Задачи курса):</label>
-                <textarea [(ngModel)]="doc.syllabus.objectives" class="custom-input" style="min-height: 80px; padding: 8px; width: 100%;" placeholder="Enter course objectives..."></textarea>
-              </div>
+              <div class="form-content">
+                <div class="form-grid">
+                  <div class="labeled-input-group">
+                    <label>Код программы</label>
+                    <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramCode">
+                  </div>
+                  <div class="labeled-input-group">
+                    <label>Название ОП</label>
+                    <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.academicProgramTitle">
+                  </div>
+                  <div class="labeled-input-group">
+                    <label>Цикл дисциплин</label>
+                    <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.courseCycle">
+                  </div>
+                  <div class="labeled-input-group">
+                    <label>Итоговый контроль</label>
+                    <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.finalAssessment">
+                  </div>
+                  <div class="labeled-input-group">
+                    <label>Кредиты (ECTS)</label>
+                    <input type="number" class="custom-input" [(ngModel)]="doc.syllabus.numberOfCredits">
+                  </div>
+                  <div class="labeled-input-group">
+                    <label>Группа ОП</label>
+                    <input type="text" class="custom-input" [(ngModel)]="doc.syllabus.groupOfAcademicPrograms">
+                  </div>
+                </div>
 
-              <div class="labeled-input-group">
-                <label style="font-weight: 600; color: #1e293b;">Learning outcomes of the course (Результаты обучения):</label>
-                <textarea [(ngModel)]="doc.syllabus.learningOutcomes" class="custom-input" style="min-height: 100px; padding: 8px; width: 100%;" placeholder="Enter learning outcomes..."></textarea>
-              </div>
+                <div class="course-details-section" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                  <div class="labeled-input-group">
+                    <label style="font-weight: 600; color: #1e293b;">Course Goals (Цели курса)</label>
+                    <textarea [(ngModel)]="doc.syllabus.goals" class="custom-input" style="min-height: 80px; padding: 8px; width: 100%;" placeholder="Enter course goals..."></textarea>
+                  </div>
 
-              <div class="labeled-input-group">
-                <label style="font-weight: 600; color: #1e293b;">Course description (Описание курса):</label>
-                <textarea [(ngModel)]="doc.syllabus.courseDescription" class="custom-input" style="min-height: 120px; padding: 8px; width: 100%;" placeholder="Enter course description..."></textarea>
-              </div>
+                  <div class="labeled-input-group">
+                    <label style="font-weight: 600; color: #1e293b;">The objectives of the course are (Задачи курса):</label>
+                    <textarea [(ngModel)]="doc.syllabus.objectives" class="custom-input" style="min-height: 80px; padding: 8px; width: 100%;" placeholder="Enter course objectives..."></textarea>
+                  </div>
 
-              <div class="labeled-input-group">
-                <label style="font-weight: 600; color: #1e293b;">Course Policy (Политика курса):</label>
-                <textarea [(ngModel)]="doc.syllabus.coursePolicy" class="custom-input" style="min-height: 100px; padding: 8px; width: 100%;" placeholder="Enter course policy and regulations..."></textarea>
-              </div>
-            </div>
+                  <div class="labeled-input-group">
+                    <label style="font-weight: 600; color: #1e293b;">Learning outcomes of the course (Результаты обучения):</label>
+                    <textarea [(ngModel)]="doc.syllabus.learningOutcomes" class="custom-input" style="min-height: 100px; padding: 8px; width: 100%;" placeholder="Enter learning outcomes..."></textarea>
+                  </div>
 
-            <div class="literature-section" style="margin-top:3rem;">
-              <div class="section-header">
-                <label class="section-label">Список литературы и ресурсов</label>
-                <span class="items-count" *ngIf="doc.syllabus.literature.length">
+                  <div class="labeled-input-group">
+                    <label style="font-weight: 600; color: #1e293b;">Course description (Описание курса):</label>
+                    <textarea [(ngModel)]="doc.syllabus.courseDescription" class="custom-input" style="min-height: 120px; padding: 8px; width: 100%;" placeholder="Enter course description..."></textarea>
+                  </div>
+
+                  <div class="labeled-input-group">
+                    <label style="font-weight: 600; color: #1e293b;">Course Policy (Политика курса):</label>
+                    <textarea [(ngModel)]="doc.syllabus.coursePolicy" class="custom-input" style="min-height: 100px; padding: 8px; width: 100%;" placeholder="Enter course policy and regulations..."></textarea>
+                  </div>
+                </div>
+
+                <div class="literature-section" style="margin-top:3rem;">
+                  <div class="section-header">
+                    <label class="section-label">Список литературы и ресурсов</label>
+                    <span class="items-count" *ngIf="doc.syllabus.literature.length">
                   ({{ doc.syllabus.literature.length }})
                 </span>
-              </div>
-              <div class="literature-list">
-                <div *ngFor="let item of doc.syllabus.literature; let i = index" class="literature-card">
-                  <div class="card-number">{{ i + 1 }}</div>
-                  <div class="literature-inputs">
-                    <div class="input-row">
-                      <div class="field-wrapper">
-                        <span class="field-icon material-symbols-outlined">book</span>
-                        <input type="text" class="custom-input" [(ngModel)]="item.title" placeholder="Название книги">
+                  </div>
+                  <div class="literature-list">
+                    <div *ngFor="let item of doc.syllabus.literature; let i = index" class="literature-card">
+                      <div class="card-number">{{ i + 1 }}</div>
+                      <div class="literature-inputs">
+                        <div class="input-row">
+                          <div class="field-wrapper">
+                            <span class="field-icon material-symbols-outlined">book</span>
+                            <input type="text" class="custom-input" [(ngModel)]="item.title" placeholder="Название книги">
+                          </div>
+                          <div class="field-wrapper">
+                            <span class="field-icon material-symbols-outlined">person_edit</span>
+                            <input type="text" class="custom-input" [(ngModel)]="item.author" placeholder="Автор">
+                          </div>
+                        </div>
                       </div>
-                      <div class="field-wrapper">
-                        <span class="field-icon material-symbols-outlined">person_edit</span>
-                        <input type="text" class="custom-input" [(ngModel)]="item.author" placeholder="Автор">
+                      <div class="action-zone">
+                        <button type="button" class="btn-remove-item" (click)="removeLiteratureLine(i)" title="Удалить">
+                          <span class="material-symbols-outlined">delete_forever</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div class="action-zone">
-                    <button type="button" class="btn-remove-item" (click)="removeLiteratureLine(i)" title="Удалить">
-                      <span class="material-symbols-outlined">delete_forever</span>
-                    </button>
-                  </div>
+                  <button type="button" class="btn-add-line" (click)="addLiteratureLine()">
+                    <div class="btn-content">
+                      <span class="material-symbols-outlined">add_circle</span>
+                      <span>Добавить источник</span>
+                    </div>
+                  </button>
                 </div>
-              </div>
-              <button type="button" class="btn-add-line" (click)="addLiteratureLine()">
-                <div class="btn-content">
-                  <span class="material-symbols-outlined">add_circle</span>
-                  <span>Добавить источник</span>
-                </div>
-              </button>
-            </div>
 
-            <div class="assessment-section" style="margin-top:3rem;">
-              <div class="section-header" style="margin-bottom:1rem;">
-                <label class="section-label" style="font-weight:600; color:#1e293b;">
-                  Критерии оценивания (Assessment Criteria)
-                </label>
-              </div>
-              <div class="table-container" style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-                <table style="width:100%; border-collapse:collapse; background:white;">
-                  <thead>
-                  <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0;">
-                    <th style="padding:12px; width:100px; text-align:center; border-right:1px solid #e2e8f0;">Points</th>
-                    <th style="padding:12px; text-align:left;">Assessment criterion</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let item of assessmentCriteria" style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:8px; background:#fcfcfc; border-right:1px solid #e2e8f0;">
-                      <input type="number" [(ngModel)]="item.points"
-                             style="width:100%; text-align:center; border:none; background:transparent; font-weight:700; font-size:16px;">
-                    </td>
-                    <td style="padding:8px;">
+                <div class="assessment-section" style="margin-top:3rem;">
+                  <div class="section-header" style="margin-bottom:1rem;">
+                    <label class="section-label" style="font-weight:600; color:#1e293b;">
+                      Критерии оценивания (Assessment Criteria)
+                    </label>
+                  </div>
+                  <div class="table-container" style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                    <table style="width:100%; border-collapse:collapse; background:white;">
+                      <thead>
+                      <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0;">
+                        <th style="padding:12px; width:100px; text-align:center; border-right:1px solid #e2e8f0;">Points</th>
+                        <th style="padding:12px; text-align:left;">Assessment criterion</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let item of assessmentCriteria" style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:8px; background:#fcfcfc; border-right:1px solid #e2e8f0;">
+                          <input type="number" [(ngModel)]="item.points"
+                                 style="width:100%; text-align:center; border:none; background:transparent; font-weight:700; font-size:16px;">
+                        </td>
+                        <td style="padding:8px;">
                         <textarea [(ngModel)]="item.criterion"
                                   style="width:100%; border:1px solid #f1f5f9; border-radius:4px; padding:8px; min-height:50px; font-family:inherit;"
                                   placeholder="Описание критерия..."></textarea>
-                    </td>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" *ngIf="['lectures', 'practices', 'srsp', 'srs'].includes(activeTab())">
+              <div class="card-header">
+                <h3 style="text-transform:capitalize;">Раздел: {{ activeTab() }}</h3>
+              </div>
+              <div class="table-container" style="overflow-x:auto; padding:1rem;">
+                <table class="custom-table" style="width:100%; border-collapse:collapse;">
+                  <thead>
+                  <tr style="background:#f8fafc; text-align:left;">
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:50px;">№</th>
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9;">Тема / Задание</th>
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:80px;">Часы</th>
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:260px;">Литература</th>
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9;">Форма отчетности</th>
+                    <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:120px;">Срок</th>
                   </tr>
+                  </thead>
+                  <tbody>
+                    @for (topic of currentTopics(); track $index) {
+                      <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:8px; font-weight:600; text-align:center;">{{ topic.weekNumber }}</td>
+                        <td style="padding:8px;">
+                          @if (activeTab() === 'lectures') {
+                            <input [(ngModel)]="topic.lectureTopic" class="table-input"
+                                   style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                          } @else if (activeTab() === 'practices') {
+                            <input [(ngModel)]="topic.practiceTopic" class="table-input"
+                                   style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                          } @else if (activeTab() === 'srsp') {
+                            <input [(ngModel)]="topic.srspTopic" class="table-input"
+                                   style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                          } @else if (activeTab() === 'srs') {
+                            <input [(ngModel)]="topic.spzTopic" class="table-input"
+                                   style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                          }
+                        </td>
+                        <td style="padding:8px;">
+                          <input type="number" [(ngModel)]="topic.hours"
+                                 style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px; text-align:center;">
+                        </td>
+                        <td style="padding:8px; position:relative;">
+                          <div class="multiselect-container">
+                            <div class="multiselect-trigger" (click)="topic.isOpen = !topic.isOpen">
+                              <div class="selected-tags">
+                                @if (!topic.references || topic.references.length === 0) {
+                                  <span class="placeholder">Выберите источники...</span>
+                                } @else {
+                                  @for (ref of topic.references; track $index) {
+                                    <span class="tag" (click)="$event.stopPropagation()">
+                                  <span class="tag-text" [title]="ref">{{ ref }}</span>
+                                  <span class="remove-tag" (click)="removeReference(topic, ref)">×</span>
+                                </span>
+                                  }
+                                }
+                              </div>
+                              <span class="material-symbols-outlined arrow-icon">
+                            {{ topic.isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                          </span>
+                            </div>
+                            @if (topic.isOpen) {
+                              <div class="multiselect-dropdown">
+                                @for (lit of syllabus()?.syllabus?.literature; track $index) {
+                                  @if (lit?.title) {
+                                    <label class="dropdown-item" (click)="$event.stopPropagation()">
+                                      <input type="checkbox"
+                                             [checked]="isLitSelected(topic, lit.title)"
+                                             (change)="toggleReference(topic, lit.title)">
+                                      <span class="lit-title-text" [title]="lit.title">{{ lit.title }}</span>
+                                    </label>
+                                  }
+                                }
+                                @if (!(syllabus()?.syllabus?.literature?.length)) {
+                                  <div class="dropdown-empty">Список литературы пуст</div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </td>
+                        <td style="padding:8px;">
+                          <input [(ngModel)]="topic.reportingForm"
+                                 style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                        </td>
+                        <td style="padding:8px;">
+                          <input [(ngModel)]="topic.deadline"
+                                 style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
+                        </td>
+                      </tr>
+                    }
                   </tbody>
                 </table>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="card" *ngIf="['lectures', 'practices', 'srsp', 'srs'].includes(activeTab())">
-          <div class="card-header">
-            <h3 style="text-transform:capitalize;">Раздел: {{ activeTab() }}</h3>
-          </div>
-          <div class="table-container" style="overflow-x:auto; padding:1rem;">
-            <table class="custom-table" style="width:100%; border-collapse:collapse;">
-              <thead>
-              <tr style="background:#f8fafc; text-align:left;">
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:50px;">№</th>
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9;">Тема / Задание</th>
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:80px;">Часы</th>
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:260px;">Литература</th>
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9;">Форма отчетности</th>
-                <th style="padding:12px; border-bottom:2px solid #f1f5f9; width:120px;">Срок</th>
-              </tr>
-              </thead>
-              <tbody>
-                @for (topic of currentTopics(); track $index) {
-                  <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:8px; font-weight:600; text-align:center;">{{ topic.weekNumber }}</td>
-                    <td style="padding:8px;">
-                      @if (activeTab() === 'lectures') {
-                        <input [(ngModel)]="topic.lectureTopic" class="table-input"
-                               style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                      } @else if (activeTab() === 'practices') {
-                        <input [(ngModel)]="topic.practiceTopic" class="table-input"
-                               style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                      } @else if (activeTab() === 'srsp') {
-                        <input [(ngModel)]="topic.srspTopic" class="table-input"
-                               style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                      } @else if (activeTab() === 'srs') {
-                        <input [(ngModel)]="topic.spzTopic" class="table-input"
-                               style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                      }
-                    </td>
-                    <td style="padding:8px;">
-                      <input type="number" [(ngModel)]="topic.hours"
-                             style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px; text-align:center;">
-                    </td>
-                    <td style="padding:8px; position:relative;">
-                      <div class="multiselect-container">
-                        <div class="multiselect-trigger" (click)="topic.isOpen = !topic.isOpen">
-                          <div class="selected-tags">
-                            @if (!topic.references || topic.references.length === 0) {
-                              <span class="placeholder">Выберите источники...</span>
-                            } @else {
-                              @for (ref of topic.references; track $index) {
-                                <span class="tag" (click)="$event.stopPropagation()">
-                                  <span class="tag-text" [title]="ref">{{ ref }}</span>
-                                  <span class="remove-tag" (click)="removeReference(topic, ref)">×</span>
-                                </span>
-                              }
-                            }
-                          </div>
-                          <span class="material-symbols-outlined arrow-icon">
-                            {{ topic.isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-                          </span>
-                        </div>
-                        @if (topic.isOpen) {
-                          <div class="multiselect-dropdown">
-                            @for (lit of syllabus()?.syllabus?.literature; track $index) {
-                              @if (lit?.title) {
-                                <label class="dropdown-item" (click)="$event.stopPropagation()">
-                                  <input type="checkbox"
-                                         [checked]="isLitSelected(topic, lit.title)"
-                                         (change)="toggleReference(topic, lit.title)">
-                                  <span class="lit-title-text" [title]="lit.title">{{ lit.title }}</span>
-                                </label>
-                              }
-                            }
-                            @if (!(syllabus()?.syllabus?.literature?.length)) {
-                              <div class="dropdown-empty">Список литературы пуст</div>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </td>
-                    <td style="padding:8px;">
-                      <input [(ngModel)]="topic.reportingForm"
-                             style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                    </td>
-                    <td style="padding:8px;">
-                      <input [(ngModel)]="topic.deadline"
-                             style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:4px;">
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
+            <div class="card" *ngIf="activeTab() === 'grading'">
+              <div class="card-header">
+                <span class="material-symbols-outlined">grading</span>
+                <h3>System for evaluating student performance in a discipline</h3>
+              </div>
 
-        <div class="card" *ngIf="activeTab() === 'grading'">
-          <div class="card-header">
-            <span class="material-symbols-outlined">grading</span>
-            <h3>System for evaluating student performance in a discipline</h3>
-          </div>
-
-          <div style="padding:1.5rem;">
-            <div style="display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-              @for (period of ['1st attestation', '2nd attestation']; track period) {
-                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px;
+              <div style="padding:1.5rem;">
+                <div style="display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+                  @for (period of ['1st attestation', '2nd attestation']; track period) {
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px;
                     padding:12px 20px; display:flex; flex-direction:column; gap:4px;">
-                  <span style="font-size:12px; color:#3b82f6; font-weight:600;">{{ period }}</span>
-                  <span style="font-size:22px; font-weight:700; color:#1e40af;">
+                      <span style="font-size:12px; color:#3b82f6; font-weight:600;">{{ period }}</span>
+                      <span style="font-size:22px; font-weight:700; color:#1e40af;">
                     {{ getTotalByPeriod(period) }}
-                    <span style="font-size:14px; color:#64748b; font-weight:400;">/ 100</span>
+                        <span style="font-size:14px; color:#64748b; font-weight:400;">/ 100</span>
                   </span>
-                  <span [style.color]="getTotalByPeriod(period) === 100 ? '#16a34a' : '#ef4444'"
-                        style="font-size:11px; font-weight:600;">
+                      <span [style.color]="getTotalByPeriod(period) === 100 ? '#16a34a' : '#ef4444'"
+                            style="font-size:11px; font-weight:600;">
                     {{ getTotalByPeriod(period) === 100 ? '✓ Баллы сходятся' : '✗ Сумма ≠ 100' }}
                   </span>
-                </div>
-              }
-              <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px;
+                    </div>
+                  }
+                  <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px;
                   padding:12px 20px; display:flex; align-items:center;">
                 <span style="font-size:13px; color:#15803d; font-weight:600;">
                   Итог: 0,3 × 1st + 0,3 × 2nd + 0,4 × Exam = 100
                 </span>
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
                 padding:1rem 1.2rem; margin-bottom:1.5rem;">
-              <p style="margin:0 0 10px 0; font-size:13px; font-weight:600; color:#374151;">Быстрое добавление</p>
-              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
-                  <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (1st att):</span>
-                  <input type="number" [(ngModel)]="quickAddPractice1" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('1st attestation', 'Practice', quickAddPractice1)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
+                  <p style="margin:0 0 10px 0; font-size:13px; font-weight:600; color:#374151;">Быстрое добавление</p>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                      <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (1st att):</span>
+                      <input type="number" [(ngModel)]="quickAddPractice1" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                      <button (click)="quickAddRows('1st attestation', 'Practice', quickAddPractice1)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                      <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (2nd att):</span>
+                      <input type="number" [(ngModel)]="quickAddPractice2" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                      <button (click)="quickAddRows('2nd attestation', 'Practice', quickAddPractice2)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
+                      <span style="font-size:12px; color:#64748b; white-space:nowrap;">Лаб. работы (2nd att):</span>
+                      <input type="number" [(ngModel)]="quickAddLab" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
+                      <button (click)="quickAddRows('2nd attestation', 'Lab', quickAddLab)" style="padding:4px 10px; background:#7c3aed; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
+                    </div>
+
+                    <span style="color:#e2e8f0; font-size:20px;">|</span>
+
+                    @for (period of gradingPeriods; track period) {
+                      <button (click)="addGradingRow(period)" style="padding:5px 12px; border:1px dashed #93c5fd; border-radius:6px; background:#eff6ff; color:#1d4ed8; cursor:pointer; font-size:12px;">+ {{ period }}</button>
+                    }
+                  </div>
                 </div>
 
-                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
-                  <span style="font-size:12px; color:#64748b; white-space:nowrap;">Практики (2nd att):</span>
-                  <input type="number" [(ngModel)]="quickAddPractice2" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('2nd attestation', 'Practice', quickAddPractice2)" style="padding:4px 10px; background:#3b82f6; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
+                <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <thead>
+                    <tr style="background:#f0f4ff;">
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:140px; text-align:left;">Period</th>
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; text-align:left;">Assignments</th>
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:90px; text-align:center;">Score</th>
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:90px; text-align:center;">Total</th>
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:110px; text-align:center;">Стиль</th>
+                      <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:44px;"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of gradingPolicy; track $index; let i = $index) {
+                        <tr [style.background]="row.period === 'Total' ? '#f8fafc' : row.bold && !row.subItem ? '#f0f7ff' : 'white'" style="border-bottom:1px solid #f1f5f9;">
+                          <td style="padding:8px 12px; vertical-align:middle; border-right:1px solid #f1f5f9;">
+                            @if (isFirstInPeriod(i)) {
+                              <span style="font-weight:600; font-size:12px; color:#1e40af; white-space:nowrap;">{{ row.period }}</span>
+                            }
+                          </td>
+                          <td style="padding:6px 8px; border-right:1px solid #f1f5f9;">
+                            <div style="display:flex; align-items:center; gap:4px;">
+                              @if (row.subItem) { <span style="display:inline-block; width:20px; min-width:20px; color:#94a3b8;">└</span> }
+                              <input [(ngModel)]="row.assignmentName" [style.font-weight]="row.bold ? '700' : '400'" [style.color]="row.period === 'Total' ? '#64748b' : '#0f172a'" style="border:1px solid #e2e8f0; border-radius:4px; padding:5px 8px; width:100%; font-size:13px; font-family:inherit; background:white;">
+                            </div>
+                          </td>
+                          <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
+                            <input type="number" [(ngModel)]="row.score" [style.font-weight]="row.bold ? '700' : '400'" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px;">
+                          </td>
+                          <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
+                            <input type="number" [(ngModel)]="row.total" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px; font-weight:700;">
+                          </td>
+                          <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
+                            <div style="display:flex; gap:8px; justify-content:center;">
+                              <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.bold"> жирный</label>
+                              <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.subItem"> отступ</label>
+                            </div>
+                          </td>
+                          <td style="padding:4px; text-align:center;">
+                            <button (click)="removeGradingRow(i)" style="background:none; border:none; cursor:pointer; color:#ef4444; padding:4px; border-radius:4px; display:flex; align-items:center;" title="Удалить строку">
+                              <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                      @if (gradingPolicy.length === 0) {
+                        <tr>
+                          <td colspan="6" style="padding:2rem; text-align:center; color:#94a3b8; font-size:14px;">Таблица пуста. Воспользуйтесь быстрым добавлением выше.</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
                 </div>
-
-                <div style="display:flex; align-items:center; gap:6px; background:white; border:1px solid #e2e8f0; border-radius:6px; padding:6px 10px;">
-                  <span style="font-size:12px; color:#64748b; white-space:nowrap;">Лаб. работы (2nd att):</span>
-                  <input type="number" [(ngModel)]="quickAddLab" min="1" max="20" style="width:48px; border:1px solid #e2e8f0; border-radius:4px; padding:3px 6px; font-size:13px; text-align:center;">
-                  <button (click)="quickAddRows('2nd attestation', 'Lab', quickAddLab)" style="padding:4px 10px; background:#7c3aed; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; white-space:nowrap;">+ Добавить</button>
-                </div>
-
-                <span style="color:#e2e8f0; font-size:20px;">|</span>
-
-                @for (period of gradingPeriods; track period) {
-                  <button (click)="addGradingRow(period)" style="padding:5px 12px; border:1px dashed #93c5fd; border-radius:6px; background:#eff6ff; color:#1d4ed8; cursor:pointer; font-size:12px;">+ {{ period }}</button>
-                }
               </div>
             </div>
 
-            <div style="border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
-              <table style="width:100%; border-collapse:collapse; font-size:13px;">
-                <thead>
-                <tr style="background:#f0f4ff;">
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:140px; text-align:left;">Period</th>
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; text-align:left;">Assignments</th>
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:90px; text-align:center;">Score</th>
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:90px; text-align:center;">Total</th>
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:110px; text-align:center;">Стиль</th>
-                  <th style="padding:10px 12px; border-bottom:2px solid #dde3f0; width:44px;"></th>
-                </tr>
-                </thead>
-                <tbody>
-                  @for (row of gradingPolicy; track $index; let i = $index) {
-                    <tr [style.background]="row.period === 'Total' ? '#f8fafc' : row.bold && !row.subItem ? '#f0f7ff' : 'white'" style="border-bottom:1px solid #f1f5f9;">
-                      <td style="padding:8px 12px; vertical-align:middle; border-right:1px solid #f1f5f9;">
-                        @if (isFirstInPeriod(i)) {
-                          <span style="font-weight:600; font-size:12px; color:#1e40af; white-space:nowrap;">{{ row.period }}</span>
-                        }
-                      </td>
-                      <td style="padding:6px 8px; border-right:1px solid #f1f5f9;">
-                        <div style="display:flex; align-items:center; gap:4px;">
-                          @if (row.subItem) { <span style="display:inline-block; width:20px; min-width:20px; color:#94a3b8;">└</span> }
-                          <input [(ngModel)]="row.assignmentName" [style.font-weight]="row.bold ? '700' : '400'" [style.color]="row.period === 'Total' ? '#64748b' : '#0f172a'" style="border:1px solid #e2e8f0; border-radius:4px; padding:5px 8px; width:100%; font-size:13px; font-family:inherit; background:white;">
-                        </div>
-                      </td>
-                      <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
-                        <input type="number" [(ngModel)]="row.score" [style.font-weight]="row.bold ? '700' : '400'" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px;">
-                      </td>
-                      <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
-                        <input type="number" [(ngModel)]="row.total" style="width:64px; text-align:center; border:1px solid #e2e8f0; border-radius:4px; padding:5px; font-size:13px; font-weight:700;">
-                      </td>
-                      <td style="padding:6px; border-right:1px solid #f1f5f9; text-align:center;">
-                        <div style="display:flex; gap:8px; justify-content:center;">
-                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.bold"> жирный</label>
-                          <label style="font-size:11px; color:#64748b; display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="checkbox" [(ngModel)]="row.subItem"> отступ</label>
-                        </div>
-                      </td>
-                      <td style="padding:4px; text-align:center;">
-                        <button (click)="removeGradingRow(i)" style="background:none; border:none; cursor:pointer; color:#ef4444; padding:4px; border-radius:4px; display:flex; align-items:center;" title="Удалить строку">
-                          <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                  @if (gradingPolicy.length === 0) {
-                    <tr>
-                      <td colspan="6" style="padding:2rem; text-align:center; color:#94a3b8; font-size:14px;">Таблица пуста. Воспользуйтесь быстрым добавлением выше.</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
 
-        <button [class.active]="activeTab() === 'comments'" (click)="setActiveTab('comments')" class="tab-comments">
-          <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle;">forum</span>
-          Замечания проверяющих
-          <span class="comment-badge" *ngIf="getApprovalComments().length">{{ getApprovalComments().length }}</span>
-        </button>
-
-        <div class="card" *ngIf="activeTab() === 'comments'">
-          <div class="card-header">
-            <span class="material-symbols-outlined">forum</span>
-            <h3>История замечаний и решений по раундам согласования</h3>
-          </div>
-
-          <div class="comments-layout">
-            <div class="comments-feed" style="max-height: none; overflow: visible;">
-
-              <div *ngIf="getApprovalComments().length === 0" class="comments-empty">
-                <span class="material-symbols-outlined">check_circle</span>
-                <p>Замечаний от проверяющих органов пока нет. Документ находится в статусе: <strong>{{ doc.status }}</strong></p>
+            <div class="card" *ngIf="activeTab() === 'comments'">
+              <div class="card-header">
+                <span class="material-symbols-outlined">forum</span>
+                <h3>История замечаний и решений по раундам согласования</h3>
               </div>
 
-              <div class="comment-item" *ngFor="let comment of getApprovalComments()">
-                <div class="comment-avatar" [style.background]="comment.decision === 'REJECTED' ? '#ef4444' : '#10b981'">
-                  {{ comment.authorName.charAt(0) || 'U' }}
-                </div>
-                <div class="comment-body">
-                  <div class="comment-meta">
-                    <span class="author-name">{{ comment.authorName }}</span>
-                    <span class="author-role" [attr.data-role]="comment.authorRole">{{ comment.authorRole }}</span>
+              <div class="comments-layout">
+                <div class="comments-feed" style="max-height: none; overflow: visible;">
 
-                    <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600;"
-                          [style.background]="comment.decision === 'APPROVED' ? '#dcfce7' : '#fee2e2'"
-                          [style.color]="comment.decision === 'APPROVED' ? '#15803d' : '#991b1b'">
+                  <div *ngIf="getApprovalComments().length === 0" class="comments-empty">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <p>Замечаний от проверяющих органов пока нет. Документ находится в статусе: <strong>{{ doc.status }}</strong></p>
+                  </div>
+
+                  <div class="comment-item" *ngFor="let comment of getApprovalComments()">
+                    <div class="comment-avatar" [style.background]="comment.decision === 'REJECTED' ? '#ef4444' : '#10b981'">
+                      {{ comment.authorName.charAt(0) || 'U' }}
+                    </div>
+                    <div class="comment-body">
+                      <div class="comment-meta">
+                        <span class="author-name">{{ comment.authorName }}</span>
+                        <span class="author-role" [attr.data-role]="comment.authorRole">{{ comment.authorRole }}</span>
+
+                        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600;"
+                              [style.background]="comment.decision === 'APPROVED' ? '#dcfce7' : '#fee2e2'"
+                              [style.color]="comment.decision === 'APPROVED' ? '#15803d' : '#991b1b'">
               {{ comment.decision === 'APPROVED' ? 'Утверждено' : 'Отклонено' }}
             </span>
 
-                    <span class="comment-date" *ngIf="comment.date">{{ comment.date | date:'dd.MM.yyyy, HH:mm' }}</span>
+                        <span class="comment-date" *ngIf="comment.date">{{ comment.date | date:'dd.MM.yyyy, HH:mm' }}</span>
+                      </div>
+                      <div class="comment-text">
+                        {{ comment.text }}
+                      </div>
+                    </div>
                   </div>
-                  <div class="comment-text">
-                    {{ comment.text }}
-                  </div>
-                </div>
-              </div>
 
-            </div>
-          </div>
-        </div>
-        <div class="card preview-card" *ngIf="activeTab() === 'preview'">
-          <div class="preview-toolbar">
-            <div class="toolbar-info">
-              <span class="material-symbols-outlined info-icon">Description</span>
-              <div class="toolbar-text">
-                <p class="title">Предпросмотр документа</p>
-                <p class="subtitle">Визуализация финального .docx файла</p>
-              </div>
-            </div>
-            <div class="toolbar-actions">
-              <button class="btn-refresh" (click)="renderSyllabusPreview()" [disabled]="isPreviewLoading">
-                <span class="material-symbols-outlined" [class.spinning]="isPreviewLoading">sync</span>
-              </button>
-            </div>
-          </div>
-          <div class="preview-viewport">
-            <div class="document-canvas">
-              <div id="docx-container"></div>
-              <div *ngIf="isPreviewLoading" class="preview-overlay">
-                <div class="modern-loader">
-                  <div class="shimmer-line title"></div>
-                  <div class="shimmer-line body"></div>
-                  <p>Формируем страницы...</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+            <div class="card preview-card" *ngIf="activeTab() === 'preview'">
+              <div class="preview-toolbar">
+                <div class="toolbar-info">
+                  <span class="material-symbols-outlined info-icon">Description</span>
+                  <div class="toolbar-text">
+                    <p class="title">Предпросмотр документа</p>
+                    <p class="subtitle">Визуализация финального .docx файла</p>
+                  </div>
+                </div>
+                <div class="toolbar-actions">
+                  <button class="btn-refresh" (click)="renderSyllabusPreview()" [disabled]="isPreviewLoading">
+                    <span class="material-symbols-outlined" [class.spinning]="isPreviewLoading">sync</span>
+                  </button>
+                </div>
+              </div>
+              <div class="preview-viewport">
+                <div class="document-canvas">
+                  <div id="docx-container"></div>
+                  <div *ngIf="isPreviewLoading" class="preview-overlay">
+                    <div class="modern-loader">
+                      <div class="shimmer-line title"></div>
+                      <div class="shimmer-line body"></div>
+                      <p>Формируем страницы...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+          </div>
+
+          <footer class="actions-footer">
+            <button class="btn-primary" (click)="saveAll()" [disabled]="isLoading()">
+              <span class="material-symbols-outlined">save</span>
+              {{ isLoading() ? 'Сохранение...' : 'Сохранить все изменения' }}
+            </button>
+          </footer>
+        </main>
       </div>
+    </ng-template>
 
-      <footer class="actions-footer">
-        <button class="btn-primary" (click)="saveAll()" [disabled]="isLoading()">
-          <span class="material-symbols-outlined">save</span>
-          {{ isLoading() ? 'Сохранение...' : 'Сохранить все изменения' }}
-        </button>
-      </footer>
-    </main>
   </div>
 </div>

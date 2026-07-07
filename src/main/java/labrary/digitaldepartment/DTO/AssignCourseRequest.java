@@ -7,7 +7,10 @@ import lombok.Setter;
 @Setter
 public class AssignCourseRequest {
     private Long teacherId;
+    private Long disciplineId;
     private String documentTitle;
+    private String academicYear;
+    private Integer semester;    
     private Integer lectures;
     private Integer practice;
     private Integer siw;

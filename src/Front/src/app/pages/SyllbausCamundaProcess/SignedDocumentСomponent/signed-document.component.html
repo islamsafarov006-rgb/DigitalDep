@@ -1,29 +1,28 @@
 <div class="syllabus-card">
   <div class="card-header">
-    <div class="icon-circle success">
-      <i class="status-icon">✓</i>
+    <div class="icon-circle">
+      <span class="checkmark"></span>
     </div>
     <h2>Силлабус утверждён</h2>
-    <p class="subtitle">Остался финальный шаг: скачайте документ, поставьте печати, отсканируйте и загрузите его обратно в систему.</p>
+    <p class="subtitle">Остался финальный шаг: скачайте документ, поставьте печати, отсканируйте и загрузите обратно в систему.</p>
   </div>
 
   <div class="card-body">
     <div class="action-block">
       <button class="btn btn-primary" (click)="downloadPdf()">
-        <span class="icon">📥</span> Скачать для печати (PDF)
+        <span class="icon icon-download"></span> Скачать для печати (PDF)
       </button>
     </div>
 
-    <hr class="divider" />
-
+    <!-- Заменили жесткий разделитель на пустое пространство, разделяющее логические зоны -->
     <div class="upload-section">
       <h3>Загрузить подписанный скан</h3>
 
       <label class="file-drop-zone" [class.file-selected]="selectedFile">
         <input type="file" accept=".pdf" (change)="onFileSelected($event)" class="hidden-file-input" />
-        <span class="upload-icon">📄</span>
+        <span class="upload-icon"></span>
         <span class="file-name">
-          {{ selectedFile ? selectedFile.name : 'Выберите файл в формате PDF или перетащите сюда' }}
+          {{ selectedFile ? selectedFile.name : 'Перетащите PDF сюда или нажмите для выбора' }}
         </span>
       </label>
 
@@ -31,13 +30,13 @@
         class="btn btn-success"
         (click)="uploadScan()"
         [disabled]="!selectedFile || isSubmitting()">
-        <span class="icon" *ngIf="!isSubmitting()">📤</span>
+        <span class="icon icon-upload" *ngIf="!isSubmitting()"></span>
         <span class="spinner" *ngIf="isSubmitting()"></span>
-        {{ isSubmitting() ? 'Загрузка...' : 'Загрузить скан' }}
+        {{ isSubmitting() ? 'Отправка...' : 'Загрузить скан силлабуса' }}
       </button>
 
       <div *ngIf="uploadSuccess" class="success-banner">
-        <span class="icon">✅</span> Скан успешно загружен! Процесс завершен.
+        <span class="icon icon-check-circle"></span> Скан успешно загружен! Процесс завершен.
       </div>
     </div>
   </div>

@@ -2,15 +2,17 @@ package labrary.digitaldepartment.Controller;
 
 import labrary.digitaldepartment.Entity.SignedDocument;
 import labrary.digitaldepartment.Service.SignedDocumentService;
+// Имппортируй свой сервис генерации PDF, например:
+// import labrary.digitaldepartment.Service.SyllabusGeneratorService;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/signed-documents")
@@ -19,25 +21,28 @@ import java.io.IOException;
 public class SignedDocumentController {
 
     private final SignedDocumentService signedDocumentService;
+    // Внедряем сервис, который отвечает за сборку PDF силлабуса
+    // private final SyllabusGeneratorService syllabusGeneratorService;
 
     /**
      * Скачать сгенерированный PDF/DOCX документ для последующей печати и подписи.
-     * Доступно только для документов в статусе APPROVED или SIGNED.
      */
     @GetMapping("/download-pdf/{documentId}")
     public ResponseEntity<?> downloadPdf(@PathVariable Long documentId) {
         try {
-            byte[] pdf = signedDocumentService.generatePdf(documentId);
+            // ВЫЗЫВАЙ МЕТОД ИЗ ТОГО СЕРВИСА, ГДЕ ОН НАПИСАН:
+            // byte[] pdf = syllabusGeneratorService.generatePdf(documentId);
+
+            byte[] pdf = new byte[0]; // Временно, пока не подставишь свой сервис генерации
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"syllabus_" + documentId + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(pdf);
         } catch (IllegalStateException e) {
-            // Ошибка валидации статуса (например, документ еще на согласовании)
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            // Ошибка самой генерации файла внутри SyllabusGeneratorService
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка при генерации документа: " + e.getMessage());
         }
@@ -45,31 +50,40 @@ public class SignedDocumentController {
 
     /**
      * Загрузить отсканированный документ с печатями обратно в систему.
-     * Автоматически переводит статус документа в SIGNED.
      */
     @PostMapping("/upload/{documentId}")
     public ResponseEntity<?> uploadScan(
             @PathVariable Long documentId,
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file) {
         try {
             signedDocumentService.saveScan(documentId, file);
             return ResponseEntity.ok().build();
         } catch (IllegalStateException e) {
-            // Если пытаются загрузить скан для недокументированного или несогласованного силлабуса
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка при сохранении файла в файловое хранилище: " + e.getMessage());
         }
     }
 
     /**
-     * Скачать ранее загруженный подписанный скан.
+     * Просмотреть или скачать ранее загруженный подписанный скан прямо в браузере.
      */
     @GetMapping("/scan/{documentId}")
-    public ResponseEntity<byte[]> downloadScan(@PathVariable Long documentId) {
-        SignedDocument signed = signedDocumentService.getByDocumentId(documentId);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + signed.getFileName() + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM) // Универсальный бинарный тип данных
-                .body(signed.getFileData());
+    public ResponseEntity<?> downloadScan(@PathVariable Long documentId) {
+        try {
+            SignedDocument signed = signedDocumentService.getByDocumentId(documentId);
+            java.io.InputStream stream = signedDocumentService.getFileFromMinio(signed.getFilePath());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + signed.getFileName() + "\"")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(new InputStreamResource(stream));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Не удалось получить файл из хранилища.");
+        }
     }
 }

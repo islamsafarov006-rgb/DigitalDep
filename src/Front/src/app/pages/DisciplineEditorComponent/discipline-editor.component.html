@@ -37,15 +37,15 @@
                   {{ doc.discipline.name || ('SYLLABUS.NO_NAME' | transloco) }}
                 </span>
                 <div class="doc-meta">
-                  <span class="meta-item">
-                    <span class="material-symbols-outlined">calendar_today</span>
-                    {{ 'SYLLABUS.SEMESTER' | transloco }} {{ doc.semester }}
-                  </span>
+              <span class="meta-item">
+                      <span class="material-symbols-outlined">calendar_today</span>
+                                    {{ 'SYLLABUS.SEMESTER' | transloco }} {{ doc.semester || '—' }}
+                    </span>
                   <span class="dot">·</span>
                   <span class="meta-item">
-                    <span class="material-symbols-outlined">history_edu</span>
-                    {{ doc.academicYear }} {{ 'SYLLABUS.YEAR' | transloco }}
-                  </span>
+                        <span class="material-symbols-outlined">history_edu</span>
+                                          {{ doc.academicYear || 'Не указан' }} {{ 'SYLLABUS.YEAR' | transloco }}
+                      </span>
                 </div>
               </div>
             </div>

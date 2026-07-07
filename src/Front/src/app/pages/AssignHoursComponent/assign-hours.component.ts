@@ -117,7 +117,7 @@ export class AssignHoursComponent implements OnInit {
     if (this.assignForm.valid) {
       this.errorMessage = '';
       this.successMessage = '';
-
+      console.log('Данные формы, отправляемые на бэкенд:', this.assignForm.value);
       this.documentService.assignCourse(this.assignForm.value).subscribe({
         next: (response) => {
           const selectedTeacher = this.teachers.find(t => t.id === this.assignForm.value.teacherId);

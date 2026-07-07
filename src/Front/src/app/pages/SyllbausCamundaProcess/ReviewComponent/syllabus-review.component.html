@@ -1,6 +1,10 @@
 <div class="management-container">
-  <div class="syllabus-page">
+  <!-- Показываем заглушку, пока данные силлабуса не загружены -->
+  <div *ngIf="!syllabus" class="loading-state" style="padding: 20px; text-align: center;">
+    <p>Загрузка данных силлабуса...</p>
+  </div>
 
+  <div class="syllabus-page" *ngIf="syllabus">
     <div class="content-side">
       <div class="management-card">
         <div class="header-area">
@@ -8,7 +12,8 @@
         </div>
         <div class="form-group">
           <label>Цели курса</label>
-          <div class="preview-box">{{ syllabus.goals }}</div>
+          <!-- Используем безопасный оператор ?. на всякий случай -->
+          <div class="preview-box">{{ syllabus?.goals || 'Цели не указаны' }}</div>
         </div>
       </div>
     </div>

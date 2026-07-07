@@ -1,14 +1,17 @@
 <div class="academic-container">
 
+  <!-- Блок ошибок -->
   <div *ngIf="errorMessage()" class="error-box">
     <span class="material-symbols-outlined">error</span>
     <p>{{ errorMessage() }}</p>
   </div>
 
-  <div *ngIf="isLoading()" class="loading-spinner">
+  <!-- Блок загрузки -->
+  <div *ngIf="isLoading() && !errorMessage()" class="loading-spinner">
     <p>Загрузка данных академической экспертизы...</p>
   </div>
 
+  <!-- Основной контент -->
   <div class="academic-card" *ngIf="!isLoading() && !errorMessage()">
 
     <header class="review-header">

@@ -11,27 +11,27 @@ export interface CamundaTask {
   syllabusId?: string;
   createTime?: string;
   endTime?: string;
+  disciplineName?: string;
+  teacherName?: string;
   variables?: Record<string, any>;
 }
+
 @Injectable({
   providedIn: 'root'
 })
 export class SyllabusApprovalService {
-  // Новая фича Angular — замена классического инжекта в конструкторе
   private http = inject(HttpClient);
 
-  // Базовый URL до твоего SyllabusApprovalController
+  // Базовый URL до SyllabusApprovalController
   private readonly apiUrl = 'http://localhost:8080/api/syllabus/tasks';
 
-  // Сигналы для хранения глобального состояния задач (доступны для чтения во всем приложении)
+  // Сигналы для хранения глобального состояния задач
   tasksList = signal<CamundaTask[]>([]);
   isLoading = signal<boolean>(false);
 
   /**
    * Загружает задачи с бэкенда по роли пользователя и статусу вкладки.
    * Автоматически обновляет реактивные сигналы состояния.
-   * @param role Текущая роль (например, 'LIBRARIAN', 'ROLE_DEAN')
-   * @param status Вкладка тасков ('active', 'fix', 'completed')
    */
   fetchTasks(role: string, status: string): Observable<CamundaTask[]> {
     this.isLoading.set(true);
@@ -48,7 +48,7 @@ export class SyllabusApprovalService {
         },
         error: (err) => {
           console.error('Ошибка при получении задач из Camunda:', err);
-          this.tasksList.set([]); // Очищаем список при ошибке, чтобы интерфейс не зависал
+          this.tasksList.set([]); // Очищаем список при ошибке
           this.isLoading.set(false);
         }
       })
@@ -56,10 +56,7 @@ export class SyllabusApprovalService {
   }
 
   /**
-   * Опционально: Метод для завершения/согласования задачи (User Task) в Camunda.
-   * Понадобится, когда пользователь нажмет кнопку "Утвердить" или "Отклонить".
-   * @param taskId ID выполняемой задачи
-   * @param variables Переменные процесса (например, одобрено ли: { approved: true })
+   * Метод для завершения/согласования задачи (User Task) в Camunda.
    */
   completeTask(taskId: string, variables: Record<string, any>): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${taskId}/complete`, variables);

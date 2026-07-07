@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../Services/AuthService/AuthService';
-import {CamundaTask, SyllabusApprovalService} from '../../Services/SyllabusApprovalService/SyllabusApprovalService';
+import { CamundaTask, SyllabusApprovalService } from '../../Services/SyllabusApprovalService/SyllabusApprovalService';
 
 @Component({
   selector: 'app-review-dashboard',
@@ -20,7 +20,6 @@ export class ReviewDashboardComponent implements OnInit {
   tasksList = this.approvalService.tasksList;
   isTasksLoading = this.approvalService.isLoading;
 
-  // Распознавание всех актуальных ролей
   getCurrentRole(): string {
     const roles = ['ADMIN', 'TEACHER', 'LIBRARIAN', 'METHODOLOGIST', 'ACADEMIC_DEPARTMENT', 'DEANERY'];
     for (const role of roles) {
@@ -29,7 +28,6 @@ export class ReviewDashboardComponent implements OnInit {
     return 'GUEST';
   }
 
-  // Человекочитаемые названия
   getRoleLabel(): string {
     const role = this.getCurrentRole();
     const labels: Record<string, string> = {
@@ -55,33 +53,44 @@ export class ReviewDashboardComponent implements OnInit {
   }
 
   loadTasks(): void {
-    let role = this.getCurrentRole();
+    const role = this.getCurrentRole();
     const status = this.activeSubTab();
 
-    // Если зашел Завкаф (у которого в БД роль ACADEMIC_DEPARTMENT),
-    // меняем отправляемую роль на ту, которую ждет бэк/Camunda для этого шага
-    if (role === 'ACADEMIC_DEPARTMENT') {
-      role = 'HEAD_OF_DEPARTMENT'; // или 'TEACHER' / смотря какая группа в BPMN
-    }
-
     this.approvalService.fetchTasks(role, status).subscribe({
-      next: (data) => console.log('Задачи успешно загружены:', data),
+      next: (data) => console.log(`Задачи успешно загружены для роли ${role}:`, data),
       error: (err) => console.error('Ошибка загрузки задач:', err)
     });
   }
 
-  openTaskReview(task: CamundaTask): void {
-    let role = this.getCurrentRole();
-    let path = '';
+  // 🌟 Хелпер для безопасного извлечения названия дисциплины из переменных Camunda
+  getDisciplineName(task: CamundaTask): string {
+    if (task.variables && task.variables['disciplineName']) {
+      return task.variables['disciplineName'].value || task.variables['disciplineName'];
+    }
+    return '—';
+  }
 
+  // 🌟 Хелпер для безопасного извлечения имени преподавателя из переменных Camunda
+  getTeacherName(task: CamundaTask): string {
+    if (task.variables && task.variables['teacherName']) {
+      return task.variables['teacherName'].value || task.variables['teacherName'];
+    }
+    if (task.variables && task.variables['author']) {
+      return task.variables['author'].value || task.variables['author'];
+    }
+    return '—';
+  }
+
+  openTaskReview(task: CamundaTask): void {
+    const role = this.getCurrentRole();
     const syllabusId = task.syllabusId;
+
     if (!syllabusId) {
       console.error('Ошибка: у задачи отсутствует syllabusId', task);
       alert('Ошибка: не удалось определить ID документа.');
       return;
     }
 
-    // 1. Финальный шаг для преподавателя (загрузка скана)
     if (task.taskDefinitionKey === 'Task_UploadSigned' || role === 'TEACHER') {
       this.router.navigate(['/signed-document', syllabusId], {
         queryParams: { taskId: task.id }
@@ -89,33 +98,28 @@ export class ReviewDashboardComponent implements OnInit {
       return;
     }
 
-    // Подмена роли для соответствия бизнес-логике
-    if (role === 'ACADEMIC_DEPARTMENT') {
-      role = 'HEAD_OF_DEPARTMENT';
-    }
-
-    // 2. Определение пути на основе роли
     if (role === 'LIBRARIAN') {
-      path = '/syllabus/review/librarian';
+      this.router.navigate(['/syllabus/review/librarian', task.id], {
+        queryParams: { syllabusId: syllabusId }
+      });
     }
     else if (role === 'METHODOLOGIST') {
-      path = '/syllabus/review/academic';
-    }
-    // 🌟 Завкаф и Декан теперь используют новые роуты, ведущие на DeanReviewComponent
-    else if (role === 'HEAD_OF_DEPARTMENT') {
-      path = '/syllabus/review/head';
-    }
-    else if (role === 'DEANERY') {
-      path = '/syllabus/review/dean';
-    }
-
-    if (path) {
-      // Перенаправляем на DeanReviewComponent: путь /:id + queryParams с taskId
-      this.router.navigate([path, syllabusId], {
+      this.router.navigate(['/syllabus', syllabusId, 'review'], {
         queryParams: { taskId: task.id }
       });
-    } else {
-      alert('У вас нет прав для доступа к этому разделу');
+    }
+    else if (role === 'ACADEMIC_DEPARTMENT') {
+      this.router.navigate(['/syllabus/review/head', syllabusId], {
+        queryParams: { taskId: task.id }
+      });
+    }
+    else if (role === 'DEANERY') {
+      this.router.navigate(['/syllabus/review/dean', syllabusId], {
+        queryParams: { taskId: task.id }
+      });
+    }
+    else {
+      alert('У вашей роли нет прав доступа к экспертизе этого типа.');
     }
   }
 

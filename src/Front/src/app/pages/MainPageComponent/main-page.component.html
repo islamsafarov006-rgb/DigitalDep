@@ -17,21 +17,21 @@
       </div>
     </a>
 
-    <a routerLink="/teacher-data" class="card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M4 19V5" stroke="currentColor" stroke-width="2"/>
-          <path d="M4 19h16" stroke="currentColor" stroke-width="2"/>
-          <rect x="7" y="12" width="3" height="5" fill="currentColor"/>
-          <rect x="12" y="9" width="3" height="8" fill="currentColor"/>
-          <rect x="17" y="6" width="3" height="11" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="card-content">
-        <div class="card-title">Нагрузка ИПП</div>
-        <div class="card-desc">Данные по нагрузке преподавателей</div>
-      </div>
-    </a>
+<!--    <a routerLink="/teacher-data" class="card">-->
+<!--      <div class="card-icon">-->
+<!--        <svg viewBox="0 0 24 24" fill="none">-->
+<!--          <path d="M4 19V5" stroke="currentColor" stroke-width="2"/>-->
+<!--          <path d="M4 19h16" stroke="currentColor" stroke-width="2"/>-->
+<!--          <rect x="7" y="12" width="3" height="5" fill="currentColor"/>-->
+<!--          <rect x="12" y="9" width="3" height="8" fill="currentColor"/>-->
+<!--          <rect x="17" y="6" width="3" height="11" fill="currentColor"/>-->
+<!--        </svg>-->
+<!--      </div>-->
+<!--      <div class="card-content">-->
+<!--        <div class="card-title">Нагрузка ИПП</div>-->
+<!--        <div class="card-desc">Данные по нагрузке преподавателей</div>-->
+<!--      </div>-->
+<!--    </a>-->
     }
     @if (authService.hasRole(['ACADEMIC_DEPARTMENT', 'LIBRARIAN', 'DEANERY', 'METHODOLOGIST'])) {
       <a routerLink="/approval-dashboard" class="card approval-card">

@@ -39,7 +39,7 @@ public class SyllabusApprovalController {
                     .list();
 
             return historicTasks.stream()
-                    .map(t -> mapHistoricTaskToMap(t))
+                    .map(this::mapHistoricTaskToMap)
                     .collect(Collectors.toList());
 
         } else if (status.equalsIgnoreCase("fix")) {
@@ -80,6 +80,11 @@ public class SyllabusApprovalController {
         map.put("assignee",          task.getAssignee() != null ? task.getAssignee() : "");
         map.put("createTime",        task.getCreateTime() != null ? task.getCreateTime().toString() : "");
         map.put("syllabusId",        getSyllabusIdFromTask(task.getId()));
+
+        // 🌟 Добавляем название дисциплины и имя преподавателя напрямую в корень объекта таски
+        map.put("disciplineName",    getVariableFromTask(task.getId(), "disciplineName"));
+        map.put("teacherName",       getVariableFromTask(task.getId(), "teacherName"));
+
         return map;
     }
 
@@ -97,6 +102,11 @@ public class SyllabusApprovalController {
         map.put("createTime",        task.getStartTime() != null ? task.getStartTime().toString() : "");
         map.put("endTime",           task.getEndTime()   != null ? task.getEndTime().toString()   : "");
         map.put("syllabusId",        getSyllabusIdFromProcess(task.getProcessInstanceId()));
+
+        // 🌟 Добавляем переменные из истории для завершенных вкладок
+        map.put("disciplineName",    getHistoricVariableFromProcess(task.getProcessInstanceId(), "disciplineName"));
+        map.put("teacherName",       getHistoricVariableFromProcess(task.getProcessInstanceId(), "teacherName"));
+
         return map;
     }
 
@@ -105,8 +115,13 @@ public class SyllabusApprovalController {
     // ─────────────────────────────────────────────────────────────────
 
     private String getSyllabusIdFromTask(String taskId) {
+        return getVariableFromTask(taskId, "syllabusId");
+    }
+
+    // Универсальный хелпер для получения переменных активной задачи
+    private String getVariableFromTask(String taskId, String variableName) {
         try {
-            Object val = taskService.getVariable(taskId, "syllabusId");
+            Object val = taskService.getVariable(taskId, variableName);
             return val != null ? val.toString() : "";
         } catch (Exception e) {
             return "";
@@ -114,11 +129,16 @@ public class SyllabusApprovalController {
     }
 
     private String getSyllabusIdFromProcess(String processInstanceId) {
+        return getHistoricVariableFromProcess(processInstanceId, "syllabusId");
+    }
+
+    // Универсальный хелпер для получения переменных из истории процесса
+    private String getHistoricVariableFromProcess(String processInstanceId, String variableName) {
         try {
             var variable = historyService
                     .createHistoricVariableInstanceQuery()
                     .processInstanceId(processInstanceId)
-                    .variableName("syllabusId")
+                    .variableName(variableName)
                     .singleResult();
             return variable != null && variable.getValue() != null
                     ? variable.getValue().toString()

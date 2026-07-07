@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { renderAsync } from 'docx-preview';
 import { CamundaTask, SyllabusProcessService } from '../../../Services/SyllabusTaskService/SyllabusProcessService';
 import {TranslocoPipe} from '@jsverse/transloco';
-
+import {SignedDocumentComponent} from '../SignedDocumentСomponent/signed-document.component';
 interface ExtendedWeeklyTopic extends Omit<WeeklyTopic, 'references'> {
   references: string | string[];
   isOpen?: boolean;
@@ -27,7 +27,7 @@ interface ProcessedComment {
 @Component({
   selector: 'app-syllabus-variables',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoPipe],
+  imports: [CommonModule, FormsModule, TranslocoPipe, SignedDocumentComponent],
   templateUrl: './syllabus-variables.component.html',
   styleUrls: ['./syllabus-variables.component.scss']
 })
@@ -45,6 +45,20 @@ export class SyllabusVariablesComponent implements OnInit {
   private currentDocumentId: number = 0;
   activeFixTask = signal<CamundaTask | null>(null);
   activeTab = signal<string>('syllabusData');
+
+  // Статусы, при которых заведомо не может существовать активной задачи "на доработку"
+  // для ЭТОГО документа. Если Camunda всё равно её присылает — значит это "хвост"
+  // от старого/чужого процесса, и его нужно игнорировать.
+  private readonly TERMINAL_STATUSES = new Set(['APPROVED', 'REJECTED', 'ARCHIVED']);
+
+  // 🌟 Когда силлабус утверждён (APPROVED), вместо формы редактирования показываем
+  // финальный экран: скачать PDF → подписать/поставить печать → загрузить скан.
+  isApprovedAwaitingSignature = computed<boolean>(() => {
+    const doc = this.syllabus();
+    if (!doc) return false;
+    const status = String((doc.syllabus as any)?.status ?? (doc as any).status ?? '').toUpperCase();
+    return status === 'APPROVED';
+  });
 
   lectures: ExtendedWeeklyTopic[] = [];
   practices: ExtendedWeeklyTopic[] = [];
@@ -208,15 +222,39 @@ export class SyllabusVariablesComponent implements OnInit {
     const currentDoc = this.syllabus();
     if (!currentDoc) return;
 
+    // Если документ уже находится в финальном статусе (APPROVED и т.п.),
+    // задачи "на доработку" по определению быть не может — не показываем
+    // баннер, даже если Camunda вернёт "хвост" от старого процесса.
+    const docStatus = (currentDoc.syllabus as any)?.status || (currentDoc as any).status;
+    if (docStatus && this.TERMINAL_STATUSES.has(String(docStatus).toUpperCase())) {
+      this.activeFixTask.set(null);
+      return;
+    }
+
     const authorRaw = currentDoc.author as any;
     const currentLoggedInUser = authorRaw?.username || authorRaw?.name || 'Преподаватель';
+    const expectedBusinessKey = String(currentDoc.id);
 
     this.camundaService.getTasksByTeacher(currentLoggedInUser).subscribe({
       next: (tasks) => {
-        const matchingTask = tasks.find(t =>
-          (t.taskDefinitionKey === 'Task_FixSyllabus' || t.taskDefinitionKey === 'Task_Fix') &&
-          t.assignee === currentLoggedInUser
-        );
+        const matchingTask = tasks.find(t => {
+          const taskAny = t as any;
+          const isFixTask =
+            (t.taskDefinitionKey === 'Task_FixSyllabus' || t.taskDefinitionKey === 'Task_Fix') &&
+            t.assignee === currentLoggedInUser;
+
+          if (!isFixTask) return false;
+
+          // Дополнительная защита: если у задачи есть businessKey/processInstance,
+          // привязанный к документу, сверяем его с текущим документом,
+          // чтобы не подхватить задачу от другого силлабуса того же преподавателя.
+          if (taskAny.businessKey != null) {
+            return String(taskAny.businessKey) === expectedBusinessKey;
+          }
+
+          return true;
+        });
+
         this.activeFixTask.set(matchingTask ?? null);
         this.cdr.detectChanges();
       },
@@ -267,6 +305,15 @@ export class SyllabusVariablesComponent implements OnInit {
   setActiveTab(tab: string) {
     this.activeTab.set(tab);
     if (tab === 'preview') this.renderSyllabusPreview();
+  }
+
+  // После того как инициатор загрузил подписанный скан, статус документа на бэкенде
+  // должен смениться (например, на SIGNED/COMPLETED) — перезагружаем данные,
+  // чтобы экран подписания скрылся и дашборд отразил актуальное состояние.
+  onSignedDocumentClosed() {
+    if (this.currentDocumentId) {
+      this.loadData(this.currentDocumentId);
+    }
   }
 
   // ── Weekly topics ──────────────────────────────────────────────

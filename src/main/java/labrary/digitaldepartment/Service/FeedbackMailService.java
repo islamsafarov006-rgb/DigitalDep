@@ -5,10 +5,14 @@ import jakarta.mail.internet.MimeMessage;
 import labrary.digitaldepartment.Entity.Feedback;
 import labrary.digitaldepartment.Repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -18,30 +22,37 @@ public class FeedbackMailService {
     private final JavaMailSender mailSender;
     private final FeedbackRepository feedbackRepository;
 
-    // Куда прилетит готовое письмо (для теста поставь свой личный alihan@mail.ru)
-    private final String MY_PERSONAL_EMAIL = "alihan@mail.ru";
+    // Куда прилетит готовое письмо
+    private final String MY_PERSONAL_EMAIL = "digitaldep.iitu@mail.ru";
 
-    // 🌟 УБРАЛИ @Transactional отсюда, чтобы не блокировать отправку сетью
-    public void sendAndSaveFeedback(String userEmail, String userName, String messageText, MultipartFile screenshot) throws MessagingException {
+    /**
+     * Основной метод: сохраняет отзыв в БД и отправляет уведомление на почту.
+     * Добавлен throws IOException для безопасной обработки байтов файла.
+     */
+    public void sendAndSaveFeedback(String userEmail, String userName, String messageText, MultipartFile screenshot)
+            throws MessagingException, IOException {
 
-        // 1. Сохраняем в БД (вынесли логику сохранения)
+        // 1. Сохраняем в БД в изолированной транзакции
         saveToDatabase(userEmail, userName, messageText, screenshot);
 
-        // 2. Отправка уведомления
+        // 2. Настройка и отправка MIME-письма
         MimeMessage message = mailSender.createMimeMessage();
+
+        // true указывает на то, что это мультипарт-письмо (с поддержкой HTML и вложений)
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        // Строго адрес почты-системы
+        // Адрес твоей системной почты (технический отправитель)
         helper.setFrom("digitaldep.iitu@mail.ru");
 
-        // Адрес, куда придет фидбек
+        // Конечный адрес получателя фидбека
         helper.setTo(MY_PERSONAL_EMAIL);
 
-        // 🌟 Указываем, что отвечать нужно на почту пользователя. Это убирает подозрения антиспама!
+        // Указываем адрес пользователя в поле Reply-To, чтобы не злить спам-фильтры
         helper.setReplyTo(userEmail);
 
         helper.setSubject("🚨 Фидбек с сайта от: " + userName);
 
+        // Формируем HTML-тело письма
         String htmlBody = "<h2>Новое сообщение обратной связи</h2>" +
                 "<p><strong>Отправитель:</strong> " + userName + " (" + userEmail + ")</p>" +
                 "<p><strong>Текст сообщения:</strong></p>" +
@@ -50,16 +61,28 @@ public class FeedbackMailService {
 
         helper.setText(htmlBody, true);
 
+        // Обработка вложения через ByteArrayResource (предотвращает зависание SMTP потока)
         if (screenshot != null && !screenshot.isEmpty()) {
             String fileName = screenshot.getOriginalFilename();
-            helper.addAttachment(fileName != null ? fileName : "screenshot.png", screenshot);
+            if (fileName == null || fileName.isEmpty()) {
+                fileName = "screenshot.png";
+            }
+
+            // Вычитываем байты из MultipartFile в оперативную память
+            ByteArrayResource byteArrayResource = new ByteArrayResource(screenshot.getBytes());
+
+            // Добавляем к письму
+            helper.addAttachment(fileName, byteArrayResource, screenshot.getContentType());
         }
 
+        // Отправка в сеть
         mailSender.send(message);
     }
 
-    // 🌟 Выделили сохранение в базу в отдельный изолированный транзакционный метод
-    @org.springframework.transaction.annotation.Transactional
+    /**
+     * Изолированный транзакционный метод для записи в базу данных.
+     */
+    @Transactional
     public void saveToDatabase(String userEmail, String userName, String messageText, MultipartFile screenshot) {
         Feedback feedback = new Feedback();
         feedback.setUserEmail(userEmail);

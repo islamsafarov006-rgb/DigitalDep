@@ -25,8 +25,7 @@ public class SignedDocument {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(name = "file_data", columnDefinition = "BYTEA")
-    private byte[] fileData;
+    private String filePath;
 
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;
