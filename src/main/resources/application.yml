@@ -73,6 +73,6 @@ camunda.bpm:
 # Настройки файлового хранилища MinIO
 minio:
   endpoint: http://localhost:9000
-  accessKey: minioadmin
-  secretKey: minioadmin
+  accessKey: minio
+  secretKey: minio123
   bucketName: digital-department-docs

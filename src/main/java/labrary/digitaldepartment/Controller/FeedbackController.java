@@ -22,7 +22,6 @@ public class FeedbackController {
             @RequestPart("userEmail") String userEmail,
             @RequestPart("userName") String userName,
             @RequestPart("message") String message,
-            // 🌟 Меняем на @RequestPart и имя "file", как на фронтенде
             @RequestPart(value = "file", required = false) MultipartFile screenshot) {
         try {
             feedbackService.sendAndSaveFeedback(userEmail, userName, message, screenshot);

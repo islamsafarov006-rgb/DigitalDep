@@ -35,7 +35,6 @@ public class SyllabusService {
         repository.deleteById(id);
     }
 
-    // ── Grading Policy ────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<GradingPolicyDto> getGradingPolicy(Long syllabusId) {
@@ -51,7 +50,6 @@ public class SyllabusService {
                                                     List<GradingPolicyDto> dtos) {
         Syllabus syllabus = getById(syllabusId);
 
-        // Удаляем старые записи и вставляем новые (простой подход)
         gradingPolicyRepository.deleteBySyllabusId(syllabusId);
         gradingPolicyRepository.flush();
 
@@ -65,7 +63,6 @@ public class SyllabusService {
                 .collect(Collectors.toList());
     }
 
-    // ── Инициализация таблицы по умолчанию (Option 1) ─────────────
 
     public List<GradingPolicyDto> buildDefaultGradingPolicy() {
         return List.of(
@@ -79,7 +76,6 @@ public class SyllabusService {
                 row(7,  "1st attestation", "Mid-term",              false, true,  25,  null),
                 row(8,  "1st attestation", "SIS assignments",       false, true,  25,  null),
                 row(9,  "1st attestation", "Attendance",            false, true,  25,  null),
-                // 2nd attestation
                 row(10, "2nd attestation", "Laboratory works:",     false, true,  35,  100),
                 row(11, "2nd attestation", "Lab work 1",            true,  false, 7,   null),
                 row(12, "2nd attestation", "Lab work 2",            true,  false, 7,   null),
@@ -94,9 +90,7 @@ public class SyllabusService {
                 row(21, "2nd attestation", "Exercise 5",            true,  false, 5,   null),
                 row(22, "2nd attestation", "End-of-term",           false, true,  25,  null),
                 row(23, "2nd attestation", "SIS assignments",       false, true,  15,  null),
-                // Exam
                 row(24, "Exam",            "Exam",                  false, true,  null, 100),
-                // Total
                 row(25, "Total",           "0,3*1stAtt+0,3*2ndAtt+0,4*Final", false, false, null, null)
         );
     }
