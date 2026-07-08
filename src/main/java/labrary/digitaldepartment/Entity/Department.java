@@ -1,8 +1,11 @@
 package labrary.digitaldepartment.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,4 +28,14 @@ public class Department {
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
+
+    // зав. кафедрой
+    @ManyToOne
+    @JoinColumn(name = "head_id")
+    private User head;
+
+    // все юзеры, привязанные к этой кафедре
+    @OneToMany(mappedBy = "department")
+    @JsonIgnore
+    private List<User> users;
 }
