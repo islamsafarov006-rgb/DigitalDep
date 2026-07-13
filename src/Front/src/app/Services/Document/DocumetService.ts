@@ -72,7 +72,7 @@ export class DocumentService {
 
   // Исправленный метод: отправляет POST-запрос с заголовками авторизации
   assignCourse(payload: any): Observable<any> {
-    return this.http.post('http://localhost:8080/api/management/assign-course', payload, {
+    return this.http.post('https://hence-mediterranean-person-forming.trycloudflare.com/api/management/assign-course', payload, {
       headers: this.getAuthHeaders()
     });
   }

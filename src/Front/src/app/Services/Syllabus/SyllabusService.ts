@@ -8,7 +8,7 @@ import {Syllabus} from './syllabus';
 })
 export class SyllabusService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/api/syllabus';
+  private baseUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/syllabus';
 
   getAll(): Observable<Syllabus[]> {
     return this.http.get<Syllabus[]>(this.baseUrl);

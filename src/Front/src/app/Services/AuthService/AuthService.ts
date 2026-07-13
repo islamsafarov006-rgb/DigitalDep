@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+  private readonly API_URL = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/auth';
 
   currentUser = signal<any>(null);
 
@@ -74,6 +74,6 @@ export class AuthService {
   }
 
   getAllTeachers(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:8080/api/users/teachers');
+    return this.http.get<any[]>('https://hence-mediterranean-person-forming.trycloudflare.com/api/users/teachers');
   }
 }

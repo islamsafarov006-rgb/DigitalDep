@@ -17,7 +17,7 @@ export interface CamundaTask {
   providedIn: 'root'
 })
 export class SyllabusProcessService {
-  private apiUrl = 'http://localhost:8080/api/v1/syllabus-process';
+  private apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/v1/syllabus-process';
 
   constructor(private http: HttpClient) {}
 

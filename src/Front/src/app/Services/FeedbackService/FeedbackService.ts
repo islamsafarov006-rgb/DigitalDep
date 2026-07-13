@@ -14,7 +14,7 @@ export interface FeedbackHistoryItem {
 })
 export class FeedbackService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/feedback';
+  private apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/feedback';
 
   sendFeedback(name: string, email: string, message: string, file: File | null): Observable<any> {
     const formData = new FormData();
