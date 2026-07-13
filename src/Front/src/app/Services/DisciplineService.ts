@@ -30,7 +30,7 @@ export interface Discipline {
 export class DisciplineService {
 
   // Замени URL на свой рабочий адрес бэкенда, если он отличается
-  private readonly apiUrl = 'http://localhost:8080/api/disciplines';
+  private readonly apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/disciplines';
 
   constructor(private http: HttpClient) {}
 

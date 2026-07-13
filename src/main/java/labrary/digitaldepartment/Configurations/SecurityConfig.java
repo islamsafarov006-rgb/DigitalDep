@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/camunda/app/**", "/camunda/api/**", "/camunda/lib/**", "/camunda/api/cockpit/**").permitAll()
+                        .requestMatchers("/camunda/app/**", "/camunda/api/**", "/camunda/lib/**", "http://213.166.81.35:8080/camunda/", "/camunda/api/cockpit/**").permitAll()
                         .requestMatchers("/api/v1/syllabus-process/**").permitAll()
                         .requestMatchers("/api/syllabus/**").permitAll() // ← добавить                        .requestMatchers("/camunda/**").permitAll()
                         .requestMatchers("/app/**").permitAll()
@@ -55,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:4300"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:4300", "http://213.166.81.35","nh"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setAllowCredentials(true);

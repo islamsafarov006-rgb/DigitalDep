@@ -7,7 +7,7 @@ import {Department} from './department';
   providedIn: 'root'
 })
 export class DepartmentService {
-  private readonly apiUrl = 'http://localhost:8080/api/departments';
+  private readonly apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/departments';
   private http = inject(HttpClient);
 
   getAll(): Observable<Department[]> {

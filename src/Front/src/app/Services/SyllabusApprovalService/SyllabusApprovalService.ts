@@ -23,7 +23,7 @@ export class SyllabusApprovalService {
   private http = inject(HttpClient);
 
   // Базовый URL до SyllabusApprovalController
-  private readonly apiUrl = 'http://localhost:8080/api/syllabus/tasks';
+  private readonly apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/syllabus/tasks';
 
   // Сигналы для хранения глобального состояния задач
   tasksList = signal<CamundaTask[]>([]);

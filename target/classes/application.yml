@@ -70,9 +70,9 @@ camunda.bpm:
     schema-update: true
     type: postgres
 
-# Настройки файлового хранилища MinIO
+# Временные фиктивные настройки, чтобы Spring Boot не падал при сборке бинов
 minio:
-  endpoint: http://localhost:9000
-  accessKey: minio
-  secretKey: minio123
+  endpoint: https://example.com
+  accessKey: fake-key
+  secretKey: fake-secret-key-123456789
   bucketName: digital-department-docs

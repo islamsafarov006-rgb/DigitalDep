@@ -23,16 +23,22 @@ public class MinioConfig {
     private String bucketName;
 
     @Bean
-    public MinioClient minioClient() throws Exception {
+    public MinioClient minioClient() {
+        // 1. Создаем клиент (сам по себе билдер сеть не блокирует)
         MinioClient minioClient = MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .build();
 
-        // Проверяем/создаем бакет при старте приложения
-        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
-        if (!found) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+        // 2. Оборачиваем проверку в try-catch, чтобы фейковый хост не ронял приложение
+        try {
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (!found) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+        } catch (Exception e) {
+            // Логируем ошибку, но не выбрасываем её дальше — даем приложению запуститься
+            System.err.println("[MinIO Warning] Не удалось проверить/создать бакет при старте: " + e.getMessage());
         }
 
         return minioClient;

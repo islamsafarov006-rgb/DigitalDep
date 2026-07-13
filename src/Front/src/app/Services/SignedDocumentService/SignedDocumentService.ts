@@ -10,7 +10,7 @@ export class SignedDocumentService {
 
   // Базовый URL. Если у вас используется Interceptor, который сам подставляет /api,
   // то оставьте здесь пустую строку '' или относительный путь.
-  private readonly apiUrl = 'http://localhost:8080/api/signed-documents';
+  private readonly apiUrl = 'https://hence-mediterranean-person-forming.trycloudflare.com/api/signed-documents';
 
   /**
    * Скачать сгенерированный PDF документ силлабуса
